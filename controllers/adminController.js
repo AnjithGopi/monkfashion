@@ -1,5 +1,4 @@
 const User = require("../models/userModal")
-const Categories = require('../models/categoriesModal')
 
 const bcrypt = require('bcrypt')
 
@@ -76,7 +75,7 @@ const changeStatus = async (req,res)=>{
 
         if(statusUpdation){
             // res.redirect('/userList')
-             const message = "User deleted Sucessfully"
+             const message = "User blocked Sucessfully"
         res.redirect(`/admin/userList?message=${message}`)
         }
 
@@ -86,42 +85,11 @@ const changeStatus = async (req,res)=>{
     }
 }
 
-const loadCategories = async(req,res)=>{
-    try{
-        res.render('categories')
-    }catch(error){
-        console.log(error.message)
-    }
-}
-
-const addCategories =  async(req,res)=>{
-    try{
-        const newCategories = new Categories({
-                           name:req.body.name
-        }) 
-        const categoriesData = await newCategories.save();
-
-        if(categoriesData){
-        
-        console.log("categories data :",categoriesData)
-            res.render('',{message : "Sucessfully Registered"});
-        }else{
-            res.render('registrationSucess',{message : "Registration failed."});
-
-        }
-
-
-    }catch(error){
-        console.log(error.message)
-    }
-}
-
 module.exports ={
    loadLogin,
    verifyLogin,
    loadUserList,
-   changeStatus,
-   loadCategories,
-   addCategories
+   changeStatus
+  
 }
     
