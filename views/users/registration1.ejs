@@ -1,0 +1,211 @@
+<% include('../layouts/header.ejs') %>
+
+<!DOCTYPE html>
+<!-- Website - www.codingnepalweb.com -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Validation in HTML | CodingNepal</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Fontawesome CDN Link For Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+  </head>
+  <body>
+    <!-- <form action="thank-you.html"> -->
+     <form action="" method="post"  id="signupForm" onsubmit="validateForm(event)">
+      <h2>Form Validation</h2>
+      <div class="form-group fullname">
+        <label for="fullname">Full Name</label>
+        <input type="text" name="name" id="name" placeholder="Enter your full name" required>
+      </div>
+      <div class="form-group email">
+        <label for="email">Email Address</label>
+        <input type="email" name="email" id="email" placeholder="Enter your email address" required>
+      </div>
+      <div class="form-group phone">
+        <label for="mobileNumber">Mobile Number:</label>
+        <input type="tel" id="mobileNumber" name="mobile" pattern="[0-9]{10}" placeholder="Enter your mobile number" required>
+        </div>
+      <div class="form-group password">
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" placeholder="Enter your password" required>
+        <i id="pass-toggle-btn" class="fa-solid fa-eye"></i>
+      </div>
+      <h4 class="alter text-success text center" id="sucessMessage">
+        <%=locals.message ?message:''%>
+      </h4>
+   
+     
+      <div class="form-group submit-btn">
+        <input type="submit" value="Register">
+      </div>
+    </form>
+
+    <!-- <script src="script.js"></script> -->
+  
+
+<!-- javascript-->
+<script>
+  function validateForm(event) {
+    // Prevent form submission if validation fails
+    event.preventDefault();
+
+    // Get form elements
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const mobileInput = document.getElementById('mobile');
+    const passwordInput = document.getElementById('password');
+
+    // Simple validation for demonstration purposes
+    if (!nameInput.value.trim()) {
+      alert('Please enter your name.');
+      return;
+    }
+
+    if (!emailInput.value.trim() || !isValidEmail(emailInput.value.trim())) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+
+    if (!mobileInput.value.trim() || !isValidMobile(mobileInput.value.trim())) {
+      alert('Please enter a valid 10-digit mobile number.');
+      return;
+    }
+
+    if (!passwordInput.value.trim()) {
+      alert('Please enter your password.');
+      return;
+    }
+
+    // If all validations pass, you can submit the form
+    alert('Form submitted successfully!');
+    // You may want to submit the form to the server using AJAX or other methods.
+  }
+
+  function isValidEmail(email) {
+    // Simple email validation regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  function isValidMobile(mobile) {
+    // Simple 10-digit mobile number validation regex
+    const mobileRegex = /^\d{10}$/;
+    return mobileRegex.test(mobile);
+  }
+</script>
+
+
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Open Sans', sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  min-height: 100vh;
+  background: #1BB295;
+}
+
+form {
+  padding: 25px;
+  background: #fff;
+  max-width: 500px;
+  width: 100%;
+  border-radius: 7px;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05);
+}
+
+form h2 {
+  font-size: 27px;
+  text-align: center;
+  margin: 0px 0 30px;
+}
+
+form .form-group {
+  margin-bottom: 15px;
+  position: relative;
+}
+
+form label {
+  display: block;
+  font-size: 15px;
+  margin-bottom: 7px;
+}
+
+form input,
+form select {
+  height: 45px;
+  padding: 10px;
+  width: 100%;
+  font-size: 15px;
+  outline: none;
+  background: #fff;
+  border-radius: 3px;
+  border: 1px solid #bfbfbf;
+}
+
+form input:focus,
+form select:focus {
+  border-color: #9a9a9a;
+}
+
+form input.error,
+form select.error {
+  border-color: #f91919;
+  background: #f9f0f1;
+}
+
+form small {
+  font-size: 14px;
+  margin-top: 5px;
+  display: block;
+  color: #f91919;
+}
+
+form .password i {
+  position: absolute;
+  right: 0px;
+  height: 45px;
+  top: 28px;
+  font-size: 13px;
+  line-height: 45px;
+  width: 45px;
+  cursor: pointer;
+  color: #939393;
+  text-align: center;
+}
+
+.submit-btn {
+  margin-top: 30px;
+}
+
+.submit-btn input {
+  color: white;
+  border: none;
+  height: auto;
+  font-size: 16px;
+  padding: 13px 0;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  text-align: center;
+  background: #1BB295;
+  transition: 0.2s ease;
+}
+
+.submit-btn input:hover {
+  background: #179b81;
+}
+    </style>
+
+<% include('../layouts/footer.ejs') %>
