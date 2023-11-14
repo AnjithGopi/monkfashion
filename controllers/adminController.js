@@ -1,4 +1,6 @@
 const User = require("../models/userModal")
+const Categories = require('../models/categoriesModal')
+
 const bcrypt = require('bcrypt')
 
 
@@ -67,7 +69,6 @@ const changeStatus = async (req,res)=>{
 
         }else{
             updateValue = 0
-
         }
 
         const statusUpdation =  await User.findByIdAndUpdate({_id:id},{$set:{is_active:updateValue}})
@@ -81,31 +82,46 @@ const changeStatus = async (req,res)=>{
 
     }catch(error){
         console.log(error.message)
+        res.status(500).send("Internal Server Error");
     }
 }
 
-// const deleteUser = async(req,res)=>{
+const loadCategories = async(req,res)=>{
+    try{
+        res.render('categories')
+    }catch(error){
+        console.log(error.message)
+    }
+}
 
-//     try{
-//         const id =  req.query.id
-//         const userdata = await User.deleteOne({_id:id})
-//         // req.flash('success', 'Message to display on the next page');
+const addCategories =  async(req,res)=>{
+    try{
+        const newCategories = new Categories({
+                           name:req.body.name
+        }) 
+        const categoriesData = await newCategories.save();
 
-//         res.redirect('/admin/dashboard')
-//         // const message = "User deleted Sucessfully"
-//         // res.redirect(`/admin/dashboard?message=${message}`)
-      
+        if(categoriesData){
+        
+        console.log("categories data :",categoriesData)
+            res.render('',{message : "Sucessfully Registered"});
+        }else{
+            res.render('registrationSucess',{message : "Registration failed."});
 
-//     }catch(error){
-//         console.log(error.message)
-//     }
-// }
+        }
 
+
+    }catch(error){
+        console.log(error.message)
+    }
+}
 
 module.exports ={
-    loadLogin,
+   loadLogin,
    verifyLogin,
    loadUserList,
-   changeStatus
+   changeStatus,
+   loadCategories,
+   addCategories
 }
     

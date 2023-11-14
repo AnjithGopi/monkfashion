@@ -310,5 +310,6 @@ module.exports ={
     newInsertUser,
     loadotpRedirect ,
     loadRegsucess
+    
 
 }
