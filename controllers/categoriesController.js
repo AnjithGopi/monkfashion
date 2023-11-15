@@ -12,13 +12,16 @@ const loadCategories = async(req,res)=>{
     }
 }
 
+
 const addCategories =  async(req,res)=>{
     try{
-        const searchCategories = await Categories.findOne({name:req.body.name})
+        // const searchCategories = await Categories.findOne({name:req.body.name})
+        const searchCategories = await Categories.findOne({ name: new RegExp('^' + req.body.name + '$', 'i') });
         const searchReturnData =await Categories.find()
         if(searchCategories){
             console.log("Worked the sweet")
-            res.render('categories',{message : true,categories:searchReturnData});
+            
+            res.render('categories',{message :'1',categories:searchReturnData});
             // res.redirect('/admin/categories')
         }else{
             const newCategories = new Categories({
@@ -28,9 +31,12 @@ const addCategories =  async(req,res)=>{
 
             if(categoriesData){
 
+            const dataAfter = await Categories.find()
             console.log("categories data :",categoriesData)
+            res.render('categories',{message :'2',categories:dataAfter});
+
             // res.render('categories',{message : true,categories:categoriesData});
-            res.redirect('/admin/categories')
+            // res.redirect('/admin/categories')
 
             }else{
             // res.render('registrationSucess',{message : "Registration failed."});
