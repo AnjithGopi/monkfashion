@@ -4,6 +4,8 @@ const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const { nextTick } = require('process');
 
+const Product = require('../models/productModal')
+
 const securePassword = async(password)=>{
 
     try{
@@ -15,37 +17,6 @@ const securePassword = async(password)=>{
     }
 }
 
-// // For sending mail
-// const sendVerifyMail = async(name,email,user_id)=>{
-//     try{
-//         const transporter = nodemailer.createTransport({
-//             service: 'gmail',
-//             auth: {
-//                 user: 'abhilash.brototype@gmail.com',
-//                 pass: 'nfjy xgfz fyxo rimf',
-//             },
-//         });
-
-//         const otp =1111;
-//         const mailOptions = {
-//             from :'abhilash.brototype@gmail.com',
-//             to:email,
-//             subject:'for verification mail',
-//             html:`Your verification code is : ${otp}`,
-//         }
-
-//       // Send mail with defined transport object
-//     transporter.sendMail(mailOptions, (error, info) => {
-//         if (error) {
-//         return console.error(error);
-//         }
-//         console.log('Message sent: %s', info.messageId);
-//     });
-
-//     }catch (error){
-//         console.log(error.message)
-//     }
-// }
 
 
 const sendVerifyMail = async (req,res) => {
@@ -220,41 +191,8 @@ const loadLogin = (req,res)=>{
     }
 }
 
-// // not needed in this program because there is another newInsert user
-// const insertUser = async(req,res)=>{
-//     const spass = await securePassword(req.body.password)
-//     try{
-//         const existingUser = await User.findOne({ email: req.body.email });
 
-//         if (existingUser) {
-//             // If the email already exists, render an error message
-//             return res.render('registration', { emailexistmessage: "Email already exists. Choose a different email." });
-//         }
-
-//       const user = new  User({
-//         name:req.body.name,
-//         email:req.body.email,
-//         mobile:req.body.mobile,
-//         password:spass
-     
-//         });
-
-//         const userData = await user.save();
-
-//         if(userData){
-//             sendVerifyMail(req.body.name,req.body.email,userData._id)
-
-//             res.render('registration',{message : "Sucessfully Registered"});
-//         }else{
-//             res.render('registration',{message : "Registration failed."});
-
-//         }
-
-//     }catch(error){
-//         console.log(error.message)
-//     }
-// }
-
+// code for verifyin the User
 const verifyLogin = async(req,res)=>{
     try{
         const email = req.body.email;
@@ -286,16 +224,33 @@ const verifyLogin = async(req,res)=>{
             console.log(error.message)
         }
     }
-
+// Website Home Page
 const loadHome = async(req,res)=>{
 
     try{
-       const userData = await User.findById({_id:req.session.user_id})
-        res.render('home',{User:userData});
+       const productData = await Product.find()
+    //    console.log(productData)
+        res.render('index',{product:productData});
+       
     }catch(error){
         console.log(error.message)
     }
 }
+
+
+const loadProduct = async(req,res)=>{
+
+    try{
+       const productData = await Product.findById({_id:req.query.id})
+     
+        res.render('shopProduct',{product:productData});
+       
+    }catch(error){
+        console.log(error.message)
+    }
+}
+
+
 
 
 
@@ -309,7 +264,9 @@ module.exports ={
     verifyOTP,
     newInsertUser,
     loadotpRedirect ,
-    loadRegsucess
+    loadRegsucess,
+    loadProduct
+    
     
 
 }

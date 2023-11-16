@@ -40,6 +40,12 @@ admin_route.get('/blockCategories',categoriesController.changeCategoriesStatus);
 admin_route.get('/deleteCategories',categoriesController.deleteCategories);
 admin_route.get('/addproduct',productController.loadAddProduct);
 admin_route.post('/addproduct',upload.single('image'),productController.insertProduct);
+admin_route.get('/products',productController.loadProduct)
+admin_route.get('/products/changeStatus',productController.changeStatus);
+admin_route.get('/products/deleteProduct',productController.deleteProduct);
+admin_route.get('/products/editProduct',productController.loadEditProduct);
+admin_route.post('/products/editProduct',upload.single('image'),productController.editProduct)
+
 
 
 

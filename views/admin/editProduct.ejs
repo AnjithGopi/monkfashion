@@ -1,0 +1,115 @@
+<!-- <% include('../layouts/header.ejs') %> -->
+<%- include('../layouts/header')-%>
+
+
+<section class="vh-100 bg-image">
+    
+  <div class="mask d-flex align-items-center h-100 gradient-custom-3">
+    <div class="container h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+          <div class="card" style="border-radius: 15px;">
+            <div class="card-body p-5">
+              <h2 class="text-uppercase text-center mb-5">Edit Product</h2>
+              
+              
+              <form  method="post" enctype="multipart/form-data">
+                <div class="mb-4">
+                    <label for="product_name" class="form-label">Product title</label>
+                    <input type="text" name="name" placeholder="Type here" value="<%= product.name %> " class="form-control" id="product_name">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">Full description</label>
+                    <!-- <textarea  name="description" value="<%= product.description %> "  class="form-control" rows="4"></textarea> -->
+                    <textarea name="description" class="form-control" rows="4"><%= product.description %></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="mb-4">
+                            <label class="form-label">Regular price</label>
+                            <div class="row gx-2">
+                                <!-- <input placeholder="$" name="regularPrice" type="number" value="<%= product.regularPrice %> "  class="form-control"> -->
+                            <input placeholder="$" name="regularPrice" type="number" value="<%= product.regularPrice %>" class="form-control">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="mb-4">
+                            <label class="form-label">Promotional price</label>
+                            <input placeholder="$" type="number" name="salePrice" value="<%= product.salePrice %>"  class="form-control">
+                            <!-- <input placeholder="$" name="regularPrice" type="number" value="<%= product.regularPrice %>" class="form-control"> -->
+                        </div>
+                    </div>
+                        <!-- To indicate which sweet alert should work -->
+                    <span hidden id="statusSpan"><%=locals.message  ? message: ''%></span>
+                    <div class="col-lg-4">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" name="categories">
+                          
+
+                            <% if( categories.length > 0 ) { for( let i = 0 ; i < categories.length ; i ++){ %>
+                            <option> <%= categories[i].name%> </option>
+                               
+                            
+                        <% } } else{ %> user not found <% } %>
+
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">Stock</label>
+                    <input type="number" name="stock" value="<%=product.stock %>"  class="form-control" id="product_name">
+                </div>
+                <div class="card-body">
+                    <div class="input-upload">
+                        <!-- <img src="/static/admin-assets/imgs/theme/upload.svg" alt=""> -->
+                        <input class="form-control" name="image" type="file">
+                    </div>
+                </div>
+              
+            <input type="submit" value="Submit" class="btn btn-success btn-md rounded font-sm hover-up" >
+        </form>   
+           
+        </div>
+    </div> <!-- card end// -->
+   
+    
+     <!-- card end// -->
+</div>
+
+
+   
+
+              
+              <script>
+                      // Remove error message after 3 seconds
+        setTimeout(() => {
+          const errorMessage = document.getElementById("span");
+          if (errorMessage) {
+            errorMessage.style.display = "none";
+          }
+        }, 3000);
+        setTimeout(() => {
+          const emailExistMessage = document.getElementById("emailexistMessage");
+          if (emailExistMessage) {
+            emailexistMessage.style.display = "none";
+          }
+        }, 3000);
+        setTimeout(() => {
+          const sucessMessage = document.getElementById("sucessMessage");
+          if (sucessMessage) {
+            sucessMessage.style.display = "none";
+          }
+        }, 3000);
+
+
+
+                
+              </script>
+
+              
+              
+
+<%- include('../layouts/footer')-%>
+

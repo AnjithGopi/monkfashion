@@ -5,9 +5,9 @@ const productSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    status:{
+    is_deleted:{
         type:Number,
-        default:1
+        default:0
     },
     description:{
         type:String,
@@ -36,6 +36,10 @@ const productSchema = new mongoose.Schema({
      stock:{
         type:Number,
         required:true
+     },
+     is_active:{
+      type:Number,
+      default:1
      }
     
 

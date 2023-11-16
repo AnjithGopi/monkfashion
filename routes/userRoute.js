@@ -36,4 +36,8 @@ user_route.post('/login',userController.verifyLogin);
 
 user_route.get('/home',userController.loadHome);
 
+user_route.get('/products',userController.loadProduct);
+
+
+
 module.exports = user_route

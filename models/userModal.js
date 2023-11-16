@@ -34,6 +34,18 @@ const userSchema = new mongoose.Schema({
      createdTime: {
         type: Date,
         default: Date.now  
+    },
+    wishlist:{
+      type:Array,
+      required:false
+    },
+    address:{
+      type:Array,
+      required:false
+    },
+    cart:{
+      type:Array,
+      required:false
     }
 });
 
