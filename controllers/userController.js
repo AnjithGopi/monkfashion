@@ -103,7 +103,7 @@ const verifyOTP = async (req,res,next)=>{
              next()
         }else{
             console.log('verification failed')
-            // res.render('otp',{message:" otp is incorrect"})
+            res.render('otp',{message:" otp is incorrect"})
             return
 
         }
