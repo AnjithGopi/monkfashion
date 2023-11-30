@@ -133,10 +133,11 @@
                                           
 
                                             <% if( categories.length > 0 ) { for( let i = 0 ; i < categories.length ; i ++){ %>
-                                            <option> <%= categories[i].name%> </option>
+                                                <% if( categories[i].isActive) { %>
+                                                <option> <%= categories[i].name%> </option>
                                                
                                             
-                                        <% } } else{ %> user not found <% } %>
+                                        <% } } } else{ %> user not found <% } %>
          
                                         </select>
                                     </div>

@@ -1,4 +1,43 @@
 const mongoose = require('mongoose');
+const {Schema} = mongoose;
+
+
+const addressSchema = new mongoose.Schema({
+   fullName: {
+      type:String,
+      required:true
+   },
+   phone:{
+      type:Number,
+      required:true
+   },
+   phone2:{
+      type:Number,
+      required:false
+   },
+   houseName:{
+      type:String,
+      required:true
+   }, 
+   state:{
+      type:String,
+      required:true
+   },
+   city:{
+      type:String,
+      required:true
+   },
+   pincode:{
+      type:Number,
+      required:true
+   },
+   landMark:{
+      type:String,
+      required:false
+   }
+
+})
+
 
 const userSchema = new mongoose.Schema({
     name:{
@@ -17,12 +56,12 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:true
      } ,
-      is_admin:{
+      isAdmin:{
         type:Number,
         required:false,
         default:0
      },
-     is_active:{
+     isActive:{
         type:Number,
         default:1
      } ,
@@ -40,13 +79,24 @@ const userSchema = new mongoose.Schema({
       required:false
     },
     address:{
-      type:Array,
+      type:[addressSchema],
       required:false
     },
     cart:{
-      type:Array,
+      type:Schema.Types.ObjectId,
+      ref:"cart",
+      required:false 
+    },
+    dob:{
+      type:String,
       required:false
-    }
+    },
+    otp:{
+      type:Number,
+      required:false
+    },
+    
 });
+
 
 module.exports =mongoose.model('User',userSchema);

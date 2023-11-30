@@ -6,9 +6,13 @@ const categoriesSchema = new mongoose.Schema({
             type:String,
             required:true
         },
-        is_active:{
-            type:Number,
-            default:1
+        isActive:{
+            type:Boolean,
+            default:true
+        },
+        isDeleted:{
+            type:Boolean,
+            default:false
         }
 })
 

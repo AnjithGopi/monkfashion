@@ -45,11 +45,13 @@
                     <span hidden id="statusSpan"><%=locals.message  ? message: ''%></span>
                     <div class="col-lg-4">
                         <label class="form-label">Category</label>
-                        <select class="form-select" name="categories">
+                        <select class="form-select" name="categories" >
                           
-
-                            <% if( categories.length > 0 ) { for( let i = 0 ; i < categories.length ; i ++){ %>
+                          <option selected  ><%=categoryname.name %> </option>
+                            <% if( categories.length > 0 ) { for( let i = 0 ; i < categories.length ; i++){ %>
+                              <% if( categories[i].isActive) { %>
                             <option> <%= categories[i].name%> </option>
+                            <% } %>
                                
                             
                         <% } } else{ %> user not found <% } %>
@@ -62,12 +64,29 @@
                     <input type="number" name="stock" value="<%=product.stock %>"  class="form-control" id="product_name">
                 </div>
                 <div class="card-body">
-                    <div class="input-upload">
-                        <!-- <img src="/static/admin-assets/imgs/theme/upload.svg" alt=""> -->
-                        <input class="form-control" name="image" type="file">
-                    </div>
+                  <div class="input-upload">
+                    <img src="/static/admin/images/product/<%=product.image[0]%>" alt="" style="width: 200px; height: 150px;" id="viewImg">
+                    <img src="/static/admin/images/product/<%=product.image[1]%>" alt="" style="width: 200px; height: 150px;" id="viewImg">
+                    <input class="form-control" name="image" type="file" multiple onchange="viewImage(event)">
                 </div>
-              
+
+                  <!-- <% if(product.image.length > 0) { %>
+                    <% product.image.forEach(product => { %>
+                    <div class="input-upload">
+                        <img src="/static/admin/images/product/<%=product%>" alt="" style="width: 200px; height: 150px;" id="viewImg">
+                        <input class="form-control" name="image" type="file" multiple onchange="viewImage(event)">
+                    </div>
+                    <% }); %>
+                  <% }%> -->
+
+                  <!-- <div class="input-upload">
+                    <img src="/static/admin/images/product/<%=product.image[0] %>" alt="" style="width: 200px; height: 150px;" id="viewImg">
+                    <input class="form-control" name="image" type="file" multiple onchange="viewImage(event)">
+                </div> -->
+
+                </div>
+                
+                
             <input type="submit" value="Submit" class="btn btn-success btn-md rounded font-sm hover-up" >
         </form>   
            
@@ -78,6 +97,14 @@
      <!-- card end// -->
 </div>
 
+
+<!-- Script to view the selected image from the file  -->
+
+<script>
+function viewImage(event){
+  document.getElementById('viewImg').src=URL.createObjectURL(event.target.files[0])
+}
+</script>
 
    
 

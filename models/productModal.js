@@ -5,7 +5,7 @@ const productSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    is_deleted:{
+    isDeleted:{
         type:Number,
         default:0
     },
@@ -19,6 +19,7 @@ const productSchema = new mongoose.Schema({
      },
      categoryId:{
         type:Schema.Types.ObjectId,
+        ref:'Categories',
         required:true 
      },
      regularPrice:{
@@ -37,7 +38,7 @@ const productSchema = new mongoose.Schema({
         type:Number,
         required:true
      },
-     is_active:{
+     isActive:{
       type:Number,
       default:1
      }

@@ -36,17 +36,17 @@ admin_route.get('/userList',adminController.loadUserList);
 admin_route.get('/changeStatus',adminController.changeStatus);
 admin_route.get('/categories',categoriesController.loadCategories);
 admin_route.post('/categories',categoriesController.addCategories);
+admin_route.get('/categories/editCategories',categoriesController.loadEditCategories);
+admin_route.post('/categories/editCategories',categoriesController.editCategories);
 admin_route.get('/blockCategories',categoriesController.changeCategoriesStatus);
 admin_route.get('/deleteCategories',categoriesController.deleteCategories);
 admin_route.get('/addproduct',productController.loadAddProduct);
-admin_route.post('/addproduct',upload.single('image'),productController.insertProduct);
+admin_route.post('/addproduct',upload.array('image',2),productController.insertProduct);
 admin_route.get('/products',productController.loadProduct)
 admin_route.get('/products/changeStatus',productController.changeStatus);
 admin_route.get('/products/deleteProduct',productController.deleteProduct);
 admin_route.get('/products/editProduct',productController.loadEditProduct);
-admin_route.post('/products/editProduct',upload.single('image'),productController.editProduct)
-
-
+admin_route.post('/products/editProduct',upload.array('image',2),productController.editProduct)
 
 
 module.exports = admin_route

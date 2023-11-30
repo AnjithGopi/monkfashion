@@ -28,6 +28,12 @@
      -webkit-box-sizing: border-box;
              box-sizing: border-box;
  }
+
+ .specialDiv{
+    background-color:red;
+ }
+
+ 
  
  .MagicZoom,
  .mz-figure {
@@ -1438,3 +1444,4 @@
      opacity: 0.2;
      filter: alpha(opacity = 20);
  }
+ 

@@ -139,13 +139,15 @@
                 <span hidden id="statusSpan"><%=locals.message  ? message: ''%></span>
 
                                     <% if( categories.length > 0 ) { for( let i = 0 ; i < categories.length ; i ++){ %>
+                                        <% if(!categories[i].isDeleted) {%>
+
                                             <tr>
                                                 <td class="text-center"><i class="material-icons md-subdirectory_arrow_right text-muted"></i></td>
                                                 <td>5</td>
                                                 <td><b><%= categories[i].name %></b></td>
                                                 <td>Electronics</td>
                                                
-                                                <td><% if(categories[i].is_active == 1 ) {%>
+                                                <td><% if(categories[i].isActive) {%>
                                                     <span class="badge rounded-pill alert-success"
                                                       >Active</span
                                                     >
@@ -161,25 +163,30 @@
                                                     <div class="dropdown">
                                                         <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
                                                         <div class="dropdown-menu">
-                                                            <button class=" m-3 btn btn-sm btn-success  font-sm mt-15"
-                                                            onclick="confirmBlockCategories('<%= categories[i].id %>','<%= categories[i].is_active %>')"
+                                                            <a class=" m-3 btn btn-sm btn-success  font-sm mt-15"
+                                                            onclick="confirmBlockCategories('<%= categories[i].id %>','<%= categories[i].isActive %>')"
                                                           >
                                                            Block/Unblock
-                                                          </button>
+                                                        </a>
                                                             <!-- <a class="dropdown-item" href="#">Edit info</a> -->
-                                                            <button class="rounded m-3 btn btn-sm btn-danger font-sm mt-15"
-                                                            onclick="confirmDeleteCategories('<%= categories[i].id %>','<%= categories[i].is_active %>')"
+                                                            <a class="rounded m-3 btn btn-sm btn-danger font-sm mt-15"
+                                                            onclick="confirmDeleteCategories('<%= categories[i].id %>','<%= categories[i].isActive %>')"
                                                           >
                                                            Delete
-                                                          </button>
+                                                            </a>
+                                                            <a class="dropdown-item"  onclick="confirmBlockCategories('<%= categories[i].id %>','<%= categories[i].isActive %>')">Block / Unblock</a>
+                                                            <a class="dropdown-item" href="/admin/categories/editCategories?id=<%=categories[i].id %>" >Edit info</a>
+                                                            <a class="dropdown-item text-danger" href="#" onclick="confirmDeleteCategories('<%= categories[i]._id %>')" >Delete</a>
+                                                        
                                                           <!-- <a class="dropdown-item text-danger" href="#">Delete</a> -->
                                                         </div>
                                                     </div> <!-- dropdown //end -->
+                                                    
                                                    
                                                 </td>
                                             </tr>
                                         
-                                    <% } } else{ %> user not found <% } %>
+                                    <% } } } else{ %> user not found <% } %>
      
                                     </tbody>
                                 </table>

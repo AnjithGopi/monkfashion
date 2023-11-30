@@ -231,7 +231,7 @@
                     <td><%= users[i].mobile%></td>
                     <!-- <td><span class="badge rounded-pill alert-success">Active</span></td> -->
                     <td>
-                      <% if(users[i].is_active == 1 ) {%>
+                      <% if(users[i].isActive == 1 ) {%>
                       <span class="badge rounded-pill alert-success"
                         >Active</span
                       >
@@ -254,7 +254,7 @@
                       >
                       <button
                         class="rounded m-3 btn btn-sm btn-danger rounded font-sm mt-15"
-                        onclick="confirmStatusChange('<%= users[i].id %>','<%= users[i].is_active %>')"
+                        onclick="confirmStatusChange('<%= users[i].id %>','<%= users[i].isActive %>')"
                       >
                        Block/Unblock
                       </button>

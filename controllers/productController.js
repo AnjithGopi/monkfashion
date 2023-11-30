@@ -25,6 +25,7 @@ const insertProduct  =  async (req,res)=>{
 
             // res.redirect('/admin/categories')
         }else{
+            const images = req.files.map(file => file.filename);
             const newProduct = new Product({
                 name:req.body.name,
                 description:req.body.description,
@@ -32,13 +33,12 @@ const insertProduct  =  async (req,res)=>{
                 regularPrice:req.body.regularPrice,
                 salePrice:req.body.salePrice,
                 stock:req.body.stock,
-                image:[req.file.filename]
-
+                image:images
 
             })
             // console.log('inages  ;',req.body.image)
             console.log("kkk")
-            console.log(req.file.filename)
+            console.log(images)
             const productInsertedData = await newProduct.save()
             if(productInsertedData){
                 res.render('add-product',{message: '2',categories:productData})
@@ -54,8 +54,20 @@ const insertProduct  =  async (req,res)=>{
 // Loading Product pages
 
 const loadProduct = async (req,res)=>{
-  const productData = await Product.find() 
-    try{
+//   const productData = await Product.find() 
+
+
+try{
+        // // Find the category with the specified name
+        // const cat = await Categories.find({ isActive: true })
+        // // Extract the array of category IDs
+        // const categoryIds = cat.map(category => category._id);
+        // const productData = await Product.find({ categoryId: { $in: categoryIds } }).exec();
+        // console.log("Cat Data :", cat)
+  const productData = await Product.find().populate('_id').populate("categoryId")
+
+        console.log("product Data :",productData)
+        console.log("Data : ;",productData[0].categoryId.isActive)
            res.render('products',{products:productData})
     }catch(error){
         console.log(error.message)
@@ -77,7 +89,7 @@ const changeStatus = async (req,res)=>{
         }
         console.log(updateValue)
 
-        const statusUpdation =  await Product.findByIdAndUpdate({_id:id},{$set:{is_active:updateValue}})
+        const statusUpdation =  await Product.findByIdAndUpdate({_id:id},{$set:{isActive:updateValue}})
 
               console.log(statusUpdation)
         if(statusUpdation){
@@ -97,7 +109,7 @@ const deleteProduct = async (req,res)=>{
         const id =req.query.id;
        
 
-        const statusUpdation =  await Product.findByIdAndUpdate({_id:id},{$set:{is_deleted:1}})
+        const statusUpdation =  await Product.findByIdAndUpdate({_id:id},{$set:{isDeleted:true}})
 
               console.log(statusUpdation)
         if(statusUpdation){
@@ -117,8 +129,9 @@ const loadEditProduct = async (req,res)=>{
         const productData = await Product.findById({_id:req.query.id})
         req.session.editProductId = req.query.id;
         const categoriesData = await Categories.find()
-        // console.log(productData)
-        res.render('editProduct',{product:productData,categories:categoriesData})
+        const idCat = productData.categoryId
+        const categoryName = await Categories.findById({_id:idCat})
+         res.render('editProduct',{product:productData,categories:categoriesData,categoryname:categoryName})
     }catch(error){
         console.log(error.message)
     }
@@ -136,10 +149,11 @@ const editProduct = async (req,res)=>{
 
         // Access form data from req.body
         const { name, description, regularPrice, salePrice, stock, categories } = req.body;
-
+        console.log(req.body)
         // Getting the category Id from Category 
         const categoriesId = await Categories.findOne({ name: categories });
-
+        console.log("Category Name",categories)
+        console.log(categoriesId)
         // Find the product by ID
         const product = await Product.findOne({_id:productId});
 
@@ -151,11 +165,17 @@ const editProduct = async (req,res)=>{
         product.stock = stock;
         product.categoryId = categoriesId._id;
 
-        console.log("SalePrice " ,salePrice)
+        console.log("req . file data", req.files)
 
-        if (req.file) {
+
+
+        if (req.files) {
+            console.log("Map Worked")
+            const images = req.files.map(file => file.filename);
+
             // If a new image is uploaded, update the image property
-            product.image = req.file.filename;
+            product.image = images;
+            console.log("Image from file   :",images)
         }
 
         // Save the updated product to the database

@@ -16,6 +16,8 @@
      <!-- Include SweetAlert 2 CSS and JS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="/static/admin-assets/imgs/theme/favicon.svg">
@@ -24,6 +26,7 @@
 </head>
 
 <body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <div class="screen-overlay"></div>
 <%- include('./aside')-%>
     
@@ -137,18 +140,42 @@
                                  
                                     <% if(products.length> 0){ for(let i=0 ;i < products.length ; i++){
                                         %>
-                                    <% if(!products[i].is_deleted) {%>
+                                    <% if(products[i].categoryId.isActive)  {%>
 
                                 <tr class="justify-content-center ">
                                     <!-- <td><%= products[i].id %></td> -->
                                     <!-- <td><img src="/static/admin/images/<%=products[i].image[0] %>" alt=""></td> -->
-                                    <td> <img class="" src="/static/admin/images/product/<%=products[i].image[0] %>" alt="" width="100" height="80">
+                                    <!-- <td> <img class="" src="/static/admin/images/product/<%=products[i].image[0] %>" alt="" width="100" height="80">
+                                   </td> -->
+                                   <td>
+                                       
+                                        
+                                      
+                                    <div class="container  " style="overflow: hidden; height: 100px; width: 100px;">
+                                        <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel" style="overflow: hidden;">
+                                            <div class="carousel-inner">
+                                    <% for(let j=0 ;j < products[i].image.length ; j++){ %>
+
+                                                <div class="carousel-item <% if (j==0) { %> active <% } %> ">
+                                                    <div class="image-wrapper">
+                                                        <img src="/static/admin/images/product/<%=products[i].image[j] %>" class="d-block " alt="..." style="object-fit: cover; object-position: center center;" width="100" height="100">
+                                                    </div>
+                                                </div>
+                                                <% } %>
+                                               
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                        
+
                                    </td>
                                     <td><b><%= products[i].name %></b></td>
                                     <td><%= products[i].salePrice %></td>
                                     <td><%= products[i].regularPrice %></td>
                                     <td>
-                                        <% if(products[i].is_active == 1 ) {%>
+                                        <% if(products[i].isActive == 1 ) {%>
                                         <span class="badge rounded-pill alert-success"
                                           >Active</span
                                         >
@@ -162,13 +189,13 @@
                                       </td>               
                                       <td><%= products[i].stock %></td>
                                     <td class="text-end">
-                                        <a href="#" class="btn btn-md rounded font-sm"   onclick="confirmStatusChange('<%= products[i]._id %>','<%= products[i].is_active %>')">Change Status</a>
+                                        <a href="#" class="btn btn-md rounded font-sm"   onclick="confirmStatusChange('<%= products[i]._id %>','<%= products[i].isActive %>')">Change Status</a>
                                         <div class="dropdown">
                                             <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
                                             <div class="dropdown-menu">
                                                 <a class="dropdown-item" href="#">View detail</a>
                                                 <a class="dropdown-item" href="/admin/products/editProduct?id=<%= products[i]._id %>">Edit info</a>
-                                                <a class="dropdown-item text-danger" href="#" onclick="confirmDelete('<%= products[i]._id %>','<%= products[i].is_active %>')">Delete</a>
+                                                <a class="dropdown-item text-danger" href="#" onclick="confirmDelete('<%= products[i]._id %>','<%= products[i].isActive %>')">Delete</a>
                                             </div>
                                         </div> 
                                         <!-- dropdown //end -->
@@ -216,11 +243,16 @@
        <!-- Sweet alert Js link  -->
        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
  
+        <!-- Crosal to display image -->
+              
+        
+        
+
       <script>
 
         // function for confirmation while blocking a category
             function confirmStatusChange(categoriesId, active) {
-                const confirmationMessage = "Are you sure you want to change the status of the user?";
+                const confirmationMessage = "Are you sure you want to change the status of the Product?";
                 Swal.fire({
                     title: 'Confirmation',
                     text: confirmationMessage,
@@ -238,9 +270,9 @@
         
        
 
-        // function for confirmation while blocking a category
+        // function for confirmation while blocking a product
              function confirmDelete(productId) {
-                const confirmationMessage = "Are you sure you want to change the status of the user?";
+                const confirmationMessage = "Are you sure you want delete the Product?";
                 Swal.fire({
                     title: 'Confirmation',
                     text: confirmationMessage,
@@ -266,7 +298,7 @@
         Swal.fire({
           icon: 'warning',
           title: 'Already Exist',
-          text: 'Category Already Exist !',
+          text: 'Product Already Exist !',
         });
         document.getElementById('statusSpan').innerText = 'none';
     

@@ -26,7 +26,7 @@ const bcrypt = require('bcrypt')
            const passMatch = await bcrypt.compare(password,adminData.password)
             if(passMatch){
     
-                if(adminData.is_admin === 0){
+                if(adminData.isAdmin === 0){
                     res.render('login',{message:" password is incorrect"})
     
                 }else{
@@ -50,7 +50,7 @@ const bcrypt = require('bcrypt')
 
 const loadUserList = async(req,res)=>{
     try{
-        const userData = await User.find({is_admin:0})
+        const userData = await User.find({isAdmin:0})
         // console.log("USer dataaa",userData)
         res.render('user-list',{users:userData})
     }catch(error){
@@ -70,13 +70,22 @@ const changeStatus = async (req,res)=>{
             updateValue = 0
         }
 
-        const statusUpdation =  await User.findByIdAndUpdate({_id:id},{$set:{is_active:updateValue}})
+        const statusUpdation =  await User.findByIdAndUpdate({_id:id},{$set:{isActive:updateValue}})
 
 
         if(statusUpdation){
             // res.redirect('/userList')
              const message = "User blocked Sucessfully"
-        res.redirect(`/admin/userList?message=${message}`)
+             req.session.destroy(err => {
+                if (err) {
+                  console.error('Error destroying session:', err);
+                  res.status(500).send('Internal Server Error');
+                } else {
+                
+                
+                  res.redirect(`/admin/userList?message=${message}`)
+                }
+              })
         }
 
     }catch(error){

@@ -1,0 +1,183 @@
+<script>
+    // This function will be executed when the window finishes loading
+    window.onload = function() {
+      // Call your function or perform actions here
+      calculateTotalAmount();
+    };
+// Function to update the quantity in the UI
+function updateQuantityUI(index, action) {
+const quantityElement = document.getElementById(`quantity${index}`);
+const subtotalElement = document.getElementById(`subtotal${index}`);
+const priceElement = document.getElementById(`salePrice${index}`);
+
+let quantity = parseInt(quantityElement.innerText);
+
+if (action === 'increase') {
+    quantity++;
+} else if (action === 'decrease' && quantity > 1) {
+    quantity--;
+}
+
+quantityElement.innerText = quantity;
+subtotalElement.innerText = (parseFloat(priceElement.value) * quantity).toFixed(2);
+
+updateTotal(); // Assuming you have a function to update the total
+}
+// Function to update the quantity in the database
+async function updateQuantityInDatabase(cartId, productId, newQuantity) {
+try {
+    // Perform the logic to update the quantity in the database
+    const response = await fetch(`/updateQuantity/${cartId}/${productId}/${newQuantity}`, {
+        method: 'POST'
+    });
+
+    const updatedCartData = await response.json();
+
+    // Update the total cart value
+    document.getElementById('totalCartValue').textContent = '$' + updatedCartData.product.reduce((total, p) => total + (p.quantity * p.productId.salePrice), 0).toFixed(2);
+} catch (error) {
+    console.error('Error updating quantity in the database:', error);
+}
+}
+
+    
+    //Function to update the quantity in the database
+    async function updateQuantity(index,action) {
+        const quantityElement = document.getElementById(`quantity${index}`);
+        const subtotalElement = document.getElementById(`subtotal${index}`);
+        const price = document.getElementById(`salePrice${index}`)
+
+        let quantity = parseInt(quantityElement.innerText);
+        if(action === 'increase'){
+            quantity++
+        }else if(action == 'decrease' && quantity > 1){
+            quantity--;
+        }
+
+        await fetch(`/updateQuantity/${quantity}/${index}/`,{
+            method:'POST'
+        })
+
+        quantityElement.innerText = quantity;
+
+        subtotalElement.innerText = (price.value * quantity).toFixed(2);
+        updateTotal();
+        try {
+
+            // Perform the logic to update the quantity in the database
+            const response = await fetch(`/updateQuantity/${cartId}/${productId}/${newQuantity}`);
+            const updatedCartData = await response.json();
+
+            // Update the UI to reflect the updated quantity
+            document.getElementById('quantity_' + productId).textContent = newQuantity;
+
+            // Update the total amount for the current product
+            const totalAmount = (newQuantity * parseFloat(salePrice)).toFixed(2);
+            document.getElementById('totalAmount_' + productId).textContent = '$' + totalAmount;
+
+            // Update the total cart value
+            document.getElementById('totalCartValue').textContent = '$' + updatedCartData.product.reduce((total, p) => total + (p.quantity * p.productId.salePrice), 0).toFixed(2);
+        } catch (error) {
+            console.error('Error updating quantity:', error);
+        }
+    }
+
+
+    // // Function to update the quantity in the database
+    // async function updateQuantity(cartId, productId, newQuantity, salePrice) {
+    //     try {
+    //         // Perform the logic to update the quantity in the database
+    //         const response = await fetch(`/updateQuantity/${cartId}/${productId}/${newQuantity}`);
+    //         const updatedCartData = await response.json();
+
+    //         // Update the UI to reflect the updated quantity
+    //         document.getElementById('quantity_' + productId).textContent = newQuantity;
+
+    //         // Update the total amount for the current product
+    //         const totalAmount = (newQuantity * parseFloat(salePrice)).toFixed(2);
+    //         document.getElementById('totalAmount_' + productId).textContent = '$' + totalAmount;
+
+    //         // Update the total cart value
+    //         document.getElementById('totalCartValue').textContent = '$' + updatedCartData.product.reduce((total, p) => total + (p.quantity * p.productId.salePrice), 0).toFixed(2);
+    //     } catch (error) {
+    //         console.error('Error updating quantity:', error);
+    //     }
+    // }
+  </script>
+
+
+
+<a href="#" class="qty-up" onclick="updateQuantity('<%= i %>', 'decrease'); updateQuantityInDatabase('<%= cart[0]._id %>', '<%= cart[0].product[0].productId %>', '<%= cart[0].product[0].quantity - 1 %>')"><i class="fi-rs-angle-small-up"></i></a>
+
+
+
+
+<% let totalCartValue = 0; %>
+<% if(cart[0].product.length> 0){ for(let i=0 ;i < cart[0].product.length ; i++){
+    %>
+  
+        <td class="image product-thumbnail"><img src="/static/admin/images/product/<%=cart[0].product[i].productId.image[0] %>" alt="#"></td>
+        <td class="product-des product-name">
+            <h5 class="product-name"><a href="shop-product-right.html"><%=cart[0].product[i].productId.name %></a></h5>
+            <p class="font-xs"><%=cart[0].product[i].productId.regularPrice %><br> 
+            </p>
+        </td>
+        <td class="price" data-title="Price"><span> <%=cart[0].product[i].productId.salePrice %> </span></td>
+      
+        <td class="text-center" data-title="Stock">
+            
+            <div class="detail-qty border radius  m-auto">
+            <div class=" d-flex flex-row ">
+                
+                <!-- <a href="#" class="qty-down" onclick=""><i class="fi-rs-angle-small-down"></i></a> -->
+                <button class="left btn btn-white border border-secondary px-3" type="button" id="decrementButton" data-mdb-ripple-color="dark" onclick="changeQuantity('<%=cart[0].product[i].productId._id%>' , '<%=cart[0].proId%>',-1)">
+                    -
+                    </button>
+                <span class="qty-val"> <%=cart[0].product[i].quantity %> </span>
+                <button class="left btn btn-white border border-secondary px-3" type="button" id="incrementButton" data-mdb-ripple-color="dark" onclick="changeQuantity('<%=cart[0].product[i].productId._id%>' , '<%=cart[0].proId%>' ,1)">
+                    +
+                    </button>                                                  
+                <!-- <a href="#" class="qty-up" onclick="updateQuantityUI('<%=cart%>', 'increase')"> <i class="fi-rs-angle-small-up"></i> </a> -->
+                <!-- <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a> -->
+
+            </div>
+        </div>
+        </td>
+        <td class="text-right" data-title="Cart">
+           <!-- <a onload="" id="priceLink"> <span> </span></a> -->
+           <span id="totalAmount_<%= i %>">$<%= (cart[0].product[i].quantity * cart[0].product[i].productId.salePrice).toFixed(2) %></span>
+        </td>
+        <td class="action" data-title="Remove"><a href="#" class="text-muted"><i class="fi-rs-trash"></i></a></td>
+        <% totalCartValue += cart[0].product[i].quantity * cart[0].product[i].productId.salePrice; %>
+
+    </tr>
+<% } } else {  %>
+        <p>Not found</p>
+    <%} %>
+
+
+
+    /./. cart button 
+    <div class="d-flex flex-row">
+        <button class="left btn btn-white border border-secondary px-3" type="button" id="decrementButton_<%= i %>" data-mdb-ripple-color="dark" onclick="changeQuantity('<%=cart[0].product[i].productId._id%>' ,  '<%=cart[0].product[i].quantity%>', -1, '<%= i %>')">
+            -
+        </button>
+        <span class="qty-val" id="qty_val_<%= i %>"><%=cart[0].product[i].quantity %></span>
+        <button class="left btn btn-white border border-secondary px-3" type="button" id="incrementButton_<%= i %>" data-mdb-ripple-color="dark" onclick="changeQuantity('<%=cart[0].product[i].productId._id%>' , '<%=cart[0].product[i].quantity%>' , 1, '<%= i %>')">
+            +
+        </button>
+    </div>
+
+<!-- Aggreagtion Lookup  -->
+    const cart = await User.aggregate([
+            {
+              $lookup: {
+                from: "carts",
+                localField: "cart",
+                foreignField: "_id",
+                as: "cartData"
+              }
+            }
+          ])
+          console.log("cart",cart)
+          console.log("cartData",cart.cartData)
