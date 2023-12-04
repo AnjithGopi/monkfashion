@@ -5,10 +5,6 @@ const productSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    isDeleted:{
-        type:Number,
-        default:0
-    },
     description:{
         type:String,
         required:true
@@ -39,10 +35,13 @@ const productSchema = new mongoose.Schema({
         required:true
      },
      isActive:{
-      type:Number,
-      default:1
-     }
-    
+         type:Boolean,
+         default:true
+      },
+      isDeleted:{
+            type:Boolean,
+            default:false
+      }
 
 })
 

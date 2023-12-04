@@ -1,142 +1,459 @@
-<!-- <% include('../layouts/header.ejs') %> -->
-<%- include('../layouts/header')-%>
+<!DOCTYPE HTML>
+<html lang="en">
 
 
-<section class="vh-100 bg-image">
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-form-product-1.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:31 GMT -->
+<head>
+    <meta charset="utf-8">
+    <title>Evara Dashboard</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/static/admin-assets/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link href="/static/admin-assets/css/main.css" rel="stylesheet" type="text/css" />
+
     
-  <div class="mask d-flex align-items-center h-100 gradient-custom-3">
-    <div class="container h-100">
-      <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col-12 col-md-9 col-lg-7 col-xl-6">
-          <div class="card" style="border-radius: 15px;">
-            <div class="card-body p-5">
-              <h2 class="text-uppercase text-center mb-5">Edit Product</h2>
-              
-              
-              <form  method="post" enctype="multipart/form-data">
-                <div class="mb-4">
-                    <label for="product_name" class="form-label">Product title</label>
-                    <input type="text" name="name" placeholder="Type here" value="<%= product.name %> " class="form-control" id="product_name">
-                </div>
-                <div class="mb-4">
-                    <label class="form-label">Full description</label>
-                    <!-- <textarea  name="description" value="<%= product.description %> "  class="form-control" rows="4"></textarea> -->
-                    <textarea name="description" class="form-control" rows="4"><%= product.description %></textarea>
-                </div>
-                <div class="row">
-                    <div class="col-lg-4">
-                        <div class="mb-4">
-                            <label class="form-label">Regular price</label>
-                            <div class="row gx-2">
-                                <!-- <input placeholder="$" name="regularPrice" type="number" value="<%= product.regularPrice %> "  class="form-control"> -->
-                            <input placeholder="$" name="regularPrice" type="number" value="<%= product.regularPrice %>" class="form-control">
+      <!-- Include SweetAlert 2 CSS and JS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+        <style>
+            .selected-image {
+                width: 100px; /* Adjust the size as needed */
+                height: auto;
+                margin: 5px;
+            }
+        </style>
 
-                            </div>
+</head>
+
+<body>
+    <div class="screen-overlay"></div>
+<%- include('./aside')-%>
+
+
+    <main class="main-wrap">
+        <header class="main-header navbar">
+            <div class="col-search">
+                <form class="searchform">
+                    <div class="input-group">
+                        <input list="search_terms" type="text" class="form-control" placeholder="Search term">
+                        <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
+                    </div>
+                    <datalist id="search_terms">
+                        <option value="Products">
+                        <option value="New orders">
+                        <option value="Apple iphone">
+                        <option value="Ahmed Hassan">
+                    </datalist>
+                </form>
+            </div>
+            <div class="col-nav">
+                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon" href="#">
+                            <i class="material-icons md-notifications animation-shake"></i>
+                            <span class="badge rounded-pill">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
+                            <a class="dropdown-item text-brand" href="#"><img src="/static/admin-assets/imgs/theme/flag-us.png" alt="English">English</a>
+                            <a class="dropdown-item" href="#"><img src="/static/admin-assets/imgs/theme/flag-fr.png" alt="Français">Français</a>
+                            <a class="dropdown-item" href="#"><img src="/static/admin-assets/imgs/theme/flag-jp.png" alt="Français">日本語</a>
+                            <a class="dropdown-item" href="#"><img src="/static/admin-assets/imgs/theme/flag-cn.png" alt="Français">中国人</a>
+                        </div>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/static/admin-assets/imgs/people/avatar2.jpg" alt="User"></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                            <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-account_balance_wallet"></i>Wallet</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <section class="content-main">
+            <div class="row">
+                <form method="post" enctype="multipart/form-data">
+                <div class="col-9">
+                    <div class="content-header">
+                        <h2 class="content-title">Edit Product</h2>
+                        <div>
+                            <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
+                            <button class="btn btn-md rounded font-sm hover-up" >Publish</button>
                         </div>
                     </div>
-                    <div class="col-lg-4">
-                        <div class="mb-4">
-                            <label class="form-label">Promotional price</label>
-                            <input placeholder="$" type="number" name="salePrice" value="<%= product.salePrice %>"  class="form-control">
-                            <!-- <input placeholder="$" name="regularPrice" type="number" value="<%= product.regularPrice %>" class="form-control"> -->
+                </div>
+                <div class="col-lg-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Add the details</h4>
                         </div>
-                    </div>
-                        <!-- To indicate which sweet alert should work -->
-                    <span hidden id="statusSpan"><%=locals.message  ? message: ''%></span>
-                    <div class="col-lg-4">
-                        <label class="form-label">Category</label>
-                        <select class="form-select" name="categories" >
-                          
-                          <option selected  ><%=categoryname.name %> </option>
-                            <% if( categories.length > 0 ) { for( let i = 0 ; i < categories.length ; i++){ %>
-                              <% if( categories[i].isActive) { %>
-                            <option> <%= categories[i].name%> </option>
-                            <% } %>
-                               
+                            <div class="card-body">
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Product title</label>
+                                    <input type="text" name="name" placeholder="Type here" value="<%= product.name %>" class="form-control" id="product_name" required oninput="validateField(this)">
+                                    <div class="text-danger" id="nameError"></div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Full description</label>
+                                    <textarea placeholder="Type here" name="description" class="form-control" rows="4"  oninput="validateField(this)" required><%= product.description %></textarea>
+                                    <div class="text-danger" id="descriptionError"></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <div class="mb-4">
+                                            <label class="form-label">Regular price</label>
+                                            <div class="row gx-2">
+                                                <input placeholder="$" name="regularPrice" type="text" min="1" value="<%= product.regularPrice %>" class="form-control"oninput="validateField(this)">
+                                                <div class="text-danger" id="regularPriceError"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="mb-4">
+                                            <label class="form-label">Promotional price</label>
+                                            <input placeholder="$" type="text" name="salePrice" min="1" value="<%= product.salePrice %>"  class="form-control" oninput="validateField(this)">
+                                            <div class="text-danger" id="salePriceError"></div>
+                                        </div>
+                                    </div>
+                                    <!-- To indicate which sweet alert should work -->
+                                    <span hidden id="statusSpan"><%= locals.message ? message : '' %></span>
+                                    <div class="col-lg-4">
+                                        <label class="form-label">Category</label>
+                                        <select class="form-select" name="categories" oninput="validateField(this)">
+                                            <option selected  ><%=categoryname.name %> </option>
+                                            <% if( categories.length > 0 ) { for( let i = 0 ; i < categories.length ; i++){ %>
+                                              <% if( categories[i].isActive) { %>
+                                            <option> <%= categories[i].name%> </option>
+                                            <% } %>
+                                               
+                                            
+                                        <% } } else{ %> user not found <% } %>
+                
+                                        </select>
+                                        <div class="text-danger" id="categoriesError"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Stock</label>
+                                    <input type="number" name="stock"  value="<%=product.stock %>" placeholder="%" class="form-control" id="product_name" min="0" required oninput="validateField(this)">
+                                    <div class="text-danger" id="stockError"></div>
+                                </div>
+                                <input type="hidden" name="deletedImages" id="deletedImagesInput" value="">
+                                <input type="submit" value="Submit" onclick="validateForm()" class="btn btn-md rounded font-sm hover-up">
                             
-                        <% } } else{ %> user not found <% } %>
-
-                        </select>
+                           
+                        </div>
+                    </div> <!-- card end// -->
+                   
+                    
+                     <!-- card end// -->
+                </div>
+                <div class="col-lg-3">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Media</h4>
+                        </div>
+                        <div class="card-body">
+                            <label for="imageUpload" class="input-upload">
+                                <div id="imagePreviewContainer">
+                                    <% for (let i = 0; i < product.image.length; i++) { %>
+                                        <div class="image-preview-item">
+                                            <img src="/static/admin/images/product/<%= product.image[i] %>" data-deletedImage="<%= product.image[i] %>" alt="Product Image">
+                                            <button type="button" class="btn btn-sm btn-danger" onclick="deleteImage(this)">Delete</button>
+                                        </div>
+                                        
+                                    <% } %>
+                                </div>
+                                <input id="imageUpload" class="form-control" name="image" type="file" multiple onchange="displaySelectedImages(this)">
+                            </label>
+                            <div id="selectedImagesContainer"></div>
+                        </div>
+                        <!-- <div class="card-body">
+                            <div class="input-upload">
+                                <img src="/static/admin-assets/imgs/theme/upload.svg" alt="">
+                                <input class="form-control" name="image2" type="file">
+                            </div>
+                        </div> -->
+                    </div> <!-- card end// -->
+                    
+                </div>
+            </form>
+            </div>
+        </section> <!-- content-main end// -->
+        <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                <div class="col-sm-6">
+                    <script>
+                    document.write(new Date().getFullYear())
+                    </script> ©, Evara - HTML Ecommerce Template .
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
                     </div>
                 </div>
-                <div class="mb-4">
-                    <label class="form-label">Stock</label>
-                    <input type="number" name="stock" value="<%=product.stock %>"  class="form-control" id="product_name">
-                </div>
-                <div class="card-body">
-                  <div class="input-upload">
-                    <img src="/static/admin/images/product/<%=product.image[0]%>" alt="" style="width: 200px; height: 150px;" id="viewImg">
-                    <img src="/static/admin/images/product/<%=product.image[1]%>" alt="" style="width: 200px; height: 150px;" id="viewImg">
-                    <input class="form-control" name="image" type="file" multiple onchange="viewImage(event)">
-                </div>
+            </div>
+        </footer>
+    </main>
 
-                  <!-- <% if(product.image.length > 0) { %>
-                    <% product.image.forEach(product => { %>
-                    <div class="input-upload">
-                        <img src="/static/admin/images/product/<%=product%>" alt="" style="width: 200px; height: 150px;" id="viewImg">
-                        <input class="form-control" name="image" type="file" multiple onchange="viewImage(event)">
-                    </div>
-                    <% }); %>
-                  <% }%> -->
-
-                  <!-- <div class="input-upload">
-                    <img src="/static/admin/images/product/<%=product.image[0] %>" alt="" style="width: 200px; height: 150px;" id="viewImg">
-                    <input class="form-control" name="image" type="file" multiple onchange="viewImage(event)">
-                </div> -->
-
-                </div>
-                
-                
-            <input type="submit" value="Submit" class="btn btn-success btn-md rounded font-sm hover-up" >
-        </form>   
-           
-        </div>
-    </div> <!-- card end// -->
-   
-    
-     <!-- card end// -->
-</div>
-
-
-<!-- Script to view the selected image from the file  -->
-
+<!-- Sweet alert Js link  -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 <script>
-function viewImage(event){
-  document.getElementById('viewImg').src=URL.createObjectURL(event.target.files[0])
+    function displaySelectedImages(input) {
+        const previewContainer = document.getElementById('imagePreviewContainer');
+        previewContainer.innerHTML = '';
+
+        for (const file of input.files) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const imagePreviewItem = document.createElement('div');
+                imagePreviewItem.classList.add('image-preview-item');
+
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = 'Product Image';
+
+                const deleteButton = document.createElement('button');
+                deleteButton.type = 'button';
+                deleteButton.classList.add('btn', 'btn-sm', 'btn-danger');
+                deleteButton.textContent = 'Delete';
+                deleteButton.onclick = function () {
+                    deleteImage(imagePreviewItem);
+                };
+
+                imagePreviewItem.appendChild(img);
+                imagePreviewItem.appendChild(deleteButton);
+
+                previewContainer.appendChild(imagePreviewItem);
+            };
+
+            reader.readAsDataURL(file);
+        }
+    }
+
+    let deletedImageNames = []; // Initialize an array to store deleted image names
+
+// Example function to retrieve the image name associated with a container
+function getImageName(imageContainer) {
+    const attributeName = 'data-deletedImage';
+    const image = imageContainer.querySelector('img');
+    return image ? image.getAttribute(attributeName) || '' : '';
 }
+
+function deleteImage(buttonElement) {
+    // Get the parent container of the button (assuming the button is inside a container div)
+    const imageContainer = buttonElement.closest('.image-preview-item');
+
+    // Check if the container exists before attempting to remove it
+    if (imageContainer) {
+        // Retrieve the image name associated with the container
+        const imageName = getImageName(imageContainer);
+
+        // Store the image name in the array
+        deletedImageNames.push(imageName);
+
+        updateDeletedImagesInput(deletedImageNames)
+        // Remove the entire container div
+        imageContainer.parentNode.removeChild(imageContainer);
+
+        // Log the array of deleted image names
+        console.log('Deleted Image Names:', deletedImageNames);
+        console.log('Deleted Image Names:', imageName);
+    }
+}
+
+
+function updateDeletedImagesInput(deletedImg) {
+    // Update the value of the hidden input field with the JSON string of deletedImages
+    const deletedImagesInput = document.getElementById('deletedImagesInput');
+    deletedImagesInput.value = JSON.stringify(deletedImg);
+}
+
 </script>
 
-   
 
-              
-              <script>
-                      // Remove error message after 3 seconds
-        setTimeout(() => {
-          const errorMessage = document.getElementById("span");
-          if (errorMessage) {
-            errorMessage.style.display = "none";
-          }
-        }, 3000);
-        setTimeout(() => {
-          const emailExistMessage = document.getElementById("emailexistMessage");
-          if (emailExistMessage) {
-            emailexistMessage.style.display = "none";
-          }
-        }, 3000);
-        setTimeout(() => {
-          const sucessMessage = document.getElementById("sucessMessage");
-          if (sucessMessage) {
-            sucessMessage.style.display = "none";
-          }
-        }, 3000);
+<script>
+    function displaySelectedImages(input) {
+        const selectedImagesContainer = document.getElementById('selectedImagesContainer');
+        selectedImagesContainer.innerHTML = '';
+
+        for (const file of input.files) {
+            const imageElement = document.createElement('img');
+            imageElement.src = URL.createObjectURL(file);
+            imageElement.alt = file.name;
+            imageElement.className = 'selected-image';
+
+            selectedImagesContainer.appendChild(imageElement);
+        }
+    }
+</script>
+<script>
+
+function validateField(element) {
+        const fieldName = element.name;
+        const fieldValue = element.value;
+        const errorElement = document.getElementById(`${fieldName}Error`);
+
+        if (!fieldValue.trim()) {
+            errorElement.textContent = "This field is required.";
+        } else {
+            errorElement.textContent = "";
+
+            // Additional validation for sale price greater than regular price
+            if (fieldName === "salePrice") {
+                const regularPrice = document.querySelector("[name='regularPrice']").value;
+                if (parseFloat(fieldValue) > parseFloat(regularPrice)) {
+                    errorElement.textContent = "Sale price cannot be greater than regular price.";
+                }
+            }
+        }
+}
+    function validateForm() {
+        const productName = document.querySelector("[name='name']").value;
+        const description = document.querySelector("[name='description']").value;
+        const regularPrice = document.querySelector("[name='regularPrice']").value;
+        const salePrice = document.querySelector("[name='salePrice']").value;
+        const category = document.querySelector("[name='categories']").value;
+        const stock = document.querySelector("[name='stock']").value;
+
+        // Reset previous warning messages
+        resetWarnings();
+
+        // Simple validation, you can add more specific checks as needed
+        let isValid = true;
+
+        if (!productName.trim()) {
+            displayWarning("[name='name']", "Please enter the product title.");
+            isValid = false;
+        }
+
+        if (!description.trim()) {
+            displayWarning("[name='description']", "Please enter the product description.");
+            isValid = false;
+        }
+
+        if (!regularPrice.trim()) {
+            displayWarning("[name='regularPrice']", "Please enter the regular price.");
+            isValid = false;
+        }
+
+        if (!salePrice.trim()) {
+            displayWarning("[name='salePrice']", "Please enter the promotional price.");
+            isValid = false;
+        }
+
+        if (!category.trim()) {
+            displayWarning("[name='categories']", "Please choose a category.");
+            isValid = false;
+        }
+
+        if (!stock.trim()) {
+            displayWarning("[name='stock']", "Please enter the stock.");
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    function displayWarning(selector, message) {
+        const element = document.querySelector(selector);
+        const warningMessage = document.createElement("div");
+        warningMessage.className = "text-danger";
+        warningMessage.textContent = message;
+
+        element.parentNode.appendChild(warningMessage);
+    }
+
+    function resetWarnings() {
+        const warningMessages = document.querySelectorAll(".text-danger");
+        warningMessages.forEach(function (warning) {
+            warning.parentNode.removeChild(warning);
+        });
+    }
+</script>
 
 
 
-                
-              </script>
 
-              
-              
+ <script>
+          
+  // Get the value of the span tag
+  const spanValue = document.getElementById('statusSpan').innerText;
+console.log(spanValue)
+// Check if the value is 1
+if(locals.errorMessage){
+    Swal.fire({
+    icon: 'warning',
+    title: 'Some error occured',
+    // text: errorMessage,
+  });
+  document.getElementById('statusSpan').innerText = 'none';
 
-<%- include('../layouts/footer')-%>
+}
+if(spanValue === '3'){
+    Swal.fire({
+    icon: 'warning',
+    title: 'Some error occured',
+    // text: errorMessage,
+  });
+  document.getElementById('statusSpan').innerText = 'none';
 
+}
+if (spanValue === '1') {
+  // Trigger SweetAlert
+  Swal.fire({
+    icon: 'warning',
+    title: 'Already Exist',
+    text: 'Product Already Exist !',
+  });
+  document.getElementById('statusSpan').innerText = 'none';
+
+
+}
+// Check if the value is 2
+if (spanValue === '2') {
+  // Trigger SweetAlert
+  Swal.fire({
+    icon: 'success',
+    title: 'Success',
+    text: 'Product added Sucessfully',
+  });
+  document.getElementById('statusSpan').innerText = 'none';
+
+
+}
+    </script>
+    <script src="/static/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/static/admin-assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/static/admin-assets/js/vendors/select2.min.js"></script>
+    <script src="/static/admin-assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/static/admin-assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="/static/admin-assets/js/main.js" type="text/javascript"></script>
+</body>
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-form-product-1.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:32 GMT -->
+</html>

@@ -21,6 +21,13 @@
     
       <!-- Include SweetAlert 2 CSS and JS -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+        <style>
+            .selected-image {
+                width: 100px; /* Adjust the size as needed */
+                height: auto;
+                margin: 5px;
+            }
+        </style>
 
 </head>
 
@@ -86,6 +93,8 @@
         </header>
         <section class="content-main">
             <div class="row">
+            <form method="post" enctype="multipart/form-data">
+
                 <div class="col-9">
                     <div class="content-header">
                         <h2 class="content-title">Add New Product</h2>
@@ -101,53 +110,56 @@
                             <h4>Add the details</h4>
                         </div>
                         <div class="card-body">
-                            <form method="post" enctype="multipart/form-data">
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Product title</label>
-                                    <input type="text" name="name" placeholder="Type here" class="form-control" id="product_name">
+                                    <input type="text" name="name" placeholder="Type here" class="form-control" id="product_name" required oninput="validateField(this)">
+                                    <div class="text-danger" id="nameError"></div>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Full description</label>
-                                    <textarea placeholder="Type here" name="description" class="form-control" rows="4"></textarea>
+                                    <textarea placeholder="Type here" name="description" class="form-control" rows="4" oninput="validateField(this)" required></textarea>
+                                    <div class="text-danger" id="descriptionError"></div>
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-4">
                                         <div class="mb-4">
                                             <label class="form-label">Regular price</label>
                                             <div class="row gx-2">
-                                                <input placeholder="$" name="regularPrice" type="text" class="form-control">
+                                                <input placeholder="$" name="regularPrice" min="0" type="text" class="form-control"oninput="validateField(this)">
+                                                <div class="text-danger" id="regularPriceError"></div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <div class="mb-4">
                                             <label class="form-label">Promotional price</label>
-                                            <input placeholder="$" type="text"name="salePrice" class="form-control">
+                                            <input placeholder="$" type="text" name="salePrice" min="0" class="form-control" oninput="validateField(this)">
+                                            <div class="text-danger" id="salePriceError"></div>
                                         </div>
                                     </div>
-                                        <!-- To indicate which sweet alert should work -->
-                                    <span hidden id="statusSpan"><%=locals.message  ? message: ''%></span>
+                                    <!-- To indicate which sweet alert should work -->
+                                    <span hidden id="statusSpan"><%= locals.message ? message : '' %></span>
                                     <div class="col-lg-4">
                                         <label class="form-label">Category</label>
-                                        <select class="form-select" name="categories">
-                                          
-
-                                            <% if( categories.length > 0 ) { for( let i = 0 ; i < categories.length ; i ++){ %>
-                                                <% if( categories[i].isActive) { %>
-                                                <option> <%= categories[i].name%> </option>
-                                               
-                                            
-                                        <% } } } else{ %> user not found <% } %>
-         
+                                        <select class="form-select" name="categories" oninput="validateField(this)">
+                                            <% if (categories.length > 0) {
+                                                for (let i = 0; i < categories.length; i++) { 
+                                                    if (categories[i].isActive) { %>
+                                                        <option> <%= categories[i].name %> </option>
+                                            <% } 
+                                                } 
+                                            } else { %> user not found <% } %>
                                         </select>
+                                        <div class="text-danger" id="categoriesError"></div>
                                     </div>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Stock</label>
-                                    <input type="number" name="stock" placeholder="%" class="form-control" id="product_name">
+                                    <input type="number" name="stock" placeholder="%" class="form-control" id="product_name" min="0" required oninput="validateField(this)">
+                                    <div class="text-danger" id="stockError"></div>
                                 </div>
-                            <input type="submit" value="Submit" class="btn btn-md rounded font-sm hover-up" >
-                               
+                                <input type="submit" value="Submit" onclick="validateForm()" class="btn btn-md rounded font-sm hover-up">
+                           
                            
                         </div>
                     </div> <!-- card end// -->
@@ -161,10 +173,11 @@
                             <h4>Media</h4>
                         </div>
                         <div class="card-body">
-                            <div class="input-upload">
-                                <img src="/static/admin-assets/imgs/theme/upload.svg" alt="">
-                                <input class="form-control" name="image" type="file" multiple>
-                            </div>
+                            <label for="imageUpload" class="input-upload">
+                                <img src="/static/admin-assets/imgs/theme/upload.svg" alt="Upload Image">
+                                <input id="imageUpload" class="form-control" name="image" type="file" multiple onchange="displaySelectedImages(this)">
+                            </label>
+                            <div id="selectedImagesContainer"></div>
                         </div>
                         <!-- <div class="card-body">
                             <div class="input-upload">
@@ -172,10 +185,11 @@
                                 <input class="form-control" name="image2" type="file">
                             </div>
                         </div> -->
-                    </form>
+       
                     </div> <!-- card end// -->
                    
                 </div>
+            </form>
             </div>
         </section> <!-- content-main end// -->
         <footer class="main-footer font-xs">
@@ -196,13 +210,134 @@
 
 <!-- Sweet alert Js link  -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
- 
+
+<script>
+    function displaySelectedImages(input) {
+        const selectedImagesContainer = document.getElementById('selectedImagesContainer');
+        selectedImagesContainer.innerHTML = '';
+
+        for (const file of input.files) {
+            const imageElement = document.createElement('img');
+            imageElement.src = URL.createObjectURL(file);
+            imageElement.alt = file.name;
+            imageElement.className = 'selected-image';
+
+            selectedImagesContainer.appendChild(imageElement);
+        }
+    }
+</script>
+<script>
+
+function validateField(element) {
+        const fieldName = element.name;
+        const fieldValue = element.value;
+        const errorElement = document.getElementById(`${fieldName}Error`);
+
+        if (!fieldValue.trim()) {
+            errorElement.textContent = "This field is required.";
+        } else {
+            errorElement.textContent = "";
+
+            // Additional validation for sale price greater than regular price
+            if (fieldName === "salePrice") {
+                const regularPrice = document.querySelector("[name='regularPrice']").value;
+                if (parseFloat(fieldValue) > parseFloat(regularPrice)) {
+                    errorElement.textContent = "Sale price cannot be greater than regular price.";
+                }
+            }
+        }
+}
+    function validateForm() {
+        const productName = document.querySelector("[name='name']").value;
+        const description = document.querySelector("[name='description']").value;
+        const regularPrice = document.querySelector("[name='regularPrice']").value;
+        const salePrice = document.querySelector("[name='salePrice']").value;
+        const category = document.querySelector("[name='categories']").value;
+        const stock = document.querySelector("[name='stock']").value;
+
+        // Reset previous warning messages
+        resetWarnings();
+
+        // Simple validation, you can add more specific checks as needed
+        let isValid = true;
+
+        if (!productName.trim()) {
+            displayWarning("[name='name']", "Please enter the product title.");
+            isValid = false;
+        }
+
+        if (!description.trim()) {
+            displayWarning("[name='description']", "Please enter the product description.");
+            isValid = false;
+        }
+
+        if (!regularPrice.trim()) {
+            displayWarning("[name='regularPrice']", "Please enter the regular price.");
+            isValid = false;
+        }
+
+        if (!salePrice.trim()) {
+            displayWarning("[name='salePrice']", "Please enter the promotional price.");
+            isValid = false;
+        }
+
+        if (!category.trim()) {
+            displayWarning("[name='categories']", "Please choose a category.");
+            isValid = false;
+        }
+
+        if (!stock.trim()) {
+            displayWarning("[name='stock']", "Please enter the stock.");
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    function displayWarning(selector, message) {
+        const element = document.querySelector(selector);
+        const warningMessage = document.createElement("div");
+        warningMessage.className = "text-danger";
+        warningMessage.textContent = message;
+
+        element.parentNode.appendChild(warningMessage);
+    }
+
+    function resetWarnings() {
+        const warningMessages = document.querySelectorAll(".text-danger");
+        warningMessages.forEach(function (warning) {
+            warning.parentNode.removeChild(warning);
+        });
+    }
+</script>
+
+
+
+
  <script>
           
   // Get the value of the span tag
   const spanValue = document.getElementById('statusSpan').innerText;
 console.log(spanValue)
 // Check if the value is 1
+if(locals.errorMessage){
+    Swal.fire({
+    icon: 'warning',
+    title: 'Some error occured',
+    // text: errorMessage,
+  });
+  document.getElementById('statusSpan').innerText = 'none';
+
+}
+if(spanValue === '3'){
+    Swal.fire({
+    icon: 'warning',
+    title: 'Some error occured',
+    // text: errorMessage,
+  });
+  document.getElementById('statusSpan').innerText = 'none';
+
+}
 if (spanValue === '1') {
   // Trigger SweetAlert
   Swal.fire({

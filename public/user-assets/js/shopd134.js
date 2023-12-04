@@ -44,13 +44,15 @@
         //     });
         // });
 
-        // //Elevate Zoom
+        // Elevate Zoom
         // if ( $(".product-image-slider").length ) {
         //     $('.product-image-slider .slick-active img').elevateZoom({
         //         zoomType: "inner",
-        //         cursor: "crosshair",
+        //         cursor:"zoom-in",
         //         zoomWindowFadeIn: 500,
-        //         zoomWindowFadeOut: 750
+        //         zoomWindowFadeOut: 750,
+        //         // zoomWindowWidth: 1600, // Set your desired width
+        //         // zoomWindowHeight: 1600 // Set your desired height
         //     });
         // }
         // Filter color/Size

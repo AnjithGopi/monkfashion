@@ -474,7 +474,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <a href="#" class="btn btn-fill-out btn-block mt-30">Place Order</a>
+                                <!-- <a href="#" class="btn btn-fill-out btn-block mt-30">Place Order</a> -->
                                 <input type="button" onclick="placeOrder()" class="btn btn-fill-out btn-block mt-30" value="Place Order" />
                             </div>
                         </div>
@@ -486,8 +486,9 @@
     <%-include('../layouts/footerUser')-%>
 
     <script>
+
         // Script to Place ORder
-       function placeOrder() {
+     function placeOrder() {
        
         const paymentForm = document.getElementById('myForm');
 
@@ -501,6 +502,18 @@
             const selectedValueAddress = selectedRadioButtonAddress.value;
             console.log('Selected Payment Option:', selectedValuePayment);
             console.log('Selected Address:', selectedValueAddress);
+            Swal.fire({
+                title: 'Placed Order',
+                text: 'Are you sure to place the order ?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#088178',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Place Order'
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    // Handle the confirmed action here
+              
 
         fetch('/home/cart/checkout/placeorder', {
                 method: 'POST',
@@ -529,77 +542,49 @@
                             title: 'Invoice',
                             html: `
                                 <div style="text-align: left;">
-                                <p><strong>Product:</strong> Example Product</p>
-                                <p><strong>Price:</strong> $50.00</p>
-                                <p><strong>Quantity:</strong> 2</p>
+                                <p><strong>OrderId:</strong> ${data.orderData.orderId}</p>
+                                <p><strong>Payment Status:</strong>  ${data.orderData.paymentStatus}</p>
+                                <p><strong>Payment Method:</strong>  ${data.orderData.paymentMethod}</p>
+                                
                                 <hr>
-                                <p><strong>Total:</strong> $100.00</p>
+                                <p><strong>Total:</strong> ${data.orderData.totalAmount}</p>
                                 </div>
                             `,
                             icon: 'success',
                             confirmButtonText: 'Close',
                             }).then((result) => {
                                 // Check if the alert was confirmed
+                                console.log("redirect 1")
+
                                 if (result.isConfirmed) {
+                                    Swal.close();
+                                    console.log("redirect2")
                                     // Redirect to the home page
                                     window.location.href = '/home'; // Change this to the actual URL of your home page
+                                    console.log("redirect3")
+                                    // window.location.href = '/login'
+                                    console.log("redirect3")
+
                                 }
                             });
 
                  } 
 
-                 
-
-                // console.log(data.updatedQuantity)
-                // document.getElementById(`qty_val_${index}`).innerText=data.updatedQuantity
-                // const salePrice = document.getElementById(`salePrice_${index}`).innerText
-                // console.log('salePrice',salePrice)
-                // document.getElementById(`totalAmount_${index}`).innerText=data.updatedQuantity*salePrice
-        
-                
-                // updateTotal()
-               
             })
             .catch(error => {
                 console.error('Error updating quantity:', error);
             });
-        }}
+         
+                } else {
+                    // Handle the canceled action here
+                    Swal.fire('Cancelled', 'Order cancelled sucessfully ', 'info');
+                }
+                });
+            
+        }
+    }
 
        
-//         fetch('/home/cart/checkout/placeorder', {
-//     method: 'POST',
-//     headers: {
-//                     'Content-Type': 'application/json',
-//                 },
-//     // You can add headers and body as needed
-// })
-// .then(data =>response.json())
-//     .then(response => {
-//         if (!response.ok) {
-//             throw new Error(`HTTP error! Status: ${response.status}`);
-//         }
-//         return response.json();
-//     })
-//     .then(data => {
-//         console.log("Response received:", data);
-//         toastr.success("Order Placed Successfully");
-//         if (successMessage) {
-//             toastr.success(successMessage);
-//         }
-//     })
-//     .catch(error => {
-//         console.error('Error:', error);
-//         toastr.error("Order Failed. Some error occurred");
-//         toastr.warning('Error:', error.message);
-//     });
-       
-    //     .catch(error => {
-    //         console.error('Error:', error);
-    //         toastr.error("Order Failed Some Error occur")
-    //         toastr.warning('Error:', error)
-    //     });
-
-    //    }
 
     </script>
     <script>

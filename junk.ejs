@@ -168,7 +168,7 @@ try {
         </button>
     </div>
 
-<!-- Aggreagtion Lookup  -->
+Aggreagtion Lookup 
     const cart = await User.aggregate([
             {
               $lookup: {
@@ -181,3 +181,13 @@ try {
           ])
           console.log("cart",cart)
           console.log("cartData",cart.cartData)
+
+
+          <% order.items.forEach(item => { %>
+            <div>
+                <p>Product ID: <%= item.productId._id %></p>
+                <p>Product Name: <%= item.productId.name %></p>
+                <p>Quantity: <%= item.quantity %></p>
+                <!-- Add more product details as needed -->
+            </div>
+        <% }); %>

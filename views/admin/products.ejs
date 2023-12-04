@@ -35,11 +35,11 @@
             <div class="col-search">
                 <form class="searchform">
                     <div class="input-group">
-                        <input list="search_terms" type="text" class="form-control" placeholder="Search term">
+                        <input list="search_terms" type="text"  class="form-control" placeholder="Search term">
                         <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
                     </div>
                     <datalist id="search_terms">
-                        <option value="Products">
+                        <option value="Productsss">
                         <option value="New orders">
                         <option value="Apple iphone">
                         <option value="Ahmed Hassan">
@@ -92,30 +92,47 @@
                     <p>Lorem ipsum dolor sit amet.</p>
                 </div>
                 <div>
-                    <input type="text" placeholder="Search order ID" class="form-control bg-white">
+                    <input type="text"  placeholder="Search order ID" class="form-control bg-white">
                 </div>
             </div>
             <div class="card mb-4">
                 <header class="card-header">
-                    <div class="row gx-3">
-                        <div class="col-lg-4 col-md-6 me-auto">
-                            <input type="text" placeholder="Search..." class="form-control">
-                        </div>
+                    <div class="row gx-3 d-flex">
+                        
+                            <!-- <div class="col-lg-4 col-md-6 me-auto">
+                                <input type="text" placeholder="Search..." class="form-control">
+                                 <input type="submit" class="m-2 btn rounded-3 btn-primary" value="Search"/>
+                            </div> -->
+                            <form action="">
+                              <div class=" d-flex  col-lg-4 col-md-6 me-auto">
+                                    <input list="search_terms" type="text" name="search"  class="form-control" placeholder="Search term">
+                                    <button class="btn btn-light bg" type="submit"> <i class="material-icons md-search"></i></button>
+                                </div>
+                            </form>
+                       <form action="">
                         <div class="col-lg-2 col-6 col-md-3">
-                            <select class="form-select">
-                                <option>Status</option>
-                                <option>Active</option>
-                                <option>Disabled</option>
-                                <option>Show all</option>
+                            <select class="form-select" name="category">
+                                <% categories.forEach((element)=>{ %>
+
+                                    <option value="<%= element._id %>"><%= element.name %></option>
+                              <%  }) %>
+                             
                             </select>
+                            <button class="btn btn-light bg" type="submit"> <i class="material-icons md-search"></i></button>
+
                         </div>
+                    </form>
+                    <form action="">
                         <div class="col-lg-2 col-6 col-md-3">
-                            <select class="form-select">
+                            <select class="form-select" name="search">
                                 <option>Show 20</option>
                                 <option>Show 30</option>
                                 <option>Show 40</option>
                             </select>
+                            <button class="btn btn-light bg" type="submit"> <i class="material-icons md-search"></i></button>
+
                         </div>
+                    </form>
                     </div>
                 </header> <!-- card-header end// -->
                 <div class="card-body">
@@ -124,7 +141,9 @@
                             <thead>
                                 <tr>
                                     <th>#ID</th>
+                                    <th scope="col">Image</th>
                                     <th scope="col">Name</th>
+                                    <th scope="col">Category</th>
                                     <th scope="col">Selling Price</th>
                                     <th scope="col">Regular Price</th>
                                     <th scope="col">Status</th>
@@ -134,16 +153,17 @@
                             </thead>
                             <tbody>
                                 
-
+                                   
                                 <span hidden id="statusSpan"><%=locals.message  ? message: ''%></span>
+                                <span hidden id="statusSpan"><%=locals.errorData  ? errorData: ''%></span>
                             
                                  
-                                    <% if(products.length> 0){ for(let i=0 ;i < products.length ; i++){
+                                    <% if(products.length> 0){ for(let i=0; i < products.length ; i++){
                                         %>
-                                    <% if(products[i].categoryId.isActive)  {%>
+                                    <% if(!products[i].isDeleted )  {%>
 
                                 <tr class="justify-content-center ">
-                                    <!-- <td><%= products[i].id %></td> -->
+                                    <td><%= i+1 %></td>
                                     <!-- <td><img src="/static/admin/images/<%=products[i].image[0] %>" alt=""></td> -->
                                     <!-- <td> <img class="" src="/static/admin/images/product/<%=products[i].image[0] %>" alt="" width="100" height="80">
                                    </td> -->
@@ -172,6 +192,7 @@
 
                                    </td>
                                     <td><b><%= products[i].name %></b></td>
+                                    <td><b><%= products[i].categoryId.name %></b></td>
                                     <td><%= products[i].salePrice %></td>
                                     <td><%= products[i].regularPrice %></td>
                                     <td>
@@ -201,7 +222,7 @@
                                         <!-- dropdown //end -->
                                     </td>
                                 </tr>
-                                <% } } } else{ %> Users Not Found <% } %>
+                                <% } } }  else{ %> Users Not Found <% } %>
                              
                              
                                
@@ -213,12 +234,23 @@
             <div class="pagination-area mt-15 mb-50">
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-start">
-                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                        <li class="page-item"><a class="page-link" href="#">02</a></li>
-                        <li class="page-item"><a class="page-link" href="#">03</a></li>
-                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="#">16</a></li>
-                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
+                        <% if (currentPage > 1) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                            </li>
+                        <% } %>
+            
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                            </li>
+                        <% } %>
+            
+                        <% if (currentPage < totalPages) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                            </li>
+                        <% } %>
                     </ul>
                 </nav>
             </div>
@@ -318,22 +350,6 @@
       }
     
     
-    
-            // function confirmDeleteCategories(categoriesId) {
-            //     const confirmationMessage = "Are you sure you want to delete Categories?";
-            //     Swal.fire({
-            //         title: 'Confirmation',
-            //         text: confirmationMessage,
-            //         icon: 'question',
-            //         showCancelButton: true,
-            //         confirmButtonText: 'Yes',
-            //         cancelButtonText: 'No'
-            //     }).then((result) => {
-            //         if (result.isConfirmed) {
-            //             // If the user confirms, navigate to the changeStatus route
-            //             window.location.href = `/admin/deleteCategories?id=${categoriesId}`;                }
-            //     });
-            // }
           
             function confirmDeleteCategories(categoriesId) {
                 Swal.fire({

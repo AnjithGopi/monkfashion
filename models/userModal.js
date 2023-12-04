@@ -57,13 +57,14 @@ const userSchema = new mongoose.Schema({
         required:true
      } ,
       isAdmin:{
-        type:Number,
-        required:false,
-        default:0
+         type:Boolean,
+         required:false,
+         default:false
      },
      isActive:{
-        type:Number,
-        default:1
+      type:Boolean,
+      required:false,
+      default:true
      } ,
       wallet:{
         type:Number,

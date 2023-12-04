@@ -7,9 +7,17 @@ mongoose.connect("mongodb://127.0.0.1:27017/mongfashion");
 const express = require("express");
 const app = express();
 
+// Middlewares
+const errorMiddleware = require('./middleware/errorMiddleware');
+
 //other modules
 
 const path = require('path')
+
+// env
+require("dotenv").config();
+PORT = process.env.PORT
+
 
 // No cache Module
 const nocache=require('nocache')
@@ -43,8 +51,10 @@ app.use('/static',express.static(path.join(__dirname,'public')) )
 app.get('*',(req,res)=>{
     res.status(404).send('404 - Not Found');
 })
+app.use(errorMiddleware);
 
-app.listen(8000,()=>{
+app.listen(PORT,()=>{
     console.log("Server is running");
 });
+
 

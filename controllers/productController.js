@@ -4,8 +4,8 @@ const { DefaultDeserializer } = require('v8')
 
 const loadAddProduct = async (req,res)=>{
     try{
-        const productData = await Categories.find()
-        res.render('add-product',{categories:productData})
+        const categoriesData = await Categories.find({isDeleted:false})
+        res.render('add-product',{categories:categoriesData})
     }catch(error){
         console.log(error.message)
     }
@@ -16,7 +16,7 @@ const insertProduct  =  async (req,res)=>{
         const searchProduct = await Product.findOne({ name: new RegExp('^' + req.body.name + '$', 'i') })
 
         // const searchReturnData = await Product.find()
-        const productData = await Categories.find()
+        const productData = await Categories.find({isDeleted:false})
         const categoriesId = await Categories.findOne({name:req.body.categories})
        console.log("categoriews Id :",categoriesId._id)
         if(searchProduct){
@@ -26,6 +26,8 @@ const insertProduct  =  async (req,res)=>{
             // res.redirect('/admin/categories')
         }else{
             const images = req.files.map(file => file.filename);
+            console.log("Images :",images)
+            console.log("Images :",req.body)
             const newProduct = new Product({
                 name:req.body.name,
                 description:req.body.description,
@@ -47,7 +49,14 @@ const insertProduct  =  async (req,res)=>{
             }
         }
     }catch(error){
+        console.log("Catch worked")
         console.log(error.message)
+        const productData = await Categories.find({isDeleted:false})
+        let errorMessage = []
+        errorMessage.push(error.message)
+        console.log("error ::",errorMessage)
+        res.render('add-product',{message: '3',errorMessage:errorMessage,categories:productData})
+        
     }
 }
 
@@ -55,22 +64,66 @@ const insertProduct  =  async (req,res)=>{
 
 const loadProduct = async (req,res)=>{
 //   const productData = await Product.find() 
+    try {
+
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5;
+
+        const skip = (page - 1) * limit;
+        
+        var search = '';
+        var category = '';
+        if(req.query.search){
+            search = req.query.search;
+        }
+        console.log("Search Key :",search)
+        let productData = null
+        if(req.query.category){
+            console.log("Category :",req.query.category)
+         productData = await Product.find({categoryId:req.query.category})  .populate('categoryId')
+         .skip(skip)
+         .limit(limit);
+        //     category = categoriesId._id
+        console.log("categoryData  ;",productData)
+    }else{
+         productData = await Product.find({
+            isDeleted:false,
+            $or:[
+                {name:{$regex:'.*'+search+'.*',$options:'i'}}
+               
+            ]
+        })
+            .populate('categoryId')
+            .skip(skip)
+            .limit(limit);
+
+            console.log("Data ::",productData)
+
+    }
 
 
-try{
-        // // Find the category with the specified name
-        // const cat = await Categories.find({ isActive: true })
-        // // Extract the array of category IDs
-        // const categoryIds = cat.map(category => category._id);
-        // const productData = await Product.find({ categoryId: { $in: categoryIds } }).exec();
-        // console.log("Cat Data :", cat)
-  const productData = await Product.find().populate('_id').populate("categoryId")
+      const categoriesData = await Categories.find({isDeleted:false})
+      console.log("caat data ::",categoriesData)
+        const totalProducts = await Product.countDocuments();
+        const totalPages = Math.ceil(totalProducts / limit);
+        res.render('products', {
+            products: productData,
+            categories:categoriesData,
+            currentPage: page,
+            totalPages: totalPages,
+        });
 
-        console.log("product Data :",productData)
-        console.log("Data : ;",productData[0].categoryId.isActive)
-           res.render('products',{products:productData})
-    }catch(error){
+      
+    } catch (error) {
         console.log(error.message)
+        let errorData = []
+            errorData.push(error.message)
+        res.render('products', {
+            products: "",
+            currentPage: "",
+            totalPages: "",
+            errorData:errorData
+        });
     }
 }
 
@@ -80,12 +133,13 @@ const changeStatus = async (req,res)=>{
         console.log(id)
         const active = req.query.active;
         console.log(active)
+        console.log(typeof(active))
        
-        if(active == 0){
-            updateValue = 1
+        if(active == 'true'){
+            updateValue =false
 
         }else{
-            updateValue = 0
+            updateValue = true
         }
         console.log(updateValue)
 
@@ -141,8 +195,9 @@ const loadEditProduct = async (req,res)=>{
 
 const editProduct = async (req,res)=>{
     try{
-
+console.log("Dleted Image",req.body.deletedImages)
         const productId = req.session.editProductId ;
+        
         console.log(productId)
         // const productId = req.params.productId;
 
@@ -164,27 +219,48 @@ const editProduct = async (req,res)=>{
         product.salePrice = salePrice;
         product.stock = stock;
         product.categoryId = categoriesId._id;
-
+ 
         console.log("req . file data", req.files)
+        const imageNames =Object.values(req.body.deletedImages) 
+        console.log("images name",imageNames)
+        console.log(typeof(imageNames))
+        console.log(imageNames)
 
+        // Get the names of images to be deleted
+const deletedImages = req.body.deletedImages;
 
+// Remove deleted images from the product
+product.image = product.image.filter(image => !deletedImages.includes(image));
 
-        if (req.files) {
-            console.log("Map Worked")
-            const images = req.files.map(file => file.filename);
+      
+// const imageData = await Product.find({_id:productId})
 
-            // If a new image is uploaded, update the image property
-            product.image = images;
-            console.log("Image from file   :",images)
+        if (req.files && req.files.length > 0) {
+            // const images = req.files.map(file => file.filename);
+            const newImages = req.files.map(file => file.filename);
+             product.image.push(...newImages);
+
+            // console.log("Map Worked")
+            // const updatingData = await Product.updateOne(
+            //     { _id: productId },
+            //     { $push: { image: { $each: images } } }
+            //   );
+            // product.image.push(...images,...imageData.image);
+            console.log("Image from file   :",newImages)
         }
+      
 
+          const updatedProduct = await product.save();
         // Save the updated product to the database
-        const updatedProduct = await product.save();
-        const productDataAfterUpdation = await Product.find()
+       
+        const productDataAfterUpdation = await Product.find().populate('_id').populate("categoryId")
+
 
         console.log("Product updated successfully:", updatedProduct);
+        // console.log("product ::",productDataAfterUpdation)
         // res.send('Product updated successfully');
-        res.render('products',{products:productDataAfterUpdation,message:3})
+        // res.render('products',{products:productDataAfterUpdation,message:3})
+        res.redirect("/admin/products")
 
 
     }catch(error){

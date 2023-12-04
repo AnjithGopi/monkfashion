@@ -41,6 +41,7 @@ const addressSchema = new mongoose.Schema({
 const orderSchema = new mongoose.Schema({
     userId:{
         type:Schema.Types.ObjectId,
+        ref:'User',
         required:true 
      },
      items:[
@@ -66,7 +67,7 @@ const orderSchema = new mongoose.Schema({
      },
       orderStatus:{
         type:String,
-        enum:['Order Placed','Shipped','Delivered','Cancelled','Returned'],
+        enum:['Order Placed','Confirmed','Shipped','Delivered','Cancelled','Returned'],
         default:'Order Placed'
      },
      paymentStatus:{

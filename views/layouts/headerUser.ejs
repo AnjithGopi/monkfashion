@@ -20,8 +20,8 @@
 
 
      <!-- magic zoom cdn  -->
-     <link rel="stylesheet" href="../../public/asset/magiczoomplus/magiczoomplus.css">
-     <script src="../../public/asset/magiczoomplus/magiczoomplus.js"></script>
+     <link rel="stylesheet" href="/static/asset/magiczoomplus/magiczoomplus.css">
+     <script src="/static/asset/magiczoomplus/magiczoomplus.js"></script>
      
 </head>
 
@@ -57,7 +57,7 @@
                                 <i class="fi-rs-user"></i><a href="/home/Profile">Profile</a>
                             </li>
                             <li>
-                                <i class="fi-rs-user"></i><a href="page-login-register.html">Log In / Sign Up</a>
+                                <i class="fi-rs-user"></i><a href="/login">Log In / Sign Up</a>
                             </li>
                             <li>
                                 <i class="fi-rs-user"></i><a href="/logout">Log OUT</a>
@@ -104,9 +104,10 @@
                             <div class="header-action-icon-2">
                                     <a class="mini-cart-icon" href="/user/cart">
                                     <img alt="Evara" src="/static/user-assets/imgs/theme/icons/icon-cart.svg">
-                                    <span class="pro-count blue">12</span>
+                                    <span class="pro-count blue"><%= locals.cartQuantity ? cartQuantity : 0 %></span>
+                                   
                                 </a>
-                                <div class="cart-dropdown-wrap cart-dropdown-hm2">
+                                <!-- <div class="cart-dropdown-wrap cart-dropdown-hm2">
                                     <ul>
                                         <li>
                                             <div class="shopping-cart-img">
@@ -142,7 +143,7 @@
                                             <a href="shop-checkout.html">Checkout</a>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>

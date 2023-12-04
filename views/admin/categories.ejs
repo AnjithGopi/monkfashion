@@ -126,9 +126,9 @@
                                             </th>
                                             <th>ID</th>
                                             <th>Name</th>
-                                            <th>Description</th>
-                                            <th>Slug</th>
-                                            <th>Order</th>
+                                            <th>Status</th>
+                                           
+                                          
                                             <th class="text-end">Action</th>
                                         </tr>
                                     </thead>
@@ -143,9 +143,10 @@
 
                                             <tr>
                                                 <td class="text-center"><i class="material-icons md-subdirectory_arrow_right text-muted"></i></td>
-                                                <td>5</td>
+                                                <td><%=i%></td>
+                                               
                                                 <td><b><%= categories[i].name %></b></td>
-                                                <td>Electronics</td>
+                                            
                                                
                                                 <td><% if(categories[i].isActive) {%>
                                                     <span class="badge rounded-pill alert-success"
@@ -158,22 +159,27 @@
                               
                                                     <% }%>
                                                 </td>
-                                                <td>5</td>
+                                               
                                                 <td class="text-end">
+                                                    <a class=" m-3 btn btn-sm btn-success  font-sm mt-15"
+                                                    onclick="confirmBlockCategories('<%= categories[i].id %>','<%= categories[i].isActive %>')"
+                                                  >
+                                                   Block/Unblock
+                                                </a>
                                                     <div class="dropdown">
                                                         <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
                                                         <div class="dropdown-menu">
-                                                            <a class=" m-3 btn btn-sm btn-success  font-sm mt-15"
+                                                            <!-- <a class=" m-3 btn btn-sm btn-success  font-sm mt-15"
                                                             onclick="confirmBlockCategories('<%= categories[i].id %>','<%= categories[i].isActive %>')"
                                                           >
                                                            Block/Unblock
-                                                        </a>
+                                                        </a> -->
                                                             <!-- <a class="dropdown-item" href="#">Edit info</a> -->
-                                                            <a class="rounded m-3 btn btn-sm btn-danger font-sm mt-15"
+                                                            <!-- <a class="rounded m-3 btn btn-sm btn-danger font-sm mt-15"
                                                             onclick="confirmDeleteCategories('<%= categories[i].id %>','<%= categories[i].isActive %>')"
                                                           >
                                                            Delete
-                                                            </a>
+                                                            </a> -->
                                                             <a class="dropdown-item"  onclick="confirmBlockCategories('<%= categories[i].id %>','<%= categories[i].isActive %>')">Block / Unblock</a>
                                                             <a class="dropdown-item" href="/admin/categories/editCategories?id=<%=categories[i].id %>" >Edit info</a>
                                                             <a class="dropdown-item text-danger" href="#" onclick="confirmDeleteCategories('<%= categories[i]._id %>')" >Delete</a>

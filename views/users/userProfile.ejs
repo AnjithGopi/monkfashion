@@ -16,7 +16,7 @@
             <div class="container">
                 <div class="row">
             
-                    <div class="col-lg-10 ">
+                    <div class="col-lg-12 ">
                         <div class="row">
                             <div class="col-md-4">
 
@@ -69,7 +69,7 @@
                                     </ul>
                                 </div>
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-md-8 mx-auto">
                                 <div class="tab-content dashboard-content">
                                     <div class="tab-pane fade active show" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
                                         <div class="card">
@@ -95,43 +95,62 @@
                                                 <h5 class="mb-0">Your Orders</h5>
                                             </div>
                                             <div class="card-body">
+                                                <% if (order.length > 0) { %>
+                                                    <% order.forEach((orderItem,index) => { %>
                                                 <div class="table-responsive">
-                                                    <table class="table">
+                                                    <table class="table table-hover">
                                                         <thead>
                                                             <tr>
-                                                                <th>Order</th>
-                                                                <th>Date</th>
-                                                                <th>Status</th>
-                                                                <th>Total</th>
-                                                                <th>Actions</th>
+                                                                <th>#SN</th>
+                                                                <th scope="col">Order Id</th>
+                                                                <!-- <th scope="col">Name</th> -->
+                                                                <th scope="col">Total Amount</th>
+                                                                <th scope="col">Payment Method</th>
+                                                                <th scope="col">Date</th>
+                                                                <th scope="col">Status</th>
+                                                                <th scope="col">Order Status</th>
+                                                                <!-- <th scope="col">Change</th> -->
+                                                                <th scope="col" class="text-end"> Action </th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
+                                                            
+                                                           
+                                                         
                                                             <tr>
-                                                                <td>#1357</td>
-                                                                <td>March 45, 2020</td>
-                                                                <td>Processing</td>
-                                                                <td>$125.00 for 2 item</td>
-                                                                <td><a href="#" class="btn-small d-block">View</a></td>
+                                                                <form action="">
+                                                                <td><%=index+1%></td>
+                                                                <td> <%= orderItem.orderId %></td>
+                                                                <!-- <td><b>Leslie Alexander</b></td> -->
+                                                                <!-- <td><template class="__cf_email__" data-cfemail="b7dbd2c4dbded2f7d2cfd6dac7dbd299d4d8da">[email&#160;protected]</template></td> -->
+                                                                <td><%= orderItem.totalAmount %></td>
+                                                                <td><span class="badge rounded-pill text-success"><%= orderItem.paymentMethod %></span></td>
+                                                                <td><%=orderItem.orderDate.toLocaleDateString()%></td>
+                                                                <td><span class="badge rounded-pill alert-warning"><%= orderItem.paymentStatus %></span></td>
+                                                                <td><span class="badge rounded-pill alert-primary" id="orderStatus_<%=index%>"><%= orderItem.orderStatus %></span></td>
+                                                                
+                                                                <td class="text-end">
+                                                                    <% if(  orderItem.orderStatus  !== 'Cancelled' ) { %>
+                                                                    <% if(  orderItem.orderStatus  !== 'Delivered' ) { %>
+                                                                    <a  class="btn btn-danger btn-md m-2 rounded font-sm" id="cancelOrderButton_<%=index%>" onclick="cancelOrder('<%=orderItem._id%>','<%= index %>')" style="background-color: brown;">Cancel Order</a>
+                                                                    <% } else {  %>
+                                                                    <a  class="btn btn-danger btn-md m-2 rounded font-sm" onclick="returnOrder('<%=orderItem._id%>','<%= index %>')" style="background-color: rgb(8, 89, 210);">Return Order</a>
+                                                                    <%  }  } %>
+                                                                    <a  class="btn btn-md m-2 rounded font-sm" href="/home/profile/order/orderDetails?id=<%=orderItem._id%>">View Details</a>
+                                                                     <!-- dropdown //end -->
+                                                                </td>
                                                             </tr>
-                                                            <tr>
-                                                                <td>#2468</td>
-                                                                <td>June 29, 2020</td>
-                                                                <td>Completed</td>
-                                                                <td>$364.00 for 5 item</td>
-                                                                <td><a href="#" class="btn-small d-block">View</a></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>#2366</td>
-                                                                <td>August 02, 2020</td>
-                                                                <td>Completed</td>
-                                                                <td>$280.00 for 3 item</td>
-                                                                <td><a href="#" class="btn-small d-block">View</a></td>
-                                                            </tr>
+                                                        </form>
+                                                           
+                                                           
                                                         </tbody>
                                                     </table>
-                                                </div>
-                                            </div>
+                                                </div> <!-- table-responsive //end -->
+                                                    <% }); %>
+                                                    <%  } else { %>
+                                                        <p>No Orders available</p>
+                                                        <% } %>
+                                                </div> <!-- card-body end// -->
                                         </div>
                                     </div>
                                     <div class="tab-pane fade" id="track-orders" role="tabpanel" aria-labelledby="track-orders-tab">
@@ -259,14 +278,7 @@
                                                             <label> Name <span class="required">*</span></label>
                                                             <input required=" " value="<%= user.name %>" class="form-control square" name="name" type="text">
                                                         </div>
-                                                        <!-- <div class="form-group col-md-6">
-                                                            <label>Last Name <span class="required">*</span></label>
-                                                            <input required="" class="form-control square" name="phone">
-                                                        </div> -->
-                                                        <!-- <div class="form-group col-md-12">
-                                                            <label>Display Name <span class="required">*</span></label>
-                                                            <input required=""  class="form-control square" name="dname" type="text">
-                                                        </div> -->
+                                                       
                                                         <div class="form-group col-md-12">
                                                             <label>Email Address <span class="required">*</span></label>
                                                             <input required="" value= "<%= user.email %>" class="form-control square" name="email" type="email">
@@ -298,7 +310,8 @@
                                                                         </p>
                                                                         <% } %>
                                                                 </div>
-                                                            </div>                                                        </div>
+                                                            </div>                                                       
+                                                         </div>
                                                        
                                                             <% }  else {%>
                                                                 <h3>No address available</h3>
@@ -352,7 +365,56 @@
     </script>
     <% } %>
 
-    
+    <script>
+        function cancelOrder(id,index) {
+            console.log("Id; ",id,"index :",index)
+           
+           
+            // toastr.success("hhhhhhh")
+            Swal.fire({
+            title: "Are you sure to Cancel your order",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#046963",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Cancel Order"
+            }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/home/profile/cancelOrder',{
+                method:'post',
+                headers:{
+                    'Content-Type':'application/json',
+                },
+                body:JSON.stringify({
+                    orderId:id,
+                    index:index,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("the response recieved");
+                if(data.message){
+                    toastr.success(data.message)
+                }
+                if(data.successMessage){
+                     toastr.success(data.successMessage)
+                     document.getElementById(`orderStatus_${index}`).innerText = "Cancelled";
+                     document.getElementById(`cancelOrderButton_${index}`).style.display="none";
+                    //  console.log('Changed order status :',data.changedOrderStatus)
+                    // changeColor(data.changedOrderStatus,index)
+                }
+                if(data.errorMessage){
+                    toastr.success(data.errorMessage)
+                }
+            })
+            .catch(error => {
+                console.error('Error updating quantity:', error);
+            });
+             }
+        })
+        }
+     </script>
 
 
     <script>

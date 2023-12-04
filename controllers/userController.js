@@ -5,6 +5,8 @@ const nodemailer = require('nodemailer');
 const { nextTick } = require('process');
 
 const Product = require('../models/productModal');
+const Order = require('../models/orderModel');
+const Cart = require('../models/cartModal');
 const { error } = require('console');
 
 const securePassword = async(password)=>{
@@ -229,8 +231,23 @@ const loadHome = async(req,res)=>{
 
     try{
        const productData = await Product.find()
-    //    console.log(productData)
-        res.render('index',{product:productData});
+    //    console.log("product data ::",productData)
+       console.log("product data ::",productData.length)
+       let cartCount = 0
+       console.log("........................................")
+       if(req.session.user_id){
+        console.log(req.session.user_id)
+              const cartData = await Cart.find({userId:req.session.user_id});
+            //   console.log("cart data",cartData)
+              console.log("........................................")
+              if(cartData.length > 0)
+               cartCount = cartData[0].product.length
+
+       }
+       console.log("cart count",cartCount)
+    //    console.log("cart count",cartCount[0].product.length)
+        res.render('index',{product:productData,cartQuantity: cartCount });
+        //her cartquantity is removed and need to change it to previous
        
     }catch(error){
         console.log(error.message)
@@ -272,20 +289,25 @@ const logoutUser = async (req,res)=>{
 const loadProfile = async(req,res)=>{
     try{
         console.log("Load profile recieved")
+        const userId = req.session.user_id
         const userData = await User.findById(req.session.user_id)
+        const orderData = await Order.find({userId:userId})
+        // console.log("ORder data :",orderData)
         // console.log(userData)
         // console.log(userData.address[0].fullName)
-        res.render('userProfile',{user:userData})
+        res.render('userProfile',{user:userData,order:orderData})
 
     }catch(error){
         console.log("Load profile catch recieved")
 
         const errorData =[]
+        const userId = req.session.user_id
         const userData = await User.findById(req.session.user_id)
 
         errorData.push(error.message)
         console.log("Error Data :",errorData)
-        res.render('userProfile',{user:userData,errorMessage:"Failed Some error occurs ",error:errorData})
+        const orderData = await Order.find({userId:userId})
+        res.render('userProfile',{user:userData,errorMessage:"Failed Some error occurs ",order:orderData,error:errorData})
 
         console.log(error.message)
     }
@@ -410,9 +432,11 @@ const editAddress = async ( req,res)=>{
             
         );
         const userData = await User.findById(userId)
+        const orderData = await Order.find({userId:userId})
+
         if(result)
-        res.render('userProfile',{user:userData,messageAddress:"Address edited sucessfully"})
-        res.render('userProfile',{user:userData,messageAddress:"Failed to edit address "})
+        res.render('userProfile',{user:userData,messageAddress:"Address edited sucessfully",order:orderData})
+        res.render('userProfile',{user:userData,messageAddress:"Failed to edit address ",order:orderData})
 
 
         
@@ -450,14 +474,17 @@ const updateUserProfile = async (req,res) =>{
         console.log("User profile updation Post recieved")
         console.log(req.body)
         const {name,phone,email,dob} = req.body
-        const userId = req.session.user_idq
+        const userId = req.session.user_id
         console.log(name)
         const result = await User.findOneAndUpdate({_id:userId},{name:name,email:email,mobile:phone,dob:dob})
         const userData = await User.findById(req.session.user_id)
         console.log("result after updation :",userData)
+        const orderData = await Order.find({userId:userId})
+
         if(result)
-        res.render('userProfile',{user:userData,successMessage:"Profile updated sucessfully"})
-        res.render('userProfile',{user:userData,failedMessage:"Failed to update Profile "})
+        res.render('userProfile',{user:userData,successMessage:"Profile updated sucessfully",order:orderData})
+        else
+        res.render('userProfile',{user:userData,failedMessage:"Failed to update Profile ",order:orderData})
 
     }catch(error){
         
@@ -507,8 +534,8 @@ const verifyChangePasword = async (req,res,next) =>{
                     //  else
                     //    res.render('userProfile',{user:userData,failedMessage:"Failed to change the password"});
                 }else{
-               
-                    res.render('userProfile',{user:userData,failedMessage:"Password Mismatch "});
+                      const orderData = await Order.find({userId:userId})
+                    res.render('userProfile',{user:userData,failedMessage:"Password Mismatch ",order:orderData});
 
                 }
     
@@ -613,13 +640,14 @@ const  changePasswordVerifyOtp = async (req,res)=>{
                     console.log("spass :",spass)
                     const result = await User.findOneAndUpdate({_id:userId},{password:spass})
                     console.log("result :",result)
+                    const orderData = await Order.find({userId:userId})
                     if(result){
-                        res.render('userProfile',{user:userData,successMessage:"Password Changed Sucessfully"});
+                        res.render('userProfile',{user:userData,successMessage:"Password Changed Sucessfully",order:orderData});
                         delete req.session.changePassword
                         req.session.save()
                     }
                     else
-                        res.render('userProfile',{user:userData,failedMessage:"Failed to change the password"});
+                        res.render('userProfile',{user:userData,failedMessage:"Failed to change the password",order:orderData});
                         // delete req.session.email;
         }else{
             console.log("Wromg otp")
@@ -631,7 +659,43 @@ const  changePasswordVerifyOtp = async (req,res)=>{
     }
 }
 
+const cancelOrder = async (req,res)=>{
+    try{
+        console.log("Cancel Order request recieved")
+        const {orderId,index} = req.body
+        console.log(req.body)
+        console.log(orderId)
+        const userId = req.session.user_id
+        const cancelOrder = await Order.findOneAndUpdate({_id:orderId},{$set:{orderStatus:"Cancelled"}},{new:true})
+        console.log("Order data :",cancelOrder)
+        if(cancelOrder){
+        res.status(200).json({ success: true, successMessage: 'Product Cancelled sucesfully' });
 
+        }
+
+    }catch(error){
+        console.log(error.message)
+        res.status(500).json({ success: false, errorMessage: error.message });
+
+    }
+}
+
+const loadOrderDetails = async (req,res)=>{
+
+    try {
+        console.log("View Order details received")
+        const orderId = req.query.id;
+        const orderData = await Order.findById(orderId)
+        .populate('userId') 
+        .populate('items.productId') 
+        .exec();
+    
+        console.log(orderData)
+        res.render('orderDetails' ,{order:orderData})
+    } catch (error) {
+        console.log(error.message)
+    }
+}
 
 
 module.exports ={
@@ -659,7 +723,9 @@ module.exports ={
     verifyChangePasword,
     changePasswordVerifyOtp,
     changePasswordSendOtp,
-    clearOtp
+    clearOtp,
+    cancelOrder,
+    loadOrderDetails
    
     
 
