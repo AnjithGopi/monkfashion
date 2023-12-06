@@ -68,7 +68,6 @@ const loadProduct = async (req,res)=>{
 
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 5;
-
         const skip = (page - 1) * limit;
         
         var search = '';
@@ -272,6 +271,8 @@ product.image = product.image.filter(image => !deletedImages.includes(image));
 
 module.exports = {
     loadAddProduct,
+
+    
     insertProduct,
     loadProduct,
     changeStatus,

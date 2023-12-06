@@ -484,6 +484,7 @@
         </section>
     </main>
     <%-include('../layouts/footerUser')-%>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <script>
 
@@ -535,40 +536,104 @@
                      toastr.warning(data.warningMessage);
 
                  }
-                 if( data.success){
+                 if (data.success) {
+    // console.log("Success worked");
+    // console.log(data.key_id);
+    // console.log(data.orderData);
+    // console.log("total amount",data.orderData.totalAmount);
+    // console.log(typeof(data.orderData.totalAmount));
+    // console.log("order id",data.orderData.orderId);
+    // console.log(typeof(data.orderData.totalAmount));
+                    const amount = JSON.stringify(data.orderData.totalAmount)*100;
+                    console.log(amount)
+                    console.log(typeof(amount))
+                    var options = {
+                        "key":""+data.key_id+"",
+                        "amount":data.totalAmount,
+                        "currency": "INR",
+                        "name": "Monk Fashion",
+                        "description": "Test Transaction",
+                        "image": "https://example.com/your_logo",
+                        "order_id":data.orderData.orderId,
+                        "handler": function (status) {
+                            toastr.success("Payment Success");
+                            Swal.fire({
+                                            title: 'Sucess',
+                                        
+                                            icon: 'success',
+                                            confirmButtonText: 'Close',
+                                            }).then((result) => {
+                                                // Check if the alert was confirmed
+                                                console.log("redirect 1")
 
-                     toastr.success(data.successMessage);
-                     Swal.fire({
-                            title: 'Invoice',
-                            html: `
-                                <div style="text-align: left;">
-                                <p><strong>OrderId:</strong> ${data.orderData.orderId}</p>
-                                <p><strong>Payment Status:</strong>  ${data.orderData.paymentStatus}</p>
-                                <p><strong>Payment Method:</strong>  ${data.orderData.paymentMethod}</p>
+                                                if (result.isConfirmed) {
+                                                    Swal.close();
+                                                    console.log("redirect2")
+                                                    // Redirect to the home page
+                                                    window.location.href = '/home'; // Change this to the actual URL of your home page
+                                                    console.log("redirect3")
+                                                    // window.location.href = '/login'
+                                                    console.log("redirect3")
+
+                                                }
+                                            });
+                        },
+                        "prefill": {
+                            "name": "Abhilash V S",
+                            "email": "abhilash@example.com",
+                            "contact": "9000090000"
+                        },
+                        "notes": {
+                            "address": "Razorpay Corporate Office"
+                        },
+                        "theme": {
+                            "color": "#3399cc"
+                        }
+                    };
+
+                    var rzp1 = new Razorpay(options);
+
+                    rzp1.on('payment_failed', function (data) {
+                        alert("Payment failed");
+                    });
+
+                    rzp1.open();
+
+
+                    //  toastr.success(data.successMessage);
+                    //  Swal.fire({
+                    //         title: 'Invoice',
+                    //         html: `
+                    //             <div style="text-align: left;">
+                    //             <p><strong>OrderId:</strong> ${data.orderData.orderId}</p>
+                    //             <p><strong>Payment Status:</strong>  ${data.orderData.paymentStatus}</p>
+                    //             <p><strong>Payment Method:</strong>  ${data.orderData.paymentMethod}</p>
                                 
-                                <hr>
-                                <p><strong>Total:</strong> ${data.orderData.totalAmount}</p>
-                                </div>
-                            `,
-                            icon: 'success',
-                            confirmButtonText: 'Close',
-                            }).then((result) => {
-                                // Check if the alert was confirmed
-                                console.log("redirect 1")
+                    //             <hr>
+                    //             <p><strong>Total:</strong> ${data.orderData.totalAmount}</p>
+                    //             </div>
+                    //         `,
+                    //         icon: 'success',
+                    //         confirmButtonText: 'Close',
+                    //         }).then((result) => {
+                    //             // Check if the alert was confirmed
+                    //             console.log("redirect 1")
 
-                                if (result.isConfirmed) {
-                                    Swal.close();
-                                    console.log("redirect2")
-                                    // Redirect to the home page
-                                    window.location.href = '/home'; // Change this to the actual URL of your home page
-                                    console.log("redirect3")
-                                    // window.location.href = '/login'
-                                    console.log("redirect3")
+                    //             if (result.isConfirmed) {
+                    //                 Swal.close();
+                    //                 console.log("redirect2")
+                    //                 // Redirect to the home page
+                    //                 window.location.href = '/home'; // Change this to the actual URL of your home page
+                    //                 console.log("redirect3")
+                    //                 // window.location.href = '/login'
+                    //                 console.log("redirect3")
 
-                                }
-                            });
+                    //             }
+                    //         });
 
-                 } 
+                 } else{
+                    alert('FAILEDD')
+                 }
 
             })
             .catch(error => {

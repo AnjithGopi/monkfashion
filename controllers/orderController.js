@@ -3,10 +3,12 @@ const Product = require("../models/productModal");
 const User = require("../models/userModal");
 const Order = require("../models/orderModel")
 
+const Razorpay = require('razorpay');
+
+
 const { v4: uuidv4 } = require('uuid');
-
-
-
+const RAZORPAY_ID_KEY = process.env.RAZORPAY_KEY_ID
+const RAZORPAY_ID_SECRET = process.env.RAZORPAY_KEY_SECRET
 
 
 // .........................................................................................
@@ -390,13 +392,34 @@ const placeOrder = async (req, res) => {
                 { _id: userId },
                 { $unset: { cart: "" } }
             );
-            res
-                .status(200)
-                .json({
-                    success: true,
-                    orderData:orderData,
-                    successMessage: "Order Placed successfully.",
+         console.log(",,1")
+            console.log(",,2")
+            var instance = new Razorpay({ key_id:"rzp_test_RRdtrmEm8YKVJp", key_secret:"yvvaMyZtZ1ntBx0HIO42eUnQ" })
+                const amount = orderData.totalAmount*100
+                var options = {
+                amount: 50000,  // amount in the smallest currency unit
+                currency: "INR",
+                receipt: "order_rcptid_11"
+                };
+                instance.orders.create(options, (err, order)=> {
+                console.log(order);
+                if(!err){
+                    console.log("! err worked")
+                    order.key_id = RAZORPAY_ID_KEY;
+                    res
+                    .status(200)
+                    .json({
+                        success: true,
+                        orderData:order,
+                        key_id:RAZORPAY_ID_KEY,
+                        order_id:orderData.orderId,
+                        totalAmount:amount,
+                        successMessage: "Order Placed successfully.",
+                    });
+
+                }
                 });
+          
         }
 
 

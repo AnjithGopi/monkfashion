@@ -76,9 +76,30 @@ const loadHome = async(req,res)=>{
 
 const loadUserList = async(req,res)=>{
     try{
-        const userData = await User.find({isAdmin:false})
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 2;
+        const skip = (page - 1) * limit;
+
+        var search = '';
+        if(req.query.search){
+            search = req.query.search;
+        }
+
+
+        const userData = await User.find({isAdmin:false,
+        
+            $or:[
+                {name:{$regex:'.*'+search+'.*',$options:'i'}},
+                {email:{$regex:'.*'+search+'.*',$options:'i'}}
+            ]
+
+        })
+        .skip(skip)
+        .limit(limit);
+        const totalUsers = await User.countDocuments();
+        const totalPages = Math.ceil(totalUsers / limit);
         // console.log("USer dataaa",userData)
-        res.render('user-list',{users:userData})
+        res.render('user-list',{users:userData,currentPage: page,totalPages: totalPages,})
     }catch(error){
         console.log(error.message)
     }

@@ -27,14 +27,16 @@
 
     <!-- sweet alet css link  -->
     <!-- Include SweetAlert 2 CSS and JS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
   </head>
 
   <body>
     <div class="screen-overlay"></div>
-<%- include('./aside')-%>
-   
+    <%- include('./aside')-%>
+
     <main class="main-wrap">
       <header class="main-header navbar">
         <div class="col-search">
@@ -177,11 +179,15 @@
           <header class="card-header">
             <div class="row gx-3">
               <div class="col-lg-4 col-md-6 me-auto">
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  class="form-control"
-                />
+                <form action="">
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    class="form-control"
+                    name="search"
+                  />
+                  <button class="btn btn-light bg" type="submit"> <i class="material-icons md-search"></i></button>
+                </form>
               </div>
               <div class="col-lg-2 col-md-3 col-6">
                 <select class="form-select">
@@ -231,7 +237,7 @@
                     <td><%= users[i].mobile%></td>
                     <!-- <td><span class="badge rounded-pill alert-success">Active</span></td> -->
                     <td>
-                      <% if(users[i].isActive == 1 ) {%>
+                      <% if(users[i].isActive==1 ) {%>
                       <span class="badge rounded-pill alert-success"
                         >Active</span
                       >
@@ -250,19 +256,21 @@
                         >View details</a
                       > -->
                       <a href="/admin/editUser?id=<%-users[i].id-%>"
-                        ><button class="rounded m-3 btn btn-sm btn-brand rounded font-sm mt-15">Edit</button></a
+                        ><button
+                          class="rounded m-3 btn btn-sm btn-brand rounded font-sm mt-15"
+                        >
+                          Edit
+                        </button></a
                       >
                       <button
                         class="rounded m-3 btn btn-sm btn-danger rounded font-sm mt-15"
                         onclick="confirmStatusChange('<%= users[i].id %>','<%= users[i].isActive %>')"
                       >
-                       Block/Unblock
+                        Block/Unblock
                       </button>
                     </td>
                   </tr>
                   <% } } else{ %> Users Not Found <% } %>
-                  
-                  
                 </tbody>
               </table>
               <!-- table-responsive.// -->
@@ -271,26 +279,32 @@
           <!-- card-body end// -->
         </div>
         <!-- card end// -->
+       
+        <!-- Pagination  -->
         <div class="pagination-area mt-15 mb-50">
           <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-start">
-              <li class="page-item active">
-                <a class="page-link" href="#">01</a>
-              </li>
-              <li class="page-item"><a class="page-link" href="#">02</a></li>
-              <li class="page-item"><a class="page-link" href="#">03</a></li>
-              <li class="page-item">
-                <a class="page-link dot" href="#">...</a>
-              </li>
-              <li class="page-item"><a class="page-link" href="#">16</a></li>
-              <li class="page-item">
-                <a class="page-link" href="#"
-                  ><i class="material-icons md-chevron_right"></i
-                ></a>
-              </li>
-            </ul>
+              <ul class="pagination justify-content-start">
+                  <% if (currentPage > 1) { %>
+                      <li class="page-item">
+                          <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                      </li>
+                  <% } %>
+      
+                  <% for (let i = 1; i <= totalPages; i++) { %>
+                      <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                          <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                      </li>
+                  <% } %>
+      
+                  <% if (currentPage < totalPages) { %>
+                      <li class="page-item">
+                          <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                      </li>
+                  <% } %>
+              </ul>
           </nav>
-        </div>
+      </div>
+
       </section>
       <!-- content-main end// -->
       <footer class="main-footer font-xs">
@@ -306,21 +320,22 @@
             ©, Evara - HTML Ecommerce Template .
             <script>
               function confirmStatusChange(userId, active) {
-                  const confirmationMessage = "Are you sure you want to change the status of the user?";
+                const confirmationMessage =
+                  "Are you sure you want to change the status of the user?";
 
-                  Swal.fire({
-                      title: 'Confirmation',
-                      text: confirmationMessage,
-                      icon: 'question',
-                      showCancelButton: true,
-                      confirmButtonText: 'Yes',
-                      cancelButtonText: 'No'
-                  }).then((result) => {
-                      if (result.isConfirmed) {
-                          // If the user confirms, navigate to the changeStatus route
-                          window.location.href = `/admin/changeStatus?id=${userId}&admin=${active}`;
-                      }
-                  });
+                Swal.fire({
+                  title: "Confirmation",
+                  text: confirmationMessage,
+                  icon: "question",
+                  showCancelButton: true,
+                  confirmButtonText: "Yes",
+                  cancelButtonText: "No",
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    // If the user confirms, navigate to the changeStatus route
+                    window.location.href = `/admin/changeStatus?id=${userId}&admin=${active}`;
+                  }
+                });
               }
 
               // Function to display a confirmation dialog
@@ -339,7 +354,7 @@
       </footer>
     </main>
     <!-- Sweet alert Js link  -->
-   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
     <script src="/static/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/static/admin-assets/js/vendors/bootstrap.bundle.min.js"></script>

@@ -604,7 +604,7 @@ const loadChangePasswordOtp = async (req,res) =>{
         res.render('otp2')
     }catch(error){
         console.log(error.message)
-    }
+    } 
 }
 
 const clearOtp = async (req,res) =>{
