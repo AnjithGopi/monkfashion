@@ -49,6 +49,8 @@ user_route.post('/login',userController.verifyLogin);
 user_route.get('/home',userController.loadHome);
 // Route to load the single product 
 user_route.get('/products',auth.isLogin,userController.loadProduct);
+// Route to view all Products
+user_route.get('/user/allProducts',userController.loadAllProducts);
 // Route to Logout the User
 user_route.get('/logout',auth.isLogin,userController.logoutUser)
 // To Load the Cart page
@@ -70,6 +72,7 @@ user_route.post('/addAddress',auth.isLogin,orderController.addAddress)
 // user_route.get('/addAddress',orderController.addAddress)
 
 user_route.post('/home/cart/checkout/placeorder',auth.isLogin,orderController.placeOrder)
+user_route.post('/home/cart/checkout/razorpay',auth.isLogin,orderController.razorpay)
 
 // User profile
 user_route.get('/home/profile',auth.isLogin,userController.loadProfile)

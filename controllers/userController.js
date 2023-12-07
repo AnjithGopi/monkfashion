@@ -561,9 +561,9 @@ const changePasswordSendOtp = async(req,res)=>{
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: 'abhilash.brototype@gmail.com',
+                user: process.env.EMAIL,
                 // pass: 'nfjy xgfz fyxo rimf',
-                pass:'simf cqwp wvxj bent',
+                pass:process.env.EMAIL_PASSWORD,
 
             },
         });
@@ -572,7 +572,7 @@ const changePasswordSendOtp = async(req,res)=>{
         req.session.changePassword = otp
         console.log("sendmail - generatd-otp:",otp)
         const mailOptions = {
-            from: 'abhilash.brototype@gmail.com',
+            from: process.env.EMAIL,
             to: userData.email,
             subject: 'Verification Mail',
             html: `
@@ -696,6 +696,24 @@ const loadOrderDetails = async (req,res)=>{
         console.log(error.message)
     }
 }
+const loadAllProducts = async(req,res)=>{
+    try{
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 3;
+        const skip = (page - 1) * limit;
+        const totalProducts = await Product.countDocuments();
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        console.log("Load all producty worked")
+        const productData = await Product.find({isDeleted:false,isActive:true}).populate('categoryId').skip(skip).limit(limit);
+        console.log("All Product data",productData)
+        console.log("All Product data c:::",productData[1].categoryId.name)
+        res.render("allProducts",{products:productData,  currentPage: page,  totalPages: totalPages,})
+
+    }catch(error){
+        console.log(error.message)
+    }
+}
 
 
 module.exports ={
@@ -725,7 +743,8 @@ module.exports ={
     changePasswordSendOtp,
     clearOtp,
     cancelOrder,
-    loadOrderDetails
+    loadOrderDetails,
+    loadAllProducts
    
     
 

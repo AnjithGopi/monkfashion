@@ -461,7 +461,7 @@
 
                                         <div class="custome-radio">
                                             <input class="form-check-input" required="" type="radio"
-                                                name="payment_option" value="Paypal" id="exampleRadios5"  />
+                                                name="payment_option" value="Online" id="exampleRadios5"  />
                                             <label class="form-check-label" for="exampleRadios5"
                                                 data-bs-toggle="collapse" data-target="#paypal"
                                                 aria-controls="paypal">Paypal</label>
@@ -492,14 +492,17 @@
      function placeOrder() {
        
         const paymentForm = document.getElementById('myForm');
+        const totalCartValue = document.getElementById('totalCartValue').innerText;
+        console.log("subtotal::",totalCartValue)
 
         // Find the selected radio button
-        const selectedRadioButton = paymentForm.querySelector('input[name="payment_option"]:checked');
+        const selectedRadioButtonPayment = paymentForm.querySelector('input[name="payment_option"]:checked');
         const selectedRadioButtonAddress = paymentForm.querySelector('input[name="address"]:checked');
 
+
         // Check if a radio button is selected
-        if (selectedRadioButton) {
-            const selectedValuePayment = selectedRadioButton.value;
+        if (selectedRadioButtonPayment && selectedRadioButtonAddress) {
+            const selectedValuePayment = selectedRadioButtonPayment.value;
             const selectedValueAddress = selectedRadioButtonAddress.value;
             console.log('Selected Payment Option:', selectedValuePayment);
             console.log('Selected Address:', selectedValueAddress);
@@ -514,7 +517,28 @@
                 }).then((result) => {
                 if (result.isConfirmed) {
                     // Handle the confirmed action here
+                    if( selectedValuePayment == "Online"){
+                        paymentRazorpay(selectedValuePayment,selectedValueAddress,totalCartValue)
+
+                    }else{
+                        let paymentStatus = "Pending"
+                        sendOrderToBackend(selectedValuePayment,selectedValueAddress,paymentStatus)
+                    }
+                    
+                    
               
+
+                } else {
+                    // Handle the canceled action here
+                    Swal.fire('Cancelled', 'Order cancelled sucessfully ', 'info');
+                }
+                });
+            
+        }
+    }
+
+    function sendOrderToBackend(paymentMethod,address,paymentStatus){
+        console.log("SEND ORDER BACKEND FUNCTION RECIEVED")
 
         fetch('/home/cart/checkout/placeorder', {
                 method: 'POST',
@@ -522,8 +546,10 @@
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    addressIndex: selectedValueAddress,
-                    paymentMethod: selectedValuePayment,
+                    addressIndex: address,
+                    paymentMethod: paymentMethod,
+                    paymentStatus: paymentStatus
+                    
                     
                 }),
             })
@@ -537,13 +563,72 @@
 
                  }
                  if (data.success) {
-    // console.log("Success worked");
-    // console.log(data.key_id);
-    // console.log(data.orderData);
-    // console.log("total amount",data.orderData.totalAmount);
-    // console.log(typeof(data.orderData.totalAmount));
-    // console.log("order id",data.orderData.orderId);
-    // console.log(typeof(data.orderData.totalAmount));
+                    console.log("order send backend Success worked");
+                    // alert("Send to backend success")
+                    Swal.fire({
+                                    title: 'Success',
+                                    icon: 'success',
+                                    confirmButtonText: 'Close',
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        Swal.close();
+                                        // Redirect to the home page
+                                        window.location.href = '/home'; // Change this to the actual URL of your home page
+                                    }
+                                });
+                    // console.log(data.key_id);
+                    // console.log(data.orderData);
+                    // console.log("total amount",data.orderData.totalAmount);
+                    // console.log(typeof(data.orderData.totalAmount));
+                    // console.log("order id",data.orderData.orderId);
+                    // console.log(typeof(data.orderData.totalAmount));
+                  
+
+
+                    
+
+                 } else{
+                    alert('FAILEDD')
+                 }
+
+            })
+            .catch(error => {
+                console.error('Error updating quantity:', error);
+            });
+         
+        }  
+        
+        
+    function  paymentRazorpay(paymentMethod,address,cartValue){
+        console.log("PAYMENT FUNCTION RECIEVED")
+        fetch('/home/cart/checkout/razorpay', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    addressIndex: address,
+                    paymentMethod: paymentMethod,
+                    cartValue :cartValue
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("got the response of...")
+                // location.reload();
+              
+                if( data.warningMessage){
+                     toastr.warning(data.warningMessage);
+
+                 }
+                 if (data.success) {
+    console.log("Success worked");
+    console.log(data.key_id);
+    console.log(data.orderData);
+    console.log("total amount",data.orderData.totalAmount);
+    console.log(typeof(data.orderData.totalAmount));
+    console.log("order id",data.orderData.id);
+    console.log(typeof(data.orderData.totalAmount));
                     const amount = JSON.stringify(data.orderData.totalAmount)*100;
                     console.log(amount)
                     console.log(typeof(amount))
@@ -554,29 +639,22 @@
                         "name": "Monk Fashion",
                         "description": "Test Transaction",
                         "image": "https://example.com/your_logo",
-                        "order_id":data.orderData.orderId,
+                        "order_id":data.orderData.id,
                         "handler": function (status) {
-                            toastr.success("Payment Success");
-                            Swal.fire({
-                                            title: 'Sucess',
-                                        
-                                            icon: 'success',
-                                            confirmButtonText: 'Close',
-                                            }).then((result) => {
-                                                // Check if the alert was confirmed
-                                                console.log("redirect 1")
+                            // toastr.success("Payment Success");
+                            if (status.razorpay_payment_id) {
+                                // Payment success
+                                toastr.success("Payment Success");
+                        let paymentStatus = "Success"
 
-                                                if (result.isConfirmed) {
-                                                    Swal.close();
-                                                    console.log("redirect2")
-                                                    // Redirect to the home page
-                                                    window.location.href = '/home'; // Change this to the actual URL of your home page
-                                                    console.log("redirect3")
-                                                    // window.location.href = '/login'
-                                                    console.log("redirect3")
+                        sendOrderToBackend(paymentMethod,address,paymentStatus)
 
-                                                }
-                                            });
+                               
+                             } else {
+                                // Payment failed
+                                toastr.error("Payment Failed");
+                                // alert("Payment failed");
+                            }
                         },
                         "prefill": {
                             "name": "Abhilash V S",
@@ -600,36 +678,7 @@
                     rzp1.open();
 
 
-                    //  toastr.success(data.successMessage);
-                    //  Swal.fire({
-                    //         title: 'Invoice',
-                    //         html: `
-                    //             <div style="text-align: left;">
-                    //             <p><strong>OrderId:</strong> ${data.orderData.orderId}</p>
-                    //             <p><strong>Payment Status:</strong>  ${data.orderData.paymentStatus}</p>
-                    //             <p><strong>Payment Method:</strong>  ${data.orderData.paymentMethod}</p>
-                                
-                    //             <hr>
-                    //             <p><strong>Total:</strong> ${data.orderData.totalAmount}</p>
-                    //             </div>
-                    //         `,
-                    //         icon: 'success',
-                    //         confirmButtonText: 'Close',
-                    //         }).then((result) => {
-                    //             // Check if the alert was confirmed
-                    //             console.log("redirect 1")
-
-                    //             if (result.isConfirmed) {
-                    //                 Swal.close();
-                    //                 console.log("redirect2")
-                    //                 // Redirect to the home page
-                    //                 window.location.href = '/home'; // Change this to the actual URL of your home page
-                    //                 console.log("redirect3")
-                    //                 // window.location.href = '/login'
-                    //                 console.log("redirect3")
-
-                    //             }
-                    //         });
+                    
 
                  } else{
                     alert('FAILEDD')
@@ -639,16 +688,7 @@
             .catch(error => {
                 console.error('Error updating quantity:', error);
             });
-         
-                } else {
-                    // Handle the canceled action here
-                    Swal.fire('Cancelled', 'Order cancelled sucessfully ', 'info');
-                }
-                });
-            
-        }
     }
-
        
 
     </script>
