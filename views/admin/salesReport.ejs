@@ -1,0 +1,202 @@
+<%- include('../../partials/adminHeader')-%>
+
+    <main class=" md-12">
+    
+        <section class="content-main md-12">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Order List </h2>
+                </div>
+                 <div>
+                    <a href="" onclick="printPage()" class="btn btn-primary"><i class="text-muted material-icons md-post_add"></i>Download Report</a>
+                </div>
+              
+            </div>
+            <div class="row ">
+                <hr >
+                <div class="col-md-9">
+                    <div class="card mb-4">
+                        <header class="card-header">
+                            <div class="row gx-3 d-flex">
+                                
+                                    <!-- <div class="col-lg-4 col-md-6 me-auto">
+                                        <input type="text" placeholder="Search..." class="form-control">
+                                         <input type="submit" class="m-2 btn rounded-3 btn-primary" value="Search"/>
+                                    </div> -->
+                                    <div class=" col-lg-4 col-md-6 me-auto">
+        
+                                        <form action="">
+                                          <div class=" d-flex ">
+                                                <input list="search_terms" type="text" name="search"  class="form-control" placeholder="Search term">
+                                                <button class="btn btn-light bg" type="submit"> <i class="material-icons md-search"></i></button>
+                                            </div>
+                                        </form>
+                                    </div>
+        
+                                    <div class=" col-lg-2 col-6 col-md-3 mx-auto">
+        
+                                        <form action="">
+                                         <div class="d-flex">
+                                             <input type="date" class="form-control" name="fromDate">
+                                             <input type="date" class="form-control" name="toDate">
+                                           
+                                             <button class="btn btn-light bg" type="submit" > <i class="material-icons md-search"></i></button>
+                 
+                                         </div>
+                                     </form>
+                                    </div>
+                           
+                            </div>
+                        </header> <!-- card-header end// -->
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table  table-striped table-hover" >
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Customer name</th>
+                                            <th>Price</th>
+                                            <th>Payment Method</th>
+                                            <th>Payment Status</th>
+                                            <th>Order Status</th>
+                                            <th>Date</th>
+                                            <th class="text-end"> Action </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody  style="border-width: 3px;" >
+                                        <% if (orders.length > 0) { %>
+                                            <% orders.forEach((orderItem)=>{ %>
+                                        <tr>
+                                            <td><%= orderItem.orderId %></td>
+                                            <td><b><%= orderItem.userDetails.name %></b></td>
+                                            <td><%= orderItem.totalAmount %></td>
+                                           
+                                            <td>
+                                                <% if ( orderItem.paymentMethod  == "Online") { %>
+                                                    <span class="badge rounded-pill  text-primary ">
+                                                        <%= orderItem.paymentMethod %>
+                                                      </span>
+
+                                                <% } else {%>
+                                                        <span class="badge rounded-pill  text-success ">
+                                                            <%= orderItem.paymentMethod %>
+                                                          </span>
+                                                        <% }%>
+                                            </td>
+                                           <td><span class="badge rounded-pill alert-success"><%= orderItem.paymentStatus %></span></td>
+                                            <td>
+                                                <% if ( orderItem.orderStatus  == "Cancelled") { %>
+                                                    <span class="badge rounded-pill  alert-danger ">
+                                                        <%= orderItem.orderStatus %>
+                                                    </span>
+
+                                                <% } else {%>
+                                                        <span class="badge rounded-pill  alert-success ">
+                                                            <%= orderItem.orderStatus %>
+                                                        </span>
+                                                        <% }%>
+                                            </td>
+                                            <td><%=orderItem.orderDate.toLocaleDateString()%></td>
+                                            <td class="text-end">
+                                                <a href="/admin/orders/orderDetails?id=<%=orderItem._id%>" class="btn btn-md rounded font-sm">Detail</a>
+                                               
+                                            </td>
+                                        </tr>
+                                        <%}); %>
+                                        <%  } else {%>
+                                            <p>No Orders found</p>
+                                            <%}%>
+                                       
+                                    </tbody>
+                                </table>
+                            </div> <!-- table-responsive //end -->
+                        </div> <!-- card-body end// -->
+                    </div> <!-- card end// -->
+                </div>
+                <div class="col-md-3">
+                    <div class="card mb-4">
+                        <div class="card-body ">
+                            <h5 class="mb-3 d-flex flex-column align-items-center mx-auto">Report</h5>
+                            <form>
+                                <div class="mb-4 d-flex flex-column align-items-center">
+                                    <label for="order_id" class="form-label fs-6 font-weight-bold">Total no of Orders</label>
+                                    <br> <span class="fs-6 font-weight-bold text-success mx-auto"><strong><%= locals.totalOrders ? totalOrders : ""%></strong></span>
+                                    <span></span>
+                                </div>
+                                <div class="mb-4 d-flex flex-column align-items-center">
+                                    <label for="order_customer" class="form-label  fs-6  font-weight-bold">Number of Customer</label>
+                                   <br>  <span class="fs-6 font-weight-bold text-success mx-auto"><strong><%= locals.users ? users : ""%></strong></span>
+                                </div>
+                                <div class="mb-4 d-flex flex-column align-items-center">
+                                    <label for="order_customer" class="form-label fs-6  font-weight-bold">Online Payments</label>
+                                   <br>  <span class="fs-6 font-weight-bold text-success mx-auto"><strong><%= locals.onlinePayments ? onlinePayments : 0%></strong></span>
+                                </div>
+                                <div class="mb-4 d-flex flex-column align-items-center">
+                                    <label for="order_customer" class="form-label fs-6  font-weight-bold">Cash on Delivery</label>
+                                  <br>   <span class="fs-6 font-weight-bold text-success mx-auto"><strong><%= locals.offlinePayments ? offlinePayments : 0%></strong></span>
+                                </div>
+                                <div class="mb-4  d-flex flex-column align-items-center">
+                                    <label for="order_customer" class="form-label fs-6  font-weight-bold">Cancelled Orders</label>
+                                   <br>  <span class="fs-6 font-weight-bold text-danger mx-auto"><strong><%= locals.cancelledOrders ? cancelledOrders : 0 %></strong></span>
+                                </div>
+
+                                <div class="mb-4 d-flex flex-column align-items-center">
+                                    <label for="order_total" class="form-label fs-6 ">Total</label>
+                                    <span class="fs-4 text-success"><strong >₹ <%= locals.totalAmount ? totalAmount : ""%></strong></span>
+
+                                </div>
+                                
+                            </form>
+                        </div>
+                    </div> <!-- card end// -->
+                </div>
+            </div>
+            <div class="pagination-area mt-15 mb-50">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                        <li class="page-item"><a class="page-link" href="#">02</a></li>
+                        <li class="page-item"><a class="page-link" href="#">03</a></li>
+                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                        <li class="page-item"><a class="page-link" href="#">16</a></li>
+                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </section> <!-- content-main end// -->
+        <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                <div class="col-sm-6">
+                    <script>
+                    document.write(new Date().getFullYear())
+                    </script> ©, Mong Fashions 
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        function printPage() {
+          window.print();
+        }
+    </script>
+
+
+
+    <script src="/static/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/static/admin-assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/static/admin-assets/js/vendors/select2.min.js"></script>
+    <script src="/static/admin-assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/static/admin-assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="/static/admin-assets/js/main.js" type="text/javascript"></script>
+</body>
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-orders-2.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:22 GMT -->
+</html>

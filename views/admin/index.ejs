@@ -69,7 +69,7 @@
                     <p>Whole data about your business here</p>
                 </div>
                 <div>
-                    <a href="#" class="btn btn-primary"><i class="text-muted material-icons md-post_add"></i>Create report</a>
+                    <a href="/admin/dashboard/salesReport" class="btn btn-primary"><i class="text-muted material-icons md-post_add"></i>Create report</a>
                 </div>
             </div>
             <div class="row">
@@ -78,8 +78,8 @@
                         <article class="icontext">
                             <span class="icon icon-sm rounded-circle bg-primary-light"><i class="text-primary material-icons md-monetization_on"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Revenue</h6>
-                                <span>$13,456.5</span>
+                                <h6 class="mb-1 card-title">Active Users</h6>
+                                <span><%= locals.userCount ? userCount : ""%></span>
                                 <span class="text-sm">
                                     Shipping fees are not included
                                 </span>
@@ -92,7 +92,7 @@
                         <article class="icontext">
                             <span class="icon icon-sm rounded-circle bg-success-light"><i class="text-success material-icons md-local_shipping"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Orders</h6> <span>53.668</span>
+                                <h6 class="mb-1 card-title">Orders</h6> <span><%= locals.orderCount ? orderCount : ""%></span>
                                 <span class="text-sm">
                                     Excluding orders in transit
                                 </span>
@@ -105,7 +105,7 @@
                         <article class="icontext">
                             <span class="icon icon-sm rounded-circle bg-warning-light"><i class="text-warning material-icons md-qr_code"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Products</h6> <span>9.856</span>
+                                <h6 class="mb-1 card-title">Products</h6> <span><%= locals.productCount ? productCount : ""%></span>
                                 <span class="text-sm">
                                     In 19 Categories
                                 </span>

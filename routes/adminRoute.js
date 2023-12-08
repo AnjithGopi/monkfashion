@@ -69,6 +69,9 @@ admin_route.get('/orders',auth.isLogin,adminController.loadOrders)
 admin_route.post('/orders/changeStatus',auth.isLogin,adminController.changeOrderStatus)
 admin_route.get('/orders/orderDetails',auth.isLogin,adminController.loadOrderDetails)
 
+// Admin Dashboars
+admin_route.get('/dashboard/salesReport',adminController.loadSalesReport)
+
 
 
 module.exports = admin_route

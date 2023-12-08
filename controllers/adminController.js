@@ -1,4 +1,6 @@
-const Order = require("../models/orderModel")
+// const { default: orders } = require("razorpay/dist/types/orders");
+const Order = require("../models/orderModel");
+const Product = require("../models/productModal");
 const User = require("../models/userModal")
 
 const bcrypt = require('bcrypt')
@@ -67,7 +69,11 @@ const logout = async (req,res)=>{
 
 const loadHome = async(req,res)=>{
     try {
-        res.render('index')
+        const userCount = await User.countDocuments({isActive:true,isAdmin:false})
+        const productCount = await Product.countDocuments({isActive:true,isDeleted:false})
+        const orderCount = await Order.countDocuments()
+        console.log(userCount)
+        res.render('index',{userCount,productCount,orderCount})
     } catch (error) {
         console.log(error.message)
         
@@ -197,6 +203,150 @@ const loadOrderDetails = async (req,res)=>{
     }
 }
 
+const loadSalesReport = async (req,res)=>{
+    try {
+        var search = '';
+        var startDate = null;
+        var endDate =null ;
+        // var category = '';
+        const userCount = await User.countDocuments({isActive:true})
+
+        if(req.query.search){
+            search = req.query.search;
+        }
+        console.log("Search Key :",search)
+        if( req.query.fromDate && req.query.toDate){
+            startDate = new Date(req.query.toDate)
+            endDate =new Date(req.query.fromDate)
+        const dateData = await Order.aggregate([
+            {
+                $match: {
+                    $or: [
+                        { orderDate: { $gt:new Date(req.query.fromDate),$lt:new Date(req.query.toDate) } }
+                    ]
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'userDetails'
+                }
+            },
+            {
+                $unwind: '$userDetails'
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'items.productId',
+                    foreignField: '_id',
+                    as: 'productDetails'
+                }
+            },
+            {
+                $unwind: '$productDetails'
+            },
+            {
+                $sort:{
+                    orderDate:-1
+                }
+            }
+        ]);
+        const orderCounts =  getSalesReportCounts(dateData)
+        res.render("salesReport",{orders:dateData,users:userCount,totalOrders:dateData.length,onlinePayments:orderCounts.filterPaymentOnline,offlinePayments:orderCounts.filterPaymentOffline,cancelledOrders:orderCounts.filterOrderCancelled,totalAmount:orderCounts.totalSum})
+
+        res.render("salesReport",{orders:dateData})
+        return
+
+        }
+
+        const orderData = await Order.aggregate([
+            {
+                $match: {
+                    $or: [
+                        { orderId: { $regex: '.*' + search + '.*', $options: 'i' } },
+                        { totalAmount: { $eq: parseFloat(search) } }
+                    ]
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'userDetails'
+                }
+            },
+            {
+                $unwind: '$userDetails'
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'items.productId',
+                    foreignField: '_id',
+                    as: 'productDetails'
+                }
+            },
+            {
+                $unwind: '$productDetails'
+            },
+            {
+                $sort:{
+                    orderDate:-1
+                }
+            }
+            
+              
+            //   console.log("order Data " ,orderData.length);
+            // // console.log(orderData[1].orderDate)
+            // console.log(startDate)
+            // console.log(new Date(endDate))
+            // console.log(endDate)
+            // const dateData = await Order.find({orderDate: { $gte: startDate }})
+    
+            // const dateData = await Order.find({ orderDate: { $gt:new Date(req.query.fromDate),$lt:new Date(req.query.toDate) } })
+    // console.log(dateData);
+    
+            // console.log("order dat ::: " ,dateData.length);
+        ]);
+
+
+        const orderCounts = getSalesReportCounts(orderData)
+        console.log("SlaesData :",orderCounts)
+        const k = orderCounts
+
+        res.render("salesReport",{orders:orderData,users:userCount,totalOrders:orderData.length,onlinePayments:orderCounts.filterPaymentOnline,offlinePayments:orderCounts.filterPaymentOffline,cancelledOrders:orderCounts.filterOrderCancelled,totalAmount:orderCounts.totalSum})
+    } catch (error) {
+        console.log(error.message)
+        
+    }
+
+    function getSalesReportCounts(orderData){
+                  
+        const filterPaymentOnline = orderData.filter(obj => obj.paymentMethod === "Online");
+        const filterPaymentOffline = orderData.filter(obj => obj.paymentMethod === "Cash On Delivery");
+        const filterOrderCancelled = orderData.filter(obj => obj.orderStatus === "Cancelled");
+        const totalSum = orderData.reduce((sum,obj) => {
+        return sum+=obj.totalAmount
+        },0)
+
+        console.log(filterPaymentOnline.length);
+        console.log(filterPaymentOffline.length);
+        console.log(filterOrderCancelled.length);
+        console.log(totalSum)
+        let salesData={
+            filterPaymentOnline:filterPaymentOnline.length,
+            filterPaymentOffline:filterPaymentOffline.length,
+            filterOrderCancelled:filterOrderCancelled.length,
+            totalSum:totalSum
+        }
+        return salesData
+    }
+}
+
 module.exports ={
    loadLogin,
    verifyLogin,
@@ -206,7 +356,8 @@ module.exports ={
    changeStatus,
    loadOrders,
    changeOrderStatus,
-   loadOrderDetails
+   loadOrderDetails,
+   loadSalesReport
   
 }
     

@@ -1,7 +1,9 @@
 // Mongo db Connection code
 
-const mongoose = require("mongoose");
-mongoose.connect("mongodb://127.0.0.1:27017/mongfashion");
+const dataBase = require('./config/mongo')
+dataBase.dbConnect();
+// const mongoose = require("mongoose");
+// mongoose.connect("mongodb://127.0.0.1:27017/mongfashion");
 
 // Express 
 const express = require("express");
@@ -54,7 +56,7 @@ app.get('*',(req,res)=>{
 app.use(errorMiddleware);
 
 app.listen(PORT,()=>{
-    console.log("Server is running");
+    console.log(`Server Started on http://localhost:${process.env.PORT}`)
 });
 
 
