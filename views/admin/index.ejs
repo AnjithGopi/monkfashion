@@ -1,4 +1,10 @@
 <%- include('../../partials/adminHeader')-%>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Include Toastr CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+<!-- Include Toastr JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 </head>
 
@@ -132,9 +138,11 @@
                     <div class="card mb-4">
                         <article class="card-body">
                             <h5 class="card-title">Sale statistics</h5>
+                            <!-- <canvas id="monthlySalesChart" height="120px"></canvas> -->
                             <canvas id="myChart" height="120px"></canvas>
                         </article>
                     </div>
+                    
                     <div class="row">
                         <div class="col-lg-5">
                             <div class="card mb-4">
@@ -181,6 +189,7 @@
                                 </article>
                             </div>
                         </div>
+
                         <div class="col-lg-7">
                             <div class="card mb-4">
                                 <article class="card-body">
@@ -544,8 +553,163 @@
             </div>
         </footer>
     </main>
-    
+
     <script>
+
+function fillMissingMonths(data) {
+  const filledData = [];
+  const monthSet = new Set(data.map(item => item._id));
+
+  for (let month = 1; month <= 12; month++) {
+    const existingData = data.find(item => item._id === month);
+    if (existingData) {
+      filledData.push(existingData);
+    } else {
+      filledData.push({ _id: month, totalOrders: 0 });
+    }
+  }
+
+  return filledData;
+}
+
+        // Function to fetch monthly orders data
+async function fetchMonthlyOrdersData() {
+    // Perform the API call to fetch data
+    const response = await fetch('/admin/home/chart');
+    const data = await response.json();
+    return data;
+}
+
+// Function to update the chart with new data
+async function updateChart() {
+    try {
+        // Fetch the latest monthly orders data
+        const chartFetchData = await fetchMonthlyOrdersData();
+        // Assuming monthlyOrders is your existing data
+const filledMonthlyOrders = fillMissingMonths(chartFetchData.monthlyOrders);
+const filledMonthlySales = fillMissingMonths(chartFetchData.monthlySales);
+console.log("1 :",filledMonthlyOrders)
+console.log("2 :",filledMonthlySales)
+
+// Now use filledMonthlyOrders to update your chart
+const months = filledMonthlyOrders.map(item => item._id);
+const totalOrdersData = filledMonthlyOrders.map(item => item.totalOrders);
+
+const monthsSales = filledMonthlySales.map(item => item._id);
+const totalOrdersDataSales = filledMonthlySales.map(item => item.totalOrders);
+
+// Assuming chart is the reference to your existing Chart.js chart
+const monthlyOrdersDatasetIndex = 1;
+
+// Update the chart's data
+chart.data.datasets[2].data = totalOrdersDataSales;
+chart.update(); // Update the chart to reflect the changes
+chart.data.datasets[monthlyOrdersDatasetIndex].data = totalOrdersData;
+chart.update(); // Update the chart to reflect the changes
+
+
+       
+
+    } catch (error) {
+        console.error('Error fetching or updating data:', error);
+    }
+}
+
+// Check if the chart element exists before creating the chart
+if ($('#myChart').length) {
+    var ctx = document.getElementById('myChart').getContext('2d');
+
+    // Create the initial chart
+    var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [
+                {
+                    label: 'Sales',
+                    tension: 0.3,
+                    fill: true,
+                    backgroundColor: 'rgba(44, 120, 220, 0.2)',
+                    borderColor: 'rgba(44, 120, 220)',
+                    data: [18, 17, 4, 3, 2, 20, 25, 31, 25, 22, 20, 9]
+                },
+                {
+                    label: 'Monthly Orders',
+                    tension: 0.3,
+                    fill: true,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    data: [] // Empty initially
+                },
+                {
+                    label: 'Sales',
+                    tension: 0.3,
+                    fill: true,
+                    backgroundColor: 'rgba(44, 120, 220, 0.2)',
+                    borderColor: 'rgba(44, 120, 220)',
+                    data: []
+                }
+            ]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    labels: {
+                        usePointStyle: true,
+                    },
+                }
+            }
+        }
+    });
+
+    // Update the chart every 5 seconds (adjust the interval as needed)
+    setTimeout(updateChart, 2000);
+}
+
+    </script>
+
+    <!-- <script>
+        
+document.addEventListener('DOMContentLoaded', () => {
+    // Fetch monthly sales data from the backend
+    fetch('/admin/home/chart')
+        .then(response => response.json())
+        .then(monthlySalesData => {
+            // Extract months and sales data
+            const months = monthlySalesData.map(item => item._id);
+            const sales = monthlySalesData.map(item => item.totalSales);
+
+            // Get the canvas context
+            const ctx = document.getElementById('myChart').getContext('2d');
+
+            // Create a bar chart using Chart.js
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Monthly Sales',
+                        backgroundColor: 'rgba(44, 120, 220, 0.7)',
+                        borderColor: 'rgba(44, 120, 220)',
+                        borderWidth: 1,
+                        data: sales,
+                    }],
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                        },
+                    },
+                },
+            });
+        })
+        .catch(error => console.error('Error fetching data:', error));
+});
+
+    </script> -->
+    
+    <!-- <script>
         // Function to show a toast
         function showToast(message) {
           toastr.info(message);
@@ -555,7 +719,7 @@
         setInterval(() => {
           showToast('This is a toast alert!');
         }, 5000);
-      </script>
+      </script> -->
 
 
     <script src="/static/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
@@ -566,7 +730,7 @@
     <script src="/static/admin-assets/js/vendors/chart.js"></script>
     <!-- Main Script -->
     <script src="/static/admin-assets/js/main.js" type="text/javascript"></script>
-    <script src="/static/admin-assets/js/custom-chart.js" type="text/javascript"></script>
+    <!-- <script src="/static/admin-assets/js/custom-chart.js" type="text/javascript"></script> -->
 </body>
 
 

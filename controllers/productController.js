@@ -271,8 +271,6 @@ product.image = product.image.filter(image => !deletedImages.includes(image));
 
 module.exports = {
     loadAddProduct,
-
-    
     insertProduct,
     loadProduct,
     changeStatus,

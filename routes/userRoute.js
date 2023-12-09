@@ -94,6 +94,8 @@ user_route.get("/home/profile/updateProfile/otp",auth.isLogin,userController.loa
 user_route.post("/home/profile/updateProfile/otp",auth.isLogin,userController.changePasswordVerifyOtp)
 user_route.post("/home/profile/cancelOrder",auth.isLogin,userController.cancelOrder)
 user_route.get("/home/profile/order/orderDetails",auth.isLogin,userController.loadOrderDetails)
+user_route.post("/home/profile/order/orderDetails/cancelOrder",auth.isLogin,orderController.cancelSingleOrder)
+
 
 user_route.post("/clearOtp",auth.isLogin,userController.clearOtp)
 // user_route.p("/clearOtp",auth.isLogin,userController.clearOtp)

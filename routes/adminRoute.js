@@ -71,6 +71,7 @@ admin_route.get('/orders/orderDetails',auth.isLogin,adminController.loadOrderDet
 
 // Admin Dashboars
 admin_route.get('/dashboard/salesReport',adminController.loadSalesReport)
+admin_route.get('/home/chart',auth.isLogin,adminController.loadChart);
 
 
 

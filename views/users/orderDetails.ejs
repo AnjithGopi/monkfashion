@@ -87,10 +87,12 @@
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th width="40%">Product</th>
-                                            <th width="20%">Unit Price</th>
-                                            <th width="20%">Quantity</th>
-                                            <th width="20%" class="text-end">Total</th>
+                                            <th width="30%">Product</th>
+                                            <th width="14%">Unit Price</th>
+                                            <th width="14%">Quantity</th>
+                                            <th width="14%">Status</th>
+                                            <th width="14%">Total</th>
+                                            <th width="14%" class="text-end">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -106,8 +108,32 @@
                                                 </a>
                                             </td>
                                             <td>₹ <%= item.productId.salePrice %></td>
-                                            <td> <%= item.quantity %> </td>
-                                            <td class="text-end"> ₹<%= item.productId.salePrice * item.quantity %> </td>
+
+                                            <% if ( item.productStatus  == "Cancelled") { %>
+                                                <td> <%= item.cancelledQuantity %> </td>
+                                                <td class="text-danger">
+                                                    <%=item.productStatus%>
+                                                </td>
+                                                <td > ₹<%= item.productId.salePrice * item.cancelledQuantity %> </td>
+                                                <td class="text-end">
+                                                    <a href="#" class=" rounded font-sm"   >Refunded</a>
+                                                </td> 
+                                                   <% } else {%>
+
+                                                <td> <%= item.quantity %> </td>
+                                                <td>
+                                                    <%=item.productStatus%>
+                                                </td>
+                                                <td > ₹<%= item.productId.salePrice * item.quantity %> </td>
+                                                <td class="text-end">
+                                            <a href="#" class="btn btn-md rounded font-sm"   onclick="returnProduct('<%=item.productId._id%>','<%= order._id %>','<%=item.quantity%>')">Change Status</a>
+                                                </td>
+                                                    
+
+                                                    <% }%>
+
+
+                                           
                                         </tr>
                                         <% }); %>
                                       
@@ -134,6 +160,7 @@
                                                     </dl>
                                                 </article>
                                             </td>
+                                            
                                         </tr>
                                     </tbody>
                                 </table>
@@ -179,6 +206,71 @@
                 </div>
             </div>
         </footer>
+
+        <script>
+
+function returnProduct(productId, orderId,quantity) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'Please provide a reason for canceling the order:',
+        input: 'text',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, cancel it!',
+        cancelButtonText: 'No, keep it',
+        preConfirm: (reason) => {
+            if (!reason) {
+                Swal.showValidationMessage('Reason is required');
+            } else {
+                console.log(reason)
+                // If a reason is provided, proceed with the cancellation
+                return fetch("/home/profile/order/orderDetails/cancelOrder", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        orderId: orderId,
+                        productId: productId,
+                        cancelledQuantity:quantity,
+                        reason: reason,
+                    }),
+                });
+            }
+        },
+    })
+    .then((result) => {
+        if (result.isConfirmed) {
+            // Handle the response if needed
+            if (result.value && result.value.ok) {
+                Swal.fire('Cancelled!', 'Your order has been canceled.', 'success').then(()=>{
+                    window.location.reload()
+                })
+            } else {
+                Swal.fire('Error!', 'Failed to cancel the order.', 'error');
+            }
+        }
+    })
+    .catch((error) => {
+        console.error('Error during order cancellation:', error.message);
+        // Show an error message to the user if fetch fails
+        Swal.fire('Error!', 'Failed to cancel the order. Please try again.', 'error');
+    });
+}
+
+            
+            // function returnProduct(productId,orderId){
+            //     fetch("/home/profile/order/orderDetails/cancelOrder",{
+            //         method:'Post',
+            //         headers:{
+            //             'Content-Type':'application/json'
+            //         },
+            //         body:JSON.stringify({
+            //             orderId:orderId,
+            //             productId:productId
+            //         })
+            //     })
+            // }
+        </script>
     </main>
     <script src="/static/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/static/admin-assets/js/vendors/bootstrap.bundle.min.js"></script>
@@ -187,6 +279,15 @@
     <script src="/static/admin-assets/js/vendors/jquery.fullscreen.min.js"></script>
     <!-- Main Script -->
     <script src="/static/admin-assets/js/main.js" type="text/javascript"></script>
+
+    <!-- JS link (include this before your closing </body> tag) -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<!-- Add this to the head or before </body> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+
 </body>
 
 

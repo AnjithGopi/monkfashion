@@ -7,6 +7,7 @@ const { nextTick } = require('process');
 const Product = require('../models/productModal');
 const Order = require('../models/orderModel');
 const Cart = require('../models/cartModal');
+const Wallet = require('../models/walletModel');
 const { error } = require('console');
 
 const securePassword = async(password)=>{
@@ -291,11 +292,13 @@ const loadProfile = async(req,res)=>{
         console.log("Load profile recieved")
         const userId = req.session.user_id
         const userData = await User.findById(req.session.user_id)
-        const orderData = await Order.find({userId:userId})
+        const orderData = await Order.find({userId:userId}).sort({orderDate:-1})
         // console.log("ORder data :",orderData)
         // console.log(userData)
         // console.log(userData.address[0].fullName)
-        res.render('userProfile',{user:userData,order:orderData})
+        const walletData = await Wallet.find({userId:userId})
+        console.log(walletData)
+        res.render('userProfile',{user:userData,order:orderData,wallet:walletData[0].balance})
 
     }catch(error){
         console.log("Load profile catch recieved")
@@ -307,7 +310,9 @@ const loadProfile = async(req,res)=>{
         errorData.push(error.message)
         console.log("Error Data :",errorData)
         const orderData = await Order.find({userId:userId})
-        res.render('userProfile',{user:userData,errorMessage:"Failed Some error occurs ",order:orderData,error:errorData})
+        const walletData = await Wallet.find({userId:userId})
+        console.log(walletData)
+        res.render('userProfile',{user:userData,errorMessage:"Failed Some error occurs ",order:orderData,error:errorData,wallet:walletData[0].balance})
 
         console.log(error.message)
     }
@@ -690,7 +695,7 @@ const loadOrderDetails = async (req,res)=>{
         .populate('items.productId') 
         .exec();
     
-        console.log(orderData)
+        // console.log(orderData)
         res.render('orderDetails' ,{order:orderData})
     } catch (error) {
         console.log(error.message)

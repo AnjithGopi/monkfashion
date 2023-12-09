@@ -220,38 +220,46 @@
 <!-- Sweet alert Js link  -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 <script>
-    function displaySelectedImages(input) {
-        const previewContainer = document.getElementById('imagePreviewContainer');
-        previewContainer.innerHTML = '';
+   function displaySelectedImages(input) {
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    previewContainer.innerHTML = '';
 
-        for (const file of input.files) {
-            const reader = new FileReader();
+    for (const file of input.files) {
+        const reader = new FileReader();
 
-            reader.onload = function (e) {
-                const imagePreviewItem = document.createElement('div');
-                imagePreviewItem.classList.add('image-preview-item');
+        reader.onload = function (e) {
+            const imagePreviewItem = document.createElement('div');
+            imagePreviewItem.classList.add('image-preview-item');
 
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.alt = 'Product Image';
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.alt = 'Product Image';
 
-                const deleteButton = document.createElement('button');
-                deleteButton.type = 'button';
-                deleteButton.classList.add('btn', 'btn-sm', 'btn-danger');
-                deleteButton.textContent = 'Delete';
-                deleteButton.onclick = function () {
-                    deleteImage(imagePreviewItem);
-                };
+            // const deleteButton = document.createElement('button');
+            // deleteButton.type = 'button';
+            // deleteButton.classList.add('btn', 'btn-sm', 'btn-danger');
+            // deleteButton.textContent = 'Delete';
+            // deleteButton.onclick = function () {
+            //     deleteImage(imagePreviewItem);
+            // };
 
-                imagePreviewItem.appendChild(img);
-                imagePreviewItem.appendChild(deleteButton);
+            const customButton = document.createElement('button');
+            customButton.type = 'button';
+            customButton.classList.add('btn', 'btn-sm', 'btn-primary');
+            customButton.textContent = 'Custom Action';
+            // Add your custom action logic here
 
-                previewContainer.appendChild(imagePreviewItem);
-            };
+            imagePreviewItem.appendChild(img);
+            // imagePreviewItem.appendChild(deleteButton);
+            imagePreviewItem.appendChild(customButton);
 
-            reader.readAsDataURL(file);
-        }
+            previewContainer.appendChild(imagePreviewItem);
+        };
+
+        reader.readAsDataURL(file);
     }
+}
+
 
     let deletedImageNames = []; // Initialize an array to store deleted image names
 
@@ -301,11 +309,14 @@ function updateDeletedImagesInput(deletedImg) {
 
         for (const file of input.files) {
             const imageElement = document.createElement('img');
+            const customButton = document.createElement('button');//here
+
             imageElement.src = URL.createObjectURL(file);
             imageElement.alt = file.name;
             imageElement.className = 'selected-image';
 
             selectedImagesContainer.appendChild(imageElement);
+            selectedImagesContainer.appendChild(customButton);// added here
         }
     }
 </script>

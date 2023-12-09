@@ -2,6 +2,7 @@ const Cart = require("../models/cartModal");
 const Product = require("../models/productModal");
 const User = require("../models/userModal");
 const Order = require("../models/orderModel")
+const walletController = require("../controllers/walletController")
 const Razorpay = require('razorpay')
 const { v4: uuidv4 } = require('uuid');
 const RAZORPAY_ID_KEY = process.env.RAZORPAY_KEY_ID
@@ -540,6 +541,40 @@ const razorpay = async (req,res)=>{
         console.log(error.message)
     }
 }
+const cancelSingleOrder = async (req,res)=>{
+    try {
+       console.log("cancel order single received") 
+       console.log(req.body);
+       const userId = req.session.user_id
+       const {productId,orderId,cancelledQuantity,reason} = req.body
+       const particularOrder = await Order.findById(orderId)
+       const product = await Product.find({_id:productId})
+       const totalAmountOfCancelledProduct = product[0].salePrice * cancelledQuantity;
+       console.log("Total cancle amount :",totalAmountOfCancelledProduct) 
+       
+       const changeStatus = await Order.updateOne({_id:orderId,"items.productId":productId},{$inc:{'totalAmount':-totalAmountOfCancelledProduct},$set:{'items.$.productStatus':"Cancelled",'items.$.cancelledQuantity':cancelledQuantity,'items.$.reason':reason},$unset:{'items.$.quantity':0}})
+       console.log("product after changing ",changeStatus.totalAmount)
+       if(changeStatus){
+          if(particularOrder.paymentStatus == "Success"){
+            // console.log("particular order data ",particularOrder)
+              const addToWallet = await walletController.addToWallet(totalAmountOfCancelledProduct,userId)
+              console.log("amount added to wallet ")
+          }
+           const increaseQuantity = await Product.findByIdAndUpdate({_id:productId},{$inc:{stock:cancelledQuantity}})
+           console.log("increse stock quantity ",increaseQuantity)
+
+           let message = " Order cancelled sucessfully"
+            res.status(200).json({
+                success:true,
+                successMessage :message
+            })
+         }
+      
+    } catch (error) {
+        console.log(error.message)
+        
+    }
+}
 
 module.exports = {
     loadCart,
@@ -549,5 +584,6 @@ module.exports = {
     loadCheckout,
     addAddress,
     placeOrder,
-    razorpay
+    razorpay,
+    cancelSingleOrder
 };

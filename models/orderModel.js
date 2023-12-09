@@ -54,6 +54,17 @@ const orderSchema = new mongoose.Schema({
             quantity:{
                 type:Number,
                 required:true
+            },
+            productStatus:{
+               type:String,
+               enum:['Order Placed','Cancelled','Returned'],
+               default:'Order Placed'
+            },reason:{
+               type:String,
+               required:false
+            },cancelledQuantity:{
+               type:Number,
+               required:false
             }
         }
      ],

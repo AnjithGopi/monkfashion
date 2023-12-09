@@ -73,7 +73,28 @@ const loadHome = async(req,res)=>{
         const productCount = await Product.countDocuments({isActive:true,isDeleted:false})
         const orderCount = await Order.countDocuments()
         console.log(userCount)
-        res.render('index',{userCount,productCount,orderCount})
+        // ......................................................... 
+        // ......................................................... 
+
+        const monthlyOrders = await Order.aggregate([
+            {
+                $project: {
+                    month: { $month: '$orderDate' },
+                },
+            },
+            {
+                $group: {
+                    _id: '$month',
+                    totalOrders: { $sum: 1 }, 
+                },
+            },
+        ]);
+        
+        console.log("Monthly Orders:",monthlyOrders)
+        // monthlyOrders
+        // ......................................................... 
+        // ......................................................... 
+        res.render('index',{userCount,productCount,orderCount,monthlyOrders:monthlyOrders})
     } catch (error) {
         console.log(error.message)
         
@@ -346,6 +367,44 @@ const loadSalesReport = async (req,res)=>{
         return salesData
     }
 }
+const loadChart = async (req,res)=>{
+    try{
+        const monthlyOrders = await Order.aggregate([
+            {
+                $project: {
+                    month: { $month: '$orderDate' },
+                },
+            },
+            {
+                $group: {
+                    _id: '$month',
+                    totalOrders: { $sum: 1 }, 
+                },
+            },
+        ]);
+        const monthlySales = await Order.aggregate([
+            {
+                $project: {
+                    month: { $month: '$orderDate' },
+                    totalAmount: 1,
+                },
+            },
+            {
+                $group: {
+                    _id: '$month',
+                    totalOrders: { $sum: '$totalAmount' },
+                },
+            },
+        ]);
+
+
+        
+        console.log("Monthly Orders:",monthlyOrders)
+                res.json({monthlyOrders,monthlySales});
+    }catch(error){
+        console.log(error.message)
+    }
+}
 
 module.exports ={
    loadLogin,
@@ -357,7 +416,8 @@ module.exports ={
    loadOrders,
    changeOrderStatus,
    loadOrderDetails,
-   loadSalesReport
+   loadSalesReport,
+   loadChart
   
 }
     
