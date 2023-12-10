@@ -50,9 +50,17 @@ app.use('/admin',adminRoute);
 app.use('/static',express.static(path.join(__dirname,'public')) )
 
 
-app.get('*',(req,res)=>{
-    res.status(404).send('404 - Not Found');
-})
+// Handling error
+app.use('*', (req, res) => {
+    res.status(404).json({
+      success: 'false',
+      message: 'Page not found',
+      error: {
+        statusCode: 404,
+        message: 'You reached a route that is not defined on this server',
+      },
+    });
+  });
 app.use(errorMiddleware);
 
 app.listen(PORT,()=>{

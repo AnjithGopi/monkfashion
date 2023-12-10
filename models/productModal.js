@@ -17,7 +17,7 @@ const productSchema = new mongoose.Schema({
         type:Schema.Types.ObjectId,
         ref:'Categories',
         required:true 
-     },
+     }, 
      regularPrice:{
         type:Number,
         required:true

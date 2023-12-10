@@ -3446,8 +3446,8 @@ table .product-thumbnail img {
 
 .product-cart-wrap .product-action-1 {
   position: absolute;
-  left: 50%;
-  top: 50%;
+  left: 90%;
+  top: 10%;
   -webkit-transform: translateX(-50%) translateY(-50%);
           transform: translateX(-50%) translateY(-50%);
   opacity: 0;
@@ -4207,6 +4207,7 @@ table .product-thumbnail img {
 /*PRODUCT DETAILS*/
 .detail-gallery {
   position: relative;
+  width: 500px;
 }
 
 .detail-gallery .zoom-icon {

@@ -58,12 +58,12 @@ admin_route.post('/categories/editCategories',auth.isLogin,categoriesController.
 admin_route.get('/blockCategories',auth.isLogin,categoriesController.changeCategoriesStatus);
 admin_route.get('/deleteCategories',auth.isLogin,categoriesController.deleteCategories);
 admin_route.get('/addproduct',auth.isLogin,productController.loadAddProduct);
-admin_route.post('/addproduct',auth.isLogin,upload.array('image',3),productController.insertProduct);
+admin_route.post('/addproduct',auth.isLogin,upload.array('image',5),productController.insertProduct);
 admin_route.get('/products',auth.isLogin,productController.loadProduct)
 admin_route.get('/products/changeStatus',auth.isLogin,productController.changeStatus);
 admin_route.get('/products/deleteProduct',auth.isLogin,productController.deleteProduct);
 admin_route.get('/products/editProduct',auth.isLogin,productController.loadEditProduct);
-admin_route.post('/products/editProduct',auth.isLogin,upload.array('image',3),productController.editProduct)
+admin_route.post('/products/editProduct',auth.isLogin,upload.array('image',5),productController.editProduct)
 
 admin_route.get('/orders',auth.isLogin,adminController.loadOrders)
 admin_route.post('/orders/changeStatus',auth.isLogin,adminController.changeOrderStatus)
@@ -73,6 +73,15 @@ admin_route.get('/orders/orderDetails',auth.isLogin,adminController.loadOrderDet
 admin_route.get('/dashboard/salesReport',adminController.loadSalesReport)
 admin_route.get('/home/chart',auth.isLogin,adminController.loadChart);
 
-
+// admin_route.use('*', (req, res) => {
+//     res.status(404).json({
+//       success: 'false',
+//       message: 'Page not found',
+//       error: {
+//         statusCode: 404,
+//         message: 'You reached a route that is not defined on this server',
+//       },
+//     });
+//   });
 
 module.exports = admin_route

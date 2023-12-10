@@ -70,6 +70,27 @@ const loadCart = async (req, res) => {
     }
 };
 
+function findQuantityByProductId(cartData, productId) {
+    const cartObject = cartData[0]; // Assuming there's only one object in the array
+    console.log("1")
+    console.log("Cart d",cartObject.product)
+    if (cartObject) {
+    console.log("2")
+
+      for (const productItem of cartObject.product) {
+    console.log("3")
+
+        console.log(productItem.quantity)
+        if (productItem.productId == productId) {
+    console.log("4")
+
+          return productItem.quantity;
+        }
+      }
+    }
+    return 0; // Return 0 if the product is not found in the cart
+  }
+
 // Function to add Product to the cart
 const addToCart = async (req, res) => {
     try {
@@ -78,13 +99,25 @@ const addToCart = async (req, res) => {
         console.log(productId);
         const productData = await Product.find();
         const currentProductData = await Product.findById(productId)
-        const cartUser = await Cart.findOne({ userId: req.session.user_id });
+        const cartUser = await Cart.find({ userId: req.session.user_id });
         console.log("session ID", req.session.user_id);
         console.log("Cart Data checking ", cartUser);
         console.log("Current product data :",currentProductData)
         console.log("Current product stock:",currentProductData.stock)
         // console.log("Product id In the cart  ;",cartUser.product[0].productId)
-        if( currentProductData.stock > 0){
+        let quantity = 0
+        if (cartUser[0].product.length > 0){
+
+            quantity = findQuantityByProductId(cartUser, productId)
+        }
+
+
+// If the product is found, retrieve the quantity
+// const quantityOfDesiredProduct = foundProduct ? foundProduct.quantity : 0;
+
+        // console.log("checkedProductCart",checkProductInCart)
+        console.log("checkedProductCart quantity :",quantity)
+        if( currentProductData.stock > quantity){
         if (cartUser) {
             // const productInCart = await cartUser.product({productId:productId})
             const productInCart = await Cart.find({

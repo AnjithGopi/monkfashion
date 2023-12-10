@@ -230,7 +230,7 @@ const loadSalesReport = async (req,res)=>{
         var startDate = null;
         var endDate =null ;
         // var category = '';
-        const userCount = await User.countDocuments({isActive:true})
+        const userCount = await User.countDocuments({isActive:true,isAdmin:false})
 
         if(req.query.search){
             search = req.query.search;
@@ -278,7 +278,7 @@ const loadSalesReport = async (req,res)=>{
         const orderCounts =  getSalesReportCounts(dateData)
         res.render("salesReport",{orders:dateData,users:userCount,totalOrders:dateData.length,onlinePayments:orderCounts.filterPaymentOnline,offlinePayments:orderCounts.filterPaymentOffline,cancelledOrders:orderCounts.filterOrderCancelled,totalAmount:orderCounts.totalSum})
 
-        res.render("salesReport",{orders:dateData})
+        // res.render("salesReport",{orders:dateData})
         return
 
         }
@@ -378,7 +378,7 @@ const loadChart = async (req,res)=>{
             {
                 $group: {
                     _id: '$month',
-                    totalOrders: { $sum: 1 }, 
+                    total: { $sum: 1 }, 
                 },
             },
         ]);
@@ -392,15 +392,33 @@ const loadChart = async (req,res)=>{
             {
                 $group: {
                     _id: '$month',
-                    totalOrders: { $sum: '$totalAmount' },
+                    total: { $sum: '$totalAmount' },
                 },
             },
         ]);
 
+        const monthlyUsers = await User.aggregate([
+            {
+                $project:{
+                    month:{$month:'$createdTime'},
+
+                },
+            },
+            {
+                    $group:{
+                        _id:'$month',
+                        total:{$sum:1}
+                    }
+                
+            }
+        ])
+        console.log("Monthlu users:",monthlyUsers)
+        console.log("Monthlu sales:",monthlySales)
+
 
         
         console.log("Monthly Orders:",monthlyOrders)
-                res.json({monthlyOrders,monthlySales});
+                res.json({monthlyOrders,monthlySales,monthlyUsers});
     }catch(error){
         console.log(error.message)
     }

@@ -1,5 +1,7 @@
 const Product = require('../models/productModal')
 const Categories = require('../models/categoriesModal')
+const sharp = require('sharp')
+const path = require('path');
 const { DefaultDeserializer } = require('v8')
 
 const loadAddProduct = async (req,res)=>{
@@ -38,6 +40,8 @@ const insertProduct  =  async (req,res)=>{
                 image:images
 
             })
+
+            
             // console.log('inages  ;',req.body.image)
             console.log("kkk")
             console.log(images)
@@ -232,20 +236,38 @@ const deletedImages = req.body.deletedImages;
 product.image = product.image.filter(image => !deletedImages.includes(image));
 
       
-// const imageData = await Product.find({_id:productId})
+
 
         if (req.files && req.files.length > 0) {
-            // const images = req.files.map(file => file.filename);
-            const newImages = req.files.map(file => file.filename);
-             product.image.push(...newImages);
+            const newImages = [];
+        
+            for (const file of req.files) {
+                const filename = file.filename;
+        
+                // Use Sharp to crop the image (adjust the crop options as needed)
+                const croppedImageBuffer = await sharp(file.path)
+                    .resize({ width: 500, height: 500, fit: 'cover' }) // Example cropping options
+                    .toBuffer();
+        
+                const croppedFilename = `cropped_${filename}`;
+        
+                const outputPath = path.join(__dirname,`../public/admin/images/product/${croppedFilename}`);
+                // Save the cropped image
+                await sharp(croppedImageBuffer)
+                    .toFile(outputPath);
+                    // const croppedFilename = `cropped_${filename}`;
 
-            // console.log("Map Worked")
-            // const updatingData = await Product.updateOne(
-            //     { _id: productId },
-            //     { $push: { image: { $each: images } } }
-            //   );
-            // product.image.push(...images,...imageData.image);
-            console.log("Image from file   :",newImages)
+                    // Save the cropped image to the static directory
+                    // fs.writeFileSync(outputPath, croppedImageBuffer);
+        
+                // Push the new cropped image filename to the array
+                newImages.push(croppedFilename);
+            }
+        
+            // Add the new cropped images to the product
+            product.image.push(...newImages);
+        
+            console.log("Cropped Images:", newImages);
         }
       
 

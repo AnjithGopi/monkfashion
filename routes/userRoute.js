@@ -100,7 +100,16 @@ user_route.post("/home/profile/order/orderDetails/cancelOrder",auth.isLogin,orde
 user_route.post("/clearOtp",auth.isLogin,userController.clearOtp)
 // user_route.p("/clearOtp",auth.isLogin,userController.clearOtp)
 
-// user_route.get('*',userController.loadHome);
+// user_route.use('*', (req, res) => {
+//     res.status(404).json({
+//       success: 'false',
+//       message: 'Page not found',
+//       error: {
+//         statusCode: 404,
+//         message: 'You reached a route that is not defined on this server',
+//       },
+//     });
+//   });
 
 
 module.exports = user_route

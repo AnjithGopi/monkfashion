@@ -186,6 +186,8 @@
                                     <% } %>
                                 </div>
                                 <input id="imageUpload" class="form-control" name="image" type="file" multiple onchange="displaySelectedImages(this)">
+                                <!-- <input type="file" id="image-input" accept="image/*" multiple> -->
+                             
                             </label>
                             <div id="selectedImagesContainer"></div>
                         </div>
@@ -199,6 +201,7 @@
                     
                 </div>
             </form>
+            <div id="image-preview-container"></div>
             </div>
         </section> <!-- content-main end// -->
         <footer class="main-footer font-xs">
@@ -219,46 +222,94 @@
 
 <!-- Sweet alert Js link  -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-<script>
-   function displaySelectedImages(input) {
-    const previewContainer = document.getElementById('imagePreviewContainer');
-    previewContainer.innerHTML = '';
 
-    for (const file of input.files) {
+<!-- <script>
+     
+    document.getElementById('image-input').addEventListener('change', handleImageSelect);
+
+    function handleImageSelect(event) {
+        console.log("handle selected images worked")
+
+      const previewContainer = document.getElementById('image-preview-container');
+      previewContainer.innerHTML = ''; // Clear previous previews
+
+      const files = event.target.files;
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
         const reader = new FileReader();
 
         reader.onload = function (e) {
-            const imagePreviewItem = document.createElement('div');
-            imagePreviewItem.classList.add('image-preview-item');
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.classList.add('preview-image');
+          img.setAttribute('data-index', i); // Set the data-index attribute with the image index
 
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.alt = 'Product Image';
+          previewContainer.appendChild(img);
 
-            // const deleteButton = document.createElement('button');
-            // deleteButton.type = 'button';
-            // deleteButton.classList.add('btn', 'btn-sm', 'btn-danger');
-            // deleteButton.textContent = 'Delete';
-            // deleteButton.onclick = function () {
-            //     deleteImage(imagePreviewItem);
-            // };
+          // Add a button with an onclick function that passes the image index
+          const button = document.createElement('button');
+          button.textContent = 'Delete';
+          button.onclick = function () {
+            // event.preventDefault();
+            console.log('worked')
+            handlePreviewClick(i);
+          };
 
-            const customButton = document.createElement('button');
-            customButton.type = 'button';
-            customButton.classList.add('btn', 'btn-sm', 'btn-primary');
-            customButton.textContent = 'Custom Action';
-            // Add your custom action logic here
-
-            imagePreviewItem.appendChild(img);
-            // imagePreviewItem.appendChild(deleteButton);
-            imagePreviewItem.appendChild(customButton);
-
-            previewContainer.appendChild(imagePreviewItem);
+          previewContainer.appendChild(button);
         };
 
         reader.readAsDataURL(file);
+      }
     }
-}
+
+    function handlePreviewClick(index) {
+      console.log('Button clicked for image at index ')
+      // You can perform additional actions based on the index
+    }
+  </script> -->
+
+<script>
+//    function displaySelectedImages(input) {
+//     const previewContainer = document.getElementById('imagePreviewContainer');
+//     previewContainer.innerHTML = '';
+
+//     for (let i = 0; i < input.files.length; i++) {
+//         const file = input.files[i];
+//         const reader = new FileReader();
+
+//         reader.onload = function (e) {
+//             const imagePreviewItem = document.createElement('div');
+//             imagePreviewItem.classList.add('image-preview-item');
+
+//             const img = document.createElement('img');
+//             img.src = e.target.result;
+//             img.alt = 'Product Image';
+
+//             const deleteButton = document.createElement('a');
+//             deleteButton.href = '/home'; // Set a placeholder href, or you can link it to a delete action
+//             deleteButton.textContent = 'Delete';
+//             // Attach onclick function with index as an argument
+//             deleteButton.onclick = function () {
+//                 handleDeleteImage(i);
+//             };
+
+//             imagePreviewItem.appendChild(img);
+//             imagePreviewItem.appendChild(deleteButton);
+
+//             previewContainer.appendChild(imagePreviewItem);
+//         };
+
+//         reader.readAsDataURL(file);
+//     }
+// }
+
+// // Example of a function that handles image deletion using the index
+// function handleDeleteImage(index) {
+//     // Add your delete logic or actions here using the index
+//     alert('Delete button clicked for image at index ' + index);
+// }
+
 
 
     let deletedImageNames = []; // Initialize an array to store deleted image names
@@ -304,21 +355,68 @@ function updateDeletedImagesInput(deletedImg) {
 
 <script>
     function displaySelectedImages(input) {
-        const selectedImagesContainer = document.getElementById('selectedImagesContainer');
+        console.log("display selected images worked")
+        const selectedImagesContainer = document.getElementById('image-preview-container');
         selectedImagesContainer.innerHTML = '';
 
-        for (const file of input.files) {
+        for (let i = 0; i < input.files.length; i++) {
+        const file = input.files[i];
             const imageElement = document.createElement('img');
             const customButton = document.createElement('button');//here
+
+            const button = document.createElement('button');
+          button.textContent = 'Delete';
+          button.onclick = function () {
+            // event.preventDefault();
+            console.log('worked onclick')
+            handlePreviewClick(i);
+          };
+            customButton.onclick = function (){
+                console.log("worked")
+            }
 
             imageElement.src = URL.createObjectURL(file);
             imageElement.alt = file.name;
             imageElement.className = 'selected-image';
 
             selectedImagesContainer.appendChild(imageElement);
-            selectedImagesContainer.appendChild(customButton);// added here
+            selectedImagesContainer.appendChild(button);// added here
         }
     }
+    function handlePreviewClick(index) {
+    console.log('Delete button clicked for image at index ' + index);
+
+    // Get the existing input element
+    const existingInput = document.getElementById('imageUpload');
+
+    // Create a new DataTransfer object
+    const newDataTransfer = new DataTransfer();
+
+    // Populate the new DataTransfer object with files excluding the one at the specified index
+    Array.from(existingInput.files).forEach((file, i) => {
+        if (i !== index) {
+            newDataTransfer.items.add(file);
+        }
+    });
+
+    // Create a new input element
+    const newInput = document.createElement('input');
+    newInput.type = 'file';
+    newInput.id = 'imageUpload';
+    newInput.name = 'image';
+
+    // Set the files property of the new input element with the updated DataTransfer object
+    newInput.files = newDataTransfer.files;
+
+    // Replace the existing input element with the new one
+    existingInput.parentNode.replaceChild(newInput, existingInput);
+
+    // Optionally, update the preview to reflect the changes
+    displaySelectedImages(newInput);
+}
+
+
+
 </script>
 <script>
 
