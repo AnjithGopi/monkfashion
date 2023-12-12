@@ -27,8 +27,39 @@ const insertProduct  =  async (req,res)=>{
 
             // res.redirect('/admin/categories')
         }else{
-            const images = req.files.map(file => file.filename);
-            console.log("Images :",images)
+            // const images = req.files.map(file => file.filename);
+            const newImages = [];
+            if (req.files && req.files.length > 0) {
+            
+                for (const file of req.files) {
+                    const filename = file.filename;
+            
+                    // Use Sharp to crop the image (adjust the crop options as needed)
+                    const croppedImageBuffer = await sharp(file.path)
+                        .resize({ width: 500, height: 500, fit: 'cover' }) // Example cropping options
+                        .toBuffer();
+            
+                    const croppedFilename = `cropped_${filename}`;
+            
+                    const outputPath = path.join(__dirname,`../public/admin/images/product/${croppedFilename}`);
+                    // Save the cropped image
+                    await sharp(croppedImageBuffer)
+                        .toFile(outputPath);
+                        // const croppedFilename = `cropped_${filename}`;
+    
+                        // Save the cropped image to the static directory
+                        // fs.writeFileSync(outputPath, croppedImageBuffer);
+            
+                    // Push the new cropped image filename to the array
+                    newImages.push(croppedFilename);
+                }
+            
+                // Add the new cropped images to the product
+                // product.image.push(...newImages);
+            
+                console.log("Cropped Images:", newImages);
+            }
+            // console.log("Images :",images)
             console.log("Images :",req.body)
             const newProduct = new Product({
                 name:req.body.name,
@@ -36,15 +67,16 @@ const insertProduct  =  async (req,res)=>{
                 categoryId:categoriesId._id,
                 regularPrice:req.body.regularPrice,
                 salePrice:req.body.salePrice,
-                stock:req.body.stock,
-                image:images
+                stock:req.body.stock
+                // image:images
 
             })
 
             
             // console.log('inages  ;',req.body.image)
             console.log("kkk")
-            console.log(images)
+            // console.log(images)
+            newProduct.image.push(...newImages)
             const productInsertedData = await newProduct.save()
             if(productInsertedData){
                 res.render('add-product',{message: '2',categories:productData})

@@ -463,3 +463,57 @@ const addToCart = async (req, res) => {
         console.log(error.message);
     }
 };
+
+
+
+
+////// search sales report
+
+const orderData = await Order.aggregate([
+{
+    $match: {
+        $or: [
+            { orderId: { $regex: '.*' + search + '.*', $options: 'i' } },
+            { totalAmount: { $eq: parseFloat(search) } }
+        ]
+    }
+},
+{
+    $lookup: {
+        from: 'users',
+        localField: 'userId',
+        foreignField: '_id',
+        as: 'userDetails'
+    }
+},
+{
+    $unwind: '$userDetails'
+},
+{
+    $lookup: {
+        from: 'products',
+        localField: 'items.productId',
+        foreignField: '_id',
+        as: 'productDetails'
+    }
+},
+{
+    $unwind: '$productDetails'
+},
+{
+    $sort:{
+        orderDate:-1
+    }
+}
+
+  
+
+]);
+
+
+const orderCounts = getSalesReportCounts(orderData)
+// console.log("SlaesData :",orderCounts)
+// const k =  await Order.find().populate("i.productId")
+
+
+res.render("salesReport",{orders:orderData,users:userCount,totalOrders:orderData.length,onlinePayments:orderCounts.filterPaymentOnline,offlinePayments:orderCounts.filterPaymentOffline,cancelledOrders:orderCounts.filterOrderCancelled,totalAmount:orderCounts.totalSum})

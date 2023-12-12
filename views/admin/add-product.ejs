@@ -175,9 +175,11 @@
                         <div class="card-body">
                             <label for="imageUpload" class="input-upload">
                                 <img src="/static/admin-assets/imgs/theme/upload.svg" alt="Upload Image">
-                                <input id="imageUpload" class="form-control" name="image" type="file" multiple onchange="displaySelectedImages(this)">
+                                <input id="imageUpload" class="form-control" name="image" type="file" multiple >
                             </label>
                             <div id="selectedImagesContainer"></div>
+                            <!-- <input type="file" multiple id="files" /> -->
+<div id="image-preview-container"></div>
                         </div>
                         <!-- <div class="card-body">
                             <div class="input-upload">
@@ -197,7 +199,7 @@
                 <div class="col-sm-6">
                     <script>
                     document.write(new Date().getFullYear())
-                    </script> ©, Evara - HTML Ecommerce Template .
+                    </script> ©, Monk Fashion 
                 </div>
                 <div class="col-sm-6">
                     <div class="text-sm-end">
@@ -310,6 +312,59 @@ function validateField(element) {
         });
     }
 </script>
+
+
+
+
+
+<script>
+const input = document.getElementById("imageUpload");
+const previewContainer = document.getElementById("image-preview-container");
+
+input.addEventListener("change", () => {
+  // Clear existing previews
+  previewContainer.innerHTML = '';
+
+  // Convert the FileList object to an array
+  const fileListArr = Array.from(input.files);
+
+  // Remove the second file from the array
+//   fileListArr.splice(1, 1);
+
+  // Create and append img elements and buttons for each file
+  fileListArr.forEach((file, index) => {
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(file);
+    img.alt = file.name;
+    img.style.maxWidth = '100px'; // Set a maximum width for preview
+    previewContainer.appendChild(img);
+
+    const button = document.createElement('button');
+    button.textContent = 'Remove';
+    button.addEventListener('click', () => {
+      // Remove the corresponding file from the array
+      fileListArr.splice(index, 1);
+      // Re-render the previews after removing the file
+      input.dispatchEvent(new Event('change'));
+        // Create a new FileList object
+  const newFileList = new DataTransfer();
+
+// Add the remaining files to the new FileList
+fileListArr.forEach((file) => {
+  newFileList.items.add(file);
+});
+
+// Set the new FileList to the input element
+input.files = newFileList.files;
+    });
+    previewContainer.appendChild(button);
+  });
+
+  // Log the modified array to the console
+  console.log(fileListArr);
+});
+</script>
+
 
 
 

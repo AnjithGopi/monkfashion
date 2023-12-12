@@ -9,6 +9,7 @@ const Order = require('../models/orderModel');
 const Cart = require('../models/cartModal');
 const Wallet = require('../models/walletModel');
 const { error } = require('console');
+const Categories = require('../models/categoriesModal');
 
 const securePassword = async(password)=>{
 
@@ -188,7 +189,7 @@ const loadRegister = async(req,res)=>{
 const loadLogin = (req,res)=>{
 
     try{
-        res.render('login')
+        res.render('../pages/login')
     }catch(error){
         console.log(error.message)
     }
@@ -198,7 +199,11 @@ const loadLogin = (req,res)=>{
 // code for verifyin the User
 const verifyLogin = async(req,res)=>{
     try{
-        const email = req.body.email;
+        console.log("Verify login worked")
+        console.log(req.body.email)
+        const email =req.body.email;
+        console.log(typeof(email))
+        console.log(typeof(req.body.email))
         const password = req.body.password;
         const userData = await User.findOne({email:email})
         console.log(userData)
@@ -207,20 +212,41 @@ const verifyLogin = async(req,res)=>{
                 if(userData.isActive){
                     const passwordMatch = await  bcrypt.compare(password,userData.password);
                     if(passwordMatch){
-                        req.session.user_id = userData._id;
-                        res.redirect('/home');
+                        let role = userData.isAdmin ? "admin" :"user"
+                        if( userData.isAdmin){
+                            console.log("Admin successfully loged")
+                             req.session.admin = userData;
+                        }else{
+                            req.session.user_id = userData._id;
+                            console.log("user successfully loged")
+
+                        }
+                        console.log("Login successfull") 
+                        // res.redirect('/home');
+                res.status(200).json({success:true,successMessage:" Login successfull",role:role})
+
                     }else{
                         console.log(userData.password)
                         console.log(password)
-                        res.render('login',{message:" password is incorrect"})
+                        // res.render('../pages/login',{message:" password is incorrect"})
+                        console.log("Password incorrect")
+
+                res.status(404).json({success:false,warningMessage:" password is incorrect"})
+
                     }
         
                 }else{
-                    res.render('login',{message:" User is not active"})
+                    // res.render('../pages/login',{message:" User is not active"})
+                console.log("User is not active")
+
+                    res.status(404).json({success:false,warningMessage:" Not Found / Not Active"})
         
                 }
         }else{
-                res.render('login',{message:"Email and password is incorrect"})
+                // res.render('../pages/login',{message:"Email and password is incorrect"})
+                console.log("Email and password incorrect")
+                res.status(404).json({success:false,warningMessage:" Email and password is incorrect"})
+
             }
     
         }catch(error){
@@ -231,7 +257,7 @@ const verifyLogin = async(req,res)=>{
 const loadHome = async(req,res)=>{
 
     try{
-       const productData = await Product.find()
+       const productData = await Product.find({isDeleted:false,isActive:true})
     //    console.log("product data ::",productData)
        console.log("product data ::",productData.length)
        let cartCount = 0
@@ -297,8 +323,12 @@ const loadProfile = async(req,res)=>{
         // console.log(userData)
         // console.log(userData.address[0].fullName)
         const walletData = await Wallet.find({userId:userId})
+       let walletBalance = 0
+        if(walletData.length > 0){
+            walletBalance = walletData[0].balance
+        }
         console.log(walletData)
-        res.render('userProfile',{user:userData,order:orderData,wallet:walletData[0].balance})
+        res.render('userProfile',{user:userData,order:orderData,wallet:walletBalance})
 
     }catch(error){
         console.log("Load profile catch recieved")
@@ -708,12 +738,13 @@ const loadAllProducts = async(req,res)=>{
         const skip = (page - 1) * limit;
         const totalProducts = await Product.countDocuments();
         const totalPages = Math.ceil(totalProducts / limit);
+        const categoryData = await Categories.find({isActive:true})
 
         console.log("Load all producty worked")
         const productData = await Product.find({isDeleted:false,isActive:true}).populate('categoryId').skip(skip).limit(limit);
         console.log("All Product data",productData)
         console.log("All Product data c:::",productData[1].categoryId.name)
-        res.render("allProducts",{products:productData,  currentPage: page,  totalPages: totalPages,})
+        res.render("allProducts",{products:productData,  currentPage: page,  totalPages: totalPages,categories:categoryData})
 
     }catch(error){
         console.log(error.message)

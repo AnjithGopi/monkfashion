@@ -2,6 +2,7 @@
 const Order = require("../models/orderModel");
 const Product = require("../models/productModal");
 const User = require("../models/userModal")
+const {getSalesReportCounts} = require("../functions/admin")
 
 const bcrypt = require('bcrypt')
 
@@ -24,7 +25,7 @@ const logout = async (req,res)=>{
               res.status(500).send('Internal Server Error');
             } else {
             
-              res.redirect('/admin');
+              res.redirect('/login');
             }
           })
     }catch(error){
@@ -72,6 +73,7 @@ const loadHome = async(req,res)=>{
         const userCount = await User.countDocuments({isActive:true,isAdmin:false})
         const productCount = await Product.countDocuments({isActive:true,isDeleted:false})
         const orderCount = await Order.countDocuments()
+        const orderData = await Order.find()
         console.log(userCount)
         // ......................................................... 
         // ......................................................... 
@@ -89,12 +91,17 @@ const loadHome = async(req,res)=>{
                 },
             },
         ]);
+
+        const totalSum = orderData.reduce((sum,obj) => {
+            return sum+=obj.totalAmount
+            },0)
+            console.log("total :::",totalSum)
         
         console.log("Monthly Orders:",monthlyOrders)
         // monthlyOrders
         // ......................................................... 
         // ......................................................... 
-        res.render('index',{userCount,productCount,orderCount,monthlyOrders:monthlyOrders})
+        res.render('index',{userCount,productCount,orderCount,monthlyOrders:monthlyOrders,totalAmount:totalSum})
     } catch (error) {
         console.log(error.message)
         
@@ -230,6 +237,8 @@ const loadSalesReport = async (req,res)=>{
         var startDate = null;
         var endDate =null ;
         // var category = '';
+        const salesReportDuration = req.query.salesReportDuration;
+        console.log("query :;",req.query.salesReportDuration)
         const userCount = await User.countDocuments({isActive:true,isAdmin:false})
 
         if(req.query.search){
@@ -283,7 +292,7 @@ const loadSalesReport = async (req,res)=>{
 
         }
 
-        const orderData = await Order.aggregate([
+        const orderData1 = await Order.aggregate([
             {
                 $match: {
                     $or: [
@@ -321,23 +330,60 @@ const loadSalesReport = async (req,res)=>{
             }
             
               
-            //   console.log("order Data " ,orderData.length);
-            // // console.log(orderData[1].orderDate)
-            // console.log(startDate)
-            // console.log(new Date(endDate))
-            // console.log(endDate)
-            // const dateData = await Order.find({orderDate: { $gte: startDate }})
-    
-            // const dateData = await Order.find({ orderDate: { $gt:new Date(req.query.fromDate),$lt:new Date(req.query.toDate) } })
-    // console.log(dateData);
-    
-            // console.log("order dat ::: " ,dateData.length);
+           
         ]);
 
+        const day = salesReportDuration === "Weekly" ? 7 : salesReportDuration === "Monthly" ? 30  : salesReportDuration === "Yearly" ? 365 : 0;
+        console.log("Report Duration :",day);
+        const currentDate = new Date();
+        const lastDate = new Date();
+        lastDate.setDate(lastDate.getDate() - day);
+        console.log(currentDate)
+        console.log(lastDate)
 
+        const orderData = await Order.aggregate([
+            {
+              $match: {
+                orderDate: {
+                  $gte: lastDate,
+                  $lte: currentDate
+                }
+              }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'userDetails'
+                }
+            },
+            {
+                $unwind: '$userDetails'
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'items.productId',
+                    foreignField: '_id',
+                    as: 'productDetails'
+                }
+            },
+            {
+                $unwind: '$productDetails'
+            },
+            {
+                $sort:{
+                    orderDate:-1
+                }
+            }
+            
+          ]);
+          
         const orderCounts = getSalesReportCounts(orderData)
-        console.log("SlaesData :",orderCounts)
-        const k = orderCounts
+        // console.log("SlaesData :",orderCounts)
+        // const k =  await Order.find().populate("i.productId")
+        
 
         res.render("salesReport",{orders:orderData,users:userCount,totalOrders:orderData.length,onlinePayments:orderCounts.filterPaymentOnline,offlinePayments:orderCounts.filterPaymentOffline,cancelledOrders:orderCounts.filterOrderCancelled,totalAmount:orderCounts.totalSum})
     } catch (error) {
@@ -345,27 +391,7 @@ const loadSalesReport = async (req,res)=>{
         
     }
 
-    function getSalesReportCounts(orderData){
-                  
-        const filterPaymentOnline = orderData.filter(obj => obj.paymentMethod === "Online");
-        const filterPaymentOffline = orderData.filter(obj => obj.paymentMethod === "Cash On Delivery");
-        const filterOrderCancelled = orderData.filter(obj => obj.orderStatus === "Cancelled");
-        const totalSum = orderData.reduce((sum,obj) => {
-        return sum+=obj.totalAmount
-        },0)
-
-        console.log(filterPaymentOnline.length);
-        console.log(filterPaymentOffline.length);
-        console.log(filterOrderCancelled.length);
-        console.log(totalSum)
-        let salesData={
-            filterPaymentOnline:filterPaymentOnline.length,
-            filterPaymentOffline:filterPaymentOffline.length,
-            filterOrderCancelled:filterOrderCancelled.length,
-            totalSum:totalSum
-        }
-        return salesData
-    }
+   
 }
 const loadChart = async (req,res)=>{
     try{

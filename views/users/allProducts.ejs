@@ -71,7 +71,7 @@
                                 <div class="product-img-action-wrap">
                                     <div class="product-img product-img-zoom">
                                         <div class="product-img-inner">
-                                            <a href="shop-product-right.html">
+                                            <a href="/products?id=<%-product._id-%>"">
                                                 <img class="default-img" src="/static/admin/images/product/<%=product.image[0] %>" alt="">
                                                 <img class="hover-img" src="/static/admin/images/product/<%=product.image[1] %>" alt="">
                                             </a>
@@ -144,13 +144,13 @@
                         <div class="widget-category mb-30">
                             <h5 class="section-title style-1 mb-30 wow fadeIn animated">Category</h5>
                             <ul class="categories">
-                                <li><a href="shop-grid-right.html">Shoes & Bags</a></li>
-                                <li><a href="shop-grid-right.html">Blouses & Shirts</a></li>
-                                <li><a href="shop-grid-right.html">Dresses</a></li>
-                                <li><a href="shop-grid-right.html">Swimwear</a></li>
-                                <li><a href="shop-grid-right.html">Beauty</a></li>
-                                <li><a href="shop-grid-right.html">Jewelry & Watch</a></li>
-                                <li><a href="shop-grid-right.html">Accessories</a></li>
+                                
+                                <% if(categories.length > 0)  {%>
+                                    <% categories.forEach((item) =>{ %>
+                                <li><a href="" onclick="loadProduct('<%= item.name %>')"><%= item.name %></a></li>
+                                <%  }) %>
+                                <% } %>
+                           
                             </ul>
                         </div>
                         <!-- Fillter By Price -->
@@ -253,6 +253,36 @@
             </div>
         </section>
     </main>
+
+    <script>
+        function loadProduct(categoryId) {
+        // Make a fetch request to the server to remove the item from the cart
+        fetch(`/user/allProducts`, {
+            method: 'get',
+        })
+        .then(response => {
+            console.log('response of remove Item received')
+            console.log(response)
+            if (response.ok) {
+            console.log('ok worked')
+               
+        toastr.success('Product removed successfully.');
+        // toastr.warning('heeeeeee');
+        // toastr.error('heeeeeee');
+        // toastr.info('heeeeeee');
+        
+                document.getElementById(`tableRow_${index}`).remove();
+                updateTotal()
+            } else {
+                console.error('Failed to remove item from the cart.');
+                 toastr.error('Failed to remove item from the cart.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+    </script>
    
     <%-include('../layouts/footerUser')-%>
   

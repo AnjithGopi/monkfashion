@@ -1,0 +1,146 @@
+<%-include('../layouts/headerUser')-%>
+<%-include('../layouts/mobileHeaderUser')-%>
+
+     
+    <main class="main">
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="index.html" rel="nofollow">Home</a>
+                    <span></span> Pages
+                    <span></span> Login / Register
+                </div>
+            </div>
+        </div>
+        <section class="pt-100 pb-150 d-flex justify-content-center">
+            <div class="container ">
+                <div class="row ">
+                    <div class=" m-auto d-flex justify-content-center">
+                        <div class="row d-flex col-lg-5 justify-content-center">
+                            <div class="col-lg-12">
+                                <div class="login_wrap widget-taber-content p-30 background-white border-radius-10 mb-md-5 mb-lg-0 mb-sm-5  border-4">
+                                    <div class="padding_eight_all bg-white">
+                                        <div class="heading_s1">
+                                            <h3 class="mb-30">Login</h3>
+                                        </div>
+                                        <form method="">
+                                            <div class="form-group">
+                                                <input type="email" required="" name="email" value="abhilash@gmail.com" placeholder="Your Email" id="email">
+                                                <span id="emailError" class="error text-danger" ></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <input required="" type="password" name="password" value="12345678" placeholder="Password" id="password">
+                                                <span id="passwordError" class="error text-danger"></span>
+                                            </div>
+                                            <div class="login_footer form-group">
+                                            <h4 class="alter text-success " id="sucessMessage"><%=locals.message ?message:''%></h4>
+
+                                                
+                                                <a class="text-muted" href="#">Forgot password?</a>
+                                            </div>
+                                            <div class="form-group d-flex justify-content-center">
+                                                <button type="button" onclick="validateForm()" class="btn btn-fill-out btn-block hover-up" name="login">Log in</button>
+                                            </div>
+                                        </form>
+                                        <div class="d-flex align-items-center justify-content-center pb-4">
+                                            <p class="mb-0 me-2">Don't have an account?</p>
+                                           <a href="/register" class=" btn-outline-danger">Create new </a>
+                                          </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-1"></div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <%-include('../layouts/footerUser')-%>
+
+    
+
+    <script>
+        // form vaildation js code
+        function validateForm() {
+            // Reset error messages
+            document.getElementById('emailError').innerText = '';
+            document.getElementById('passwordError').innerText = '';
+
+            // Get form values
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Validate email using a regular expression
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+            document.getElementById('emailError').innerText = 'Enter a valid email address';
+            clearMessage('emailError');
+            return false;
+            }
+
+            // Validate password
+            if (!password) {
+            document.getElementById('passwordError').innerText = 'Password is required';
+            clearMessage('passwordError');
+            return false;
+            }
+
+            // Form is valid allow submission
+           submitForm()
+        }
+     // Function to submit the form
+        function submitForm(){
+            const email = document.getElementById('email').value
+            const password = document.getElementById('password').value;
+            fetch('/login',{
+                method:'post',
+                headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password,
+                    }),
+            })   
+                .then(response => response.json())
+                .then(data => {
+                    console.log("got the response")
+                    console.log(data)
+                    // location.reload();
+                
+                    if( data.warningMessage){
+                        toastr.warning(data.warningMessage);
+
+                    }
+                    if( data.successMessage){
+                        toastr.success(data.successMessage);
+
+                    }
+                    if(data.success){
+                        
+                    if(data.role === "admin"){
+                        console.log("admin")
+                        location.href="/admin"
+                    }else if (data.role === "user"){
+                        console.log("user")
+
+                        location.href = "/home"
+                    }
+                    }
+
+                    
+                })
+                .catch(error => {
+                    console.error('Error :', error);
+                });
+        }
+
+        // Function to clear the messages thar appeared while validating the form
+       function clearMessage(id){
+            setTimeout(()=>{
+                document.getElementById(id).innerText = ""
+            },3000)
+        }
+    </script>

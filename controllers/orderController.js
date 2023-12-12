@@ -106,11 +106,12 @@ const addToCart = async (req, res) => {
         console.log("Current product stock:",currentProductData.stock)
         // console.log("Product id In the cart  ;",cartUser.product[0].productId)
         let quantity = 0
+        if(  cartUser.length > 0){
         if (cartUser[0].product.length > 0){
 
             quantity = findQuantityByProductId(cartUser, productId)
         }
-
+    }
 
 // If the product is found, retrieve the quantity
 // const quantityOfDesiredProduct = foundProduct ? foundProduct.quantity : 0;
@@ -118,7 +119,7 @@ const addToCart = async (req, res) => {
         // console.log("checkedProductCart",checkProductInCart)
         console.log("checkedProductCart quantity :",quantity)
         if( currentProductData.stock > quantity){
-        if (cartUser) {
+        if (cartUser.length > 0) {
             // const productInCart = await cartUser.product({productId:productId})
             const productInCart = await Cart.find({
                 userId: userId,
@@ -145,11 +146,15 @@ const addToCart = async (req, res) => {
 
             } else {
                 console.log("not in the cart");
+                console.log(req.session.user_id)
+
                 const result = await Cart.updateOne(
                     { userId: userId },
                     { $push: { product: { productId: productId, quantity: 1 } } }
                 );
+                console.log(req.session.user_id)
                 console.log(result);
+
                 let message = 'Product added to cart successfully!';
                 const productData = await Product.find()
                 const cartCount = await Cart.find({ userId: req.session.user_id });

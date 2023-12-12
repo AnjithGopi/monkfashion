@@ -185,7 +185,7 @@
                                         
                                     <% } %>
                                 </div>
-                                <input id="imageUpload" class="form-control" name="image" type="file" multiple onchange="displaySelectedImages(this)">
+                                <input id="imageUpload" class="form-control" name="image" type="file" multiple >
                                 <!-- <input type="file" id="image-input" accept="image/*" multiple> -->
                              
                             </label>
@@ -352,8 +352,54 @@ function updateDeletedImagesInput(deletedImg) {
 
 </script>
 
-
 <script>
+    const input = document.getElementById("imageUpload");
+    const previewContainer = document.getElementById("selectedImagesContainer");
+    
+    input.addEventListener("change", () => {
+      // Clear existing previews
+      previewContainer.innerHTML = '';
+    
+      // Convert the FileList object to an array
+      const fileListArr = Array.from(input.files);
+    
+      // Remove the second file from the array
+    //   fileListArr.splice(1, 1);
+    
+      // Create and append img elements and buttons for each file
+      fileListArr.forEach((file, index) => {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.alt = file.name;
+        img.style.maxWidth = '100px'; // Set a maximum width for preview
+        previewContainer.appendChild(img);
+    
+        const button = document.createElement('button');
+        button.textContent = 'Remove';
+        button.addEventListener('click', () => {
+          // Remove the corresponding file from the array
+          fileListArr.splice(index, 1);
+          // Re-render the previews after removing the file
+          input.dispatchEvent(new Event('change'));
+            // Create a new FileList object
+      const newFileList = new DataTransfer();
+    
+    // Add the remaining files to the new FileList
+    fileListArr.forEach((file) => {
+      newFileList.items.add(file);
+    });
+    
+    // Set the new FileList to the input element
+    input.files = newFileList.files;
+        });
+        previewContainer.appendChild(button);
+      });
+    
+      // Log the modified array to the console
+      console.log(fileListArr);
+    });
+    </script>
+<!-- <script>
     function displaySelectedImages(input) {
         console.log("display selected images worked")
         const selectedImagesContainer = document.getElementById('image-preview-container');
@@ -367,12 +413,14 @@ function updateDeletedImagesInput(deletedImg) {
             const button = document.createElement('button');
           button.textContent = 'Delete';
           button.onclick = function () {
-            // event.preventDefault();
+            event.preventDefault();
             console.log('worked onclick')
-            handlePreviewClick(i);
+            newFunction(i)
+            // handlePreviewClick(i);
           };
             customButton.onclick = function (){
                 console.log("worked")
+                newFunction(i)
             }
 
             imageElement.src = URL.createObjectURL(file);
@@ -382,6 +430,34 @@ function updateDeletedImagesInput(deletedImg) {
             selectedImagesContainer.appendChild(imageElement);
             selectedImagesContainer.appendChild(button);// added here
         }
+    }
+
+    function newFunction(i){
+        console.log(i)
+        const input = document.getElementById("imageUpload");
+        console.log("input file :",input.files)
+
+
+  // Convert the FileList object to an array
+  const fileListArr = Array.from(input.files);
+
+  // Remove the second file from the array
+  fileListArr.splice(i, 1);
+
+  // Create a new FileList object
+  const newFileList = new DataTransfer();
+
+  // Add the remaining files to the new FileList
+  fileListArr.forEach((file) => {
+    newFileList.items.add(file);
+  });
+
+  // Set the new FileList to the input element
+  input.files = newFileList.files;
+
+  // Log the modified array to the console
+  console.log("sliced file :",fileListArr);
+
     }
     function handlePreviewClick(index) {
     console.log('Delete button clicked for image at index ' + index);
@@ -398,6 +474,8 @@ function updateDeletedImagesInput(deletedImg) {
             newDataTransfer.items.add(file);
         }
     });
+
+   
 
     // Create a new input element
     const newInput = document.createElement('input');
@@ -417,7 +495,7 @@ function updateDeletedImagesInput(deletedImg) {
 
 
 
-</script>
+</script> -->
 <script>
 
 function validateField(element) {
@@ -512,15 +590,15 @@ function validateField(element) {
   const spanValue = document.getElementById('statusSpan').innerText;
 console.log(spanValue)
 // Check if the value is 1
-if(locals.errorMessage){
-    Swal.fire({
-    icon: 'warning',
-    title: 'Some error occured',
-    // text: errorMessage,
-  });
-  document.getElementById('statusSpan').innerText = 'none';
+// if(locals.errorMessage){
+//     Swal.fire({
+//     icon: 'warning',
+//     title: 'Some error occured',
+//     // text: errorMessage,
+//   });
+//   document.getElementById('statusSpan').innerText = 'none';
 
-}
+// }
 if(spanValue === '3'){
     Swal.fire({
     icon: 'warning',

@@ -42,7 +42,8 @@ user_route.get('/verifyotp',auth.isLogout,userController.loadOtp)
 // Rotute to check the submited otp
 user_route.post('/verifyotp',userController.verifyOTP,userController.newInsertUser);
 // Route to load the login page
-user_route.get('/login',auth.isLogout,userController.loadLogin);
+// user_route.get('/login',auth.isLogout,userController.loadLogin);
+user_route.get('/login',userController.loadLogin);
 // Route to verify the login
 user_route.post('/login',userController.verifyLogin);
 // Route to load the home page
@@ -50,7 +51,7 @@ user_route.get('/home',userController.loadHome);
 // Route to load the single product 
 user_route.get('/products',auth.isLogin,userController.loadProduct);
 // Route to view all Products
-user_route.get('/user/allProducts',userController.loadAllProducts);
+user_route.get('/user/allProducts',auth.isLogin,userController.loadAllProducts);
 // Route to Logout the User
 user_route.get('/logout',auth.isLogin,userController.logoutUser)
 // To Load the Cart page
