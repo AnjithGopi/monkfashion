@@ -44,6 +44,7 @@ const auth = require("../middleware/adminAuthentication")
 const adminController = require("../controllers/adminController")
 const categoriesController = require("../controllers/categoriesController")
 const productController = require("../controllers/productController")
+const couponController = require("../controllers/couponController")
 
 admin_route.get('/',auth.isLogout,adminController.loadLogin);
 admin_route.post('/',adminController.verifyLogin);
@@ -72,6 +73,11 @@ admin_route.get('/orders/orderDetails',auth.isLogin,adminController.loadOrderDet
 // Admin Dashboars
 admin_route.get('/dashboard/salesReport',adminController.loadSalesReport)
 admin_route.get('/home/chart',auth.isLogin,adminController.loadChart);
+
+// Admin Coupon Management
+admin_route.get('/coupon',couponController.loadCoupon)
+admin_route.post('/coupon/createCoupon',couponController.createCoupon)
+admin_route.patch('/coupon/changeStatus',couponController.changeCouponStatus)
 
 // admin_route.use('*', (req, res) => {
 //     res.status(404).json({

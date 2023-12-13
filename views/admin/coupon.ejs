@@ -1,0 +1,355 @@
+<%- include('../../partials/adminHeader')-%>
+
+</head>
+
+   
+<body>
+
+    <div class="screen-overlay"></div>
+<%- include('./aside')-%>
+
+   
+    <main class="main-wrap">
+        <header class="main-header navbar">
+            <div class="col-search">
+                <form class="searchform">
+                    <div class="input-group">
+                        <input list="search_terms" type="text" class="form-control" placeholder="Search term">
+                        <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
+                    </div>
+                    <datalist id="search_terms">
+                        <option value="Products">
+                        <option value="New orders">
+                        <option value="Apple iphone">
+                        <option value="Ahmed Hassan">
+                    </datalist>
+                </form>
+            </div>
+            <div class="col-nav">
+                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon" href="#">
+                            <i class="material-icons md-notifications animation-shake"></i>
+                            <span class="badge rounded-pill">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
+                            <a class="dropdown-item text-brand" href="#"><img src="/static/admin-assets/imgs/theme/flag-us.png" alt="English">English</a>
+                            <a class="dropdown-item" href="#"><img src="/static/admin-assets/imgs/theme/flag-fr.png" alt="Français">Français</a>
+                            <a class="dropdown-item" href="#"><img src="/static/admin-assets/imgs/theme/flag-jp.png" alt="Français">日本語</a>
+                            <a class="dropdown-item" href="#"><img src="/static/admin-assets/imgs/theme/flag-cn.png" alt="Français">中国人</a>
+                        </div>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/static/admin-assets/imgs/people/avatar2.jpg" alt="User"></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                            <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-account_balance_wallet"></i>Wallet</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Coupon </h2>
+                    <p>Add, edit or delete a Coupon</p>
+                </div>
+                <div>
+                    <input type="text" placeholder="Search Coupon" class="form-control bg-white">
+                </div>
+            </div>
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="row ">
+                        <div class="col-md-3">
+
+                            <form method="" id="myform">
+                                <div class="mb-4">
+                                    <label for="name" class="form-label">Name</label>
+                                    <input type="text" name="name" placeholder="Type here" class="form-control" id="name" required />
+                                    <span id="nameError" class="error text-danger"></span>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="couponId" class="form-label">Coupon Id</label>
+                                    <input type="text" name="couponId" placeholder="Type here" class="form-control" id="couponId" required />
+                                    <span id="couponIdError" class="error text-danger"></span>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="minimumAmount" class="form-label">Minimum Purchase</label>
+                                    <input type="number" name="minimumAmount" placeholder="Type here" class="form-control" id="minimumAmount" />
+                                    <span id="minimumAmountError" class="error text-danger"></span>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="discountAmount" class="form-label">Discount Amount</label>
+                                    <input type="number" name="discountAmount" class="form-control" id="discountAmount" min="0" required />
+                                    <span id="discountAmountError" class="error text-danger"></span>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="limit" class="form-label">Maximum Uses</label>
+                                    <input type="number" name="limit" class="form-control" id="limit" min="0" required />
+                                    <span id="limitError" class="error text-danger"></span>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="expirationDate" class="form-label">Expiration Date</label>
+                                    <input type="date" name="expirationDate" class="form-control" id="expirationDate" required />
+                                    <span id="expirationDateError" class="error text-danger"></span>
+                                </div>
+                                <div class="d-grid">
+                                    <input type="button" onclick="validateCoupon()" class="btn btn-primary" id="submit" value="Create Coupon" />
+                                </div>
+                            </form>
+                            
+                        </div>
+                        <div class="col-md-9 ">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="" />
+                                                </div>
+                                            </th>
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>Status</th>
+                                           
+                                          
+                                            <th class="text-end">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="">
+                                      
+                                   
+                
+                                        <% if (coupon) {%>
+                                   
+                                        <% coupon.forEach((item,index)=>{ %>
+
+                                            <tr>
+                                                <td class="text-center"><i class="material-icons md-subdirectory_arrow_right text-muted"></i></td>
+                                                <td><%= index+1%></td>
+                                               
+                                                <td><b><%= item.name %></b></td>
+                                            
+                                               
+                                                <td><% if(item.isActive) {%>
+                                                   
+                                                    <span class="badge rounded-pill alert-success"
+                                                      >Active</span
+                                                    >
+                              
+                                                    <% } else{%>
+                                                    <span class="badge rounded-pill alert-danger"
+                                                      >Inactive</span>
+                              
+                                                    <% }%>
+                                                </td>
+                                               
+                                                <td class="text-end">
+                                                    <a class=" m-3 btn btn-sm btn-success  font-sm mt-15"
+                                                    onclick="blockCoupon('<%= item._id %>','<%= item.isActive %>')"
+                                                  >
+                                                   Block/Unblock
+                                                </a>
+                                                    <div class="dropdown">
+                                                        <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
+                                                        <div class="dropdown-menu">
+                                                           
+                                                        </div>
+                                                    </div> <!-- dropdown //end -->
+                                                    
+                                                   
+                                                </td>
+                                            </tr>
+                                        
+                                    <% })  %>
+                                    <%}else {%>
+                                        <p>No DATA</p>
+                                        <%}%>
+     
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> <!-- .col// -->
+                    </div> <!-- .row // -->
+                </div> <!-- card body .// -->
+            </div> <!-- card .// -->
+        </section> <!-- content-main end// -->
+
+<%- include('../../partials/adminFooter')-%>
+
+<script>
+  async  function blockCoupon(productId,status){
+        try {
+            console.log("block received")
+            fetch('/admin/coupon/changeStatus',{
+                method:"PATCH",
+                 headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    couponId: productId,
+                    isBlocked: status,
+                }),
+             })      
+        } catch (error) {
+            console.log(error.message)
+            
+        }
+    }
+    window.onload = ()=>{
+        toastr.success("hello")
+    }
+    function clearError(){
+        setTimeout(()=>{
+            document.querySelectorAll('.error').forEach(error => error.textContent = '');
+
+        },5000)
+    }
+     function validateCoupon() {
+        // Reset previous error messages
+
+        let name = document.getElementById("name").value;
+        let couponId = document.getElementById("couponId").value;
+        let minimumAmount = document.getElementById("minimumAmount").value;
+        let discountAmount = document.getElementById("discountAmount").value;
+        let limit = document.getElementById("limit").value;
+        let expirationDate = document.getElementById("expirationDate").value;
+
+          // Check for empty fields
+    if (!name) {
+        document.getElementById("nameError").textContent = 'This field is required.';
+        clearError()
+    }
+
+    if (!couponId) {
+        document.getElementById("couponIdError").textContent = 'This field is required.';
+        clearError()
+    }
+
+    if (!discountAmount) {
+        document.getElementById("discountAmountError").textContent = 'This field is required.';
+        clearError()
+    }
+
+    if (!limit) {
+        document.getElementById("limitError").textContent = 'This field is required.';
+        clearError()
+    }
+
+    if (!expirationDate) {
+        document.getElementById("expirationDateError").textContent = 'This field is required.';
+        clearError()
+    }
+    if (!minimumAmount) {
+        document.getElementById("minimumAmountError").textContent = 'This field is required.';
+        clearError()
+    }
+
+    // Check for valid numbers
+    if (isNaN(discountAmount) || discountAmount < 0) {
+        document.getElementById("discountAmountError").textContent = 'Please enter a valid number.';
+        clearError()
+    }
+
+    if (isNaN(limit) || limit < 0) {
+        document.getElementById("limitError").textContent = 'Please enter a valid number.';
+        clearError()
+    }
+
+    // Additional validation for expiration date (optional)
+    let currentDate = new Date();
+    let selectedDate = new Date(expirationDate);
+
+    if (selectedDate <= currentDate) {
+        document.getElementById("expirationDateError").textContent = 'Please select a future date.';
+        clearError()
+    }
+
+    // Check if any errors occurred
+    if (
+        !name ||
+        !couponId ||
+        !discountAmount ||
+        !limit ||
+        !expirationDate ||
+        isNaN(discountAmount) ||
+        isNaN(limit) ||
+        discountAmount < 0 ||
+        limit < 0 ||
+        selectedDate <= currentDate||
+        !minimumAmount
+    ) {
+        return;
+    }
+
+     
+        console.log("Form is valid");
+        createCoupon()
+    }
+
+    function createCoupon(){
+        console.log("create coupon worked ")
+        let name = document.getElementById("name").value;
+        let couponId = document.getElementById("couponId").value;
+        let minimumAmount = document.getElementById("minimumAmount").value;
+        let discountAmount = document.getElementById("discountAmount").value;
+        let limit = document.getElementById("limit").value;
+        let expirationDate = document.getElementById("expirationDate").value;
+    
+        fetch('/admin/coupon/createCoupon',{
+            method:"Post",
+            headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        couponId:couponId ,
+                        minimumAmount: minimumAmount,
+                        discountAmount:discountAmount,
+                        limit:limit,
+                        expirationDate:expirationDate,
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    console.log("got the response")
+                    console.log(data.successMessage)
+                   
+                    if( data.warningMessage){
+                        toastr.warning(data.warningMessage);
+                    }
+                     
+                    if(data.success){
+                        toastr.success(data.successMessage);
+                        window.location.reload() 
+                    }
+
+                })
+                .catch(error => {
+                    toastr.error('Error in Creating coupon:', error);
+                    console.error('Error in Creating coupon:', error);
+                });
+        
+    }
+</script>
+
+      
