@@ -196,7 +196,7 @@
 <%- include('../../partials/adminFooter')-%>
 
 <script>
-  async  function blockCoupon(productId,status){
+    function blockCoupon(productId,status){
         try {
             console.log("block received")
             fetch('/admin/coupon/changeStatus',{
@@ -206,17 +206,33 @@
                 },
                 body: JSON.stringify({
                     couponId: productId,
-                    isBlocked: status,
+                    status: status,
                 }),
-             })      
+             }) .then(response=>response.json())
+                .then(data => {
+                    console.log(data)
+                    console.log("got the response")
+                    console.log(data.successMessage)
+                   
+                    if( data.warningMessage){
+                        toastr.warning(data.warningMessage);
+                    }
+                     
+                    if(data.successMessage){
+                        toastr.success(data.successMessage);
+                    }
+                        // window.location.reload() 
+
+                })
+                .catch(error => {
+                    toastr.error('Error in Creating coupon:', error);
+                    console.error('Error in Creating coupon:', error);
+                });     
         } catch (error) {
             console.log(error.message)
-            
         }
     }
-    window.onload = ()=>{
-        toastr.success("hello")
-    }
+   
     function clearError(){
         setTimeout(()=>{
             document.querySelectorAll('.error').forEach(error => error.textContent = '');

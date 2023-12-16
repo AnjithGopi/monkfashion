@@ -63,9 +63,11 @@ const changeCouponStatus = async(req,res)=>{
         console.log("Change status received")
         console.log(req.body)
         const { couponId , status } = req.body
-      let changeStatus = status == "true"? false : true;
-      console.log("change status :",changeStatus)
-let couponid = new mongoose.Types.ObjectId(couponId)
+        console.log(req.body.status)
+        console.log(typeof(req.body.status))
+        let changeStatus = status == "true"? false : true;
+        console.log("change status :",changeStatus)
+        let couponid = new mongoose.Types.ObjectId(couponId)
 
 
     //   let couponid = JSON.stringify(req.body.couponId);
@@ -76,17 +78,49 @@ let couponid = new mongoose.Types.ObjectId(couponId)
     );
     console.log(updatedCoupon)
     if(updatedCoupon){
-        
+        res.status(200).json({successMessage:"Status changed successfully",status:changeStatus})      
+        return
     }
+    res.status(500).json({warningMessage:"Failed to link the status",status:changeStatus})
     } catch (error) {
         console.log(error.message)
         
     }
 }
 
+// Apply Coupon
+const applyCoupon = async (req,res)=>{
+    try {
+        console.log("Apply coupon received")
+        console.log(req.body)
+        const {couponId ,totalAmount }= req.body
+        const couponData = await Coupon.findOne({code:couponId})
+        console.log(couponData)
+        var message = ""
+        if(couponData && !couponData.isDeleted){
+            console.log("Coupon find")
+            if( totalAmount >= couponData.minimumPurchase ){
+                const amountAfterApplyingCoupon = totalAmount-couponData.discountAmount
+                req.session.appliedCouponId = couponData._id
+                res.status(200).json({success:true,couponAmount:couponData.discountAmount,amountAfterApplyingCoupon:amountAfterApplyingCoupon,successMessage:"Coupon Applied successfully"})
+            }else{
+                res.status(500).json({success:false,warningMessage:"failed to apply coupon"})
+            }
+        }else{
+            console.log("Coupon not available")
+            res.status(500).json({success:false,warningMessage:"Coupon not available"})
+
+        }
+        
+    } catch (error) {
+        console.log(error.message)
+        
+    }
+}
  
 module.exports ={
     loadCoupon,
     createCoupon,
-    changeCouponStatus
+    changeCouponStatus,
+    applyCoupon
 }

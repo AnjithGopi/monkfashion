@@ -193,7 +193,8 @@
                                    
                                     
                                   
-                                       
+                                    <% if(cart.length > 0) { %>
+
                                             <% let totalCartValue = 0; %>
                                             <% if(cart[0].product.length > 0) { %>
                                                 <% for(let i = 0; i < cart[0].product.length; i++) { %>
@@ -238,7 +239,7 @@
                                                 
                                             </tr>
                                                 <% } %>
-                                            <% } else { %>
+                                            <% }  else { %>
                                                 <p>Not found</p>
                                             <% } %>
                                     <!-- console.log(cartData[0].product[1].productId.name) -->
@@ -338,7 +339,9 @@
                                     <a href="/home/cart/checkout" class="btn "> <i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut</a>
                                 </div>
                             </div>
-                           
+                           <% } else { %>
+                            <h2 class="d-flex justify-content-center mb-3 text-danger">Cart Empty</h2>
+                            <% } %>
                             
                         </div>
                     </div>
@@ -385,11 +388,6 @@
                         toastr.warning(data.warningMessage);
 
                     }
-                    //  else if( data.message){
-
-                    //      toastr.sucess(data.message);
-                    //  }
-
                     
 
                     console.log(data.updatedQuantity)

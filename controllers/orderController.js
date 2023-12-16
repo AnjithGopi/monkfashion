@@ -2,9 +2,11 @@ const Cart = require("../models/cartModal");
 const Product = require("../models/productModal");
 const User = require("../models/userModal");
 const Order = require("../models/orderModel")
+const Coupon = require("../models/couponModal")
 const walletController = require("../controllers/walletController")
 const Razorpay = require('razorpay')
 const { v4: uuidv4 } = require('uuid');
+const mongoose = require('mongoose');
 const RAZORPAY_ID_KEY = process.env.RAZORPAY_KEY_ID
 const RAZORPAY_ID_SECRET = process.env.RAZORPAY_KEY_SECRET
 
@@ -467,6 +469,15 @@ const placeOrder = async (req, res) => {
         if (orderData) {
             const clearCart = await Cart.deleteOne({ _id: userData.cart });
             console.log("cart cleared Data :",clearCart)
+            if(req.session.appliedCouponId ){
+                console.log(req.session.appliedCouponId)
+                console.log(typeof(req.session.appliedCouponId))
+                const couponId =  new mongoose.Types.ObjectId(req.session.appliedCouponId)
+                const addUserIdtoCoupon = await Coupon.findByIdAndUpdate({_id:couponId},{$push:{redeemedUsers:req.session.user_id}},{new:true}) 
+                if(addUserIdtoCoupon){
+                    console.log("Sucessfully added user id to coupon")
+                }
+            }
 
             updateStock();
             // clearing the cart refernce stored in the user data

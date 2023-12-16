@@ -31,6 +31,9 @@ const userController = require("../controllers/userController")
 // importing the orderController module to orderController
 const orderController = require("../controllers/orderController")
 
+// importing the coupon Controller
+const couponController = require("../controllers/couponController")
+
 
 user_route.get('/',userController.loadHome);
 // router to load registration form
@@ -68,6 +71,7 @@ user_route.delete('/remove-item/:id',auth.isLogin,orderController.removeItemFrom
 
 // to checkout
 user_route.get('/home/cart/checkout',auth.isLogin,orderController.loadCheckout)
+user_route.post('/home/cart/checkout/applyCoupon',auth.isLogin,couponController.applyCoupon)
 // Add address.
 user_route.post('/addAddress',auth.isLogin,orderController.addAddress)
 // user_route.get('/addAddress',orderController.addAddress)

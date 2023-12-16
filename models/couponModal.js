@@ -34,6 +34,10 @@ const couponSchema = new mongoose.Schema({
         type: Boolean,
         default:true
     },
+    isDeleted: {
+        type: Boolean,
+        default:false
+    },
     timestamp: {
         type: Date,
         default: Date.now,
