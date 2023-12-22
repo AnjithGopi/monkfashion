@@ -26,6 +26,21 @@ const productSchema = new mongoose.Schema({
         type:Number,
         required:true
      },
+     offer:{
+         percentage:{
+            type:Number,
+            default:0
+         },
+         expiryDate:{
+            type:Date,
+        default:Date.now
+
+         },
+         status:{
+            type:Boolean,
+            default:true
+         }
+     },
      createdOn:{
         type:Date,
         default:Date.now

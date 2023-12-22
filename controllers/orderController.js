@@ -467,7 +467,7 @@ const placeOrder = async (req, res) => {
         console.log("Order Data :", orderData);
 
         if (orderData) {
-            const clearCart = await Cart.deleteOne({ _id: userData.cart });
+            const clearCart = await Cart.deleteOne({ _id: userData.cart});
             console.log("cart cleared Data :",clearCart)
             if(req.session.appliedCouponId ){
                 console.log(req.session.appliedCouponId)
@@ -625,6 +625,43 @@ const cancelSingleOrder = async (req,res)=>{
     }
 }
 
+const returnSingleOrder = async (req,res)=>{
+    try {
+        console.log("Return order single received") 
+       console.log(req.body);
+       const userId = req.session.user_id
+       const {productId,orderId,returnedQuantity,reason} = req.body
+       const particularOrder = await Order.findById(orderId)
+       const product = await Product.find({_id:productId})
+       const totalAmountOfReturnedProduct = product[0].salePrice * returnedQuantity;
+       console.log("Total return amount :",totalAmountOfReturnedProduct) 
+       
+       const changeStatus = await Order.updateOne({_id:orderId,"items.productId":productId},{$inc:{'totalAmount':-totalAmountOfReturnedProduct},$set:{'items.$.productStatus':"Returned",'items.$.returnedQuantity':returnedQuantity,'items.$.returnedReason':reason},$unset:{'items.$.quantity':0}})
+       console.log(changeStatus)
+       console.log("product after changing ",changeStatus.totalAmount)
+       if(changeStatus){
+          if(particularOrder.paymentStatus == "Success"){
+            // console.log("particular order data ",particularOrder)
+              const addToWallet = await walletController.addToWallet(totalAmountOfReturnedProduct,userId)
+              console.log("amount added to wallet ")
+          }
+           const increaseQuantity = await Product.findByIdAndUpdate({_id:productId},{$inc:{stock:returnedQuantity}})
+           console.log("incresed stock quantity ",increaseQuantity)
+
+           let message = " Order Returned sucessfully"
+            res.status(200).json({
+                success:true,
+                successMessage :message
+            })
+         }
+      
+
+    } catch (error) {
+        console.log(error.message)
+        
+    }
+}
+
 module.exports = {
     loadCart,
     addToCart,
@@ -634,5 +671,6 @@ module.exports = {
     addAddress,
     placeOrder,
     razorpay,
-    cancelSingleOrder
+    cancelSingleOrder,
+    returnSingleOrder
 };

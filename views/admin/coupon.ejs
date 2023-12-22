@@ -298,6 +298,10 @@
         document.getElementById("expirationDateError").textContent = 'Please select a future date.';
         clearError()
     }
+    if (minimumAmount <= discountAmount) {
+        document.getElementById("minimumAmountError").textContent = 'Minimum amount should be greater than discount amount.';
+        clearError()
+    }
 
     // Check if any errors occurred
     if (
@@ -311,7 +315,8 @@
         discountAmount < 0 ||
         limit < 0 ||
         selectedDate <= currentDate||
-        !minimumAmount
+        !minimumAmount ||
+        minimumAmount <= discountAmount
     ) {
         return;
     }

@@ -96,15 +96,22 @@ const applyCoupon = async (req,res)=>{
         const {couponId ,totalAmount }= req.body
         const couponData = await Coupon.findOne({code:couponId})
         console.log(couponData)
+        const userId = req.session.user_id
         var message = ""
         if(couponData && !couponData.isDeleted){
             console.log("Coupon find")
-            if( totalAmount >= couponData.minimumPurchase ){
-                const amountAfterApplyingCoupon = totalAmount-couponData.discountAmount
-                req.session.appliedCouponId = couponData._id
-                res.status(200).json({success:true,couponAmount:couponData.discountAmount,amountAfterApplyingCoupon:amountAfterApplyingCoupon,successMessage:"Coupon Applied successfully"})
+            const countOfUser = couponData.redeemedUsers.filter(item => item ==userId).length
+            console.log("Count of used :", countOfUser)
+            if( countOfUser <= couponData.limit){
+                if( totalAmount >= couponData.minimumPurchase ){
+                    const amountAfterApplyingCoupon = totalAmount-couponData.discountAmount
+                    req.session.appliedCouponId = couponData._id
+                    res.status(200).json({success:true,couponAmount:couponData.discountAmount,amountAfterApplyingCoupon:amountAfterApplyingCoupon,successMessage:"Coupon Applied successfully"})
+                }else{
+                    res.status(500).json({success:false,warningMessage:"failed to apply coupon"})
+                }
             }else{
-                res.status(500).json({success:false,warningMessage:"failed to apply coupon"})
+                res.status(500).json({success:false,warningMessage:"Coupon limit exceeded"})
             }
         }else{
             console.log("Coupon not available")
@@ -117,10 +124,39 @@ const applyCoupon = async (req,res)=>{
         
     }
 }
- 
+// const job = require('../cronJob')
+// job.add
+
+const schedule = require('node-schedule')
+
+
+schedule.scheduleJob('*/2 * * * * *',async ()=>{
+    // console.log("Job  .. ")
+    try {
+        const result = await Coupon.updateMany(
+            {
+                expirationDate: { $lte: new Date() },
+                
+            },
+            { $set: { isDeleted:true  } }
+        );
+    
+    
+        if (result.nModified > 0) {
+            console.log('Expired coupons updated successfully.');
+        } else {
+            // console.log('No expired coupons found.');
+        }
+    } catch (error) {
+        console.log(error.message)
+    }
+})
+
+
 module.exports ={
     loadCoupon,
     createCoupon,
     changeCouponStatus,
     applyCoupon
 }
+

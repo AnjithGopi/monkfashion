@@ -133,7 +133,7 @@ const loadUserList = async(req,res)=>{
         const totalUsers = await User.countDocuments();
         const totalPages = Math.ceil(totalUsers / limit);
         // console.log("USer dataaa",userData)
-        res.render('user-list',{users:userData,currentPage: page,totalPages: totalPages,})
+        res.render('user-list',{users:userData,currentPage: page,totalPages: totalPages})
     }catch(error){
         console.log(error.message)
     }
@@ -188,8 +188,26 @@ const changeStatus = async (req,res)=>{
 
 const loadOrders = async (req,res) =>{
     try {
-        const orderData = await Order.find({})
-        res.render('orders',{order:orderData})
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5;
+        const skip = (page - 1) * limit;
+
+        var search = '';
+        if(req.query.status){
+            search = req.query.status;
+        }
+
+
+        const orderData = await Order.find({ 
+            $or:[
+            {orderStatus:{$regex:'.*'+search+'.*',$options:'i'}}
+            // {email:{$regex:'.*'+search+'.*',$options:'i'}}
+        ]})
+        .skip(skip)
+        .limit(limit);
+        const totalUsers = await Order.countDocuments();
+        const totalPages = Math.ceil(totalUsers / limit);
+        res.render('orders',{order:orderData,currentPage: page,totalPages: totalPages})
     } catch (error) {
         console.log(error.message)
     }
@@ -252,7 +270,7 @@ const loadSalesReport = async (req,res)=>{
             {
                 $match: {
                     $or: [
-                        { orderDate: { $gt:new Date(req.query.fromDate),$lt:new Date(req.query.toDate) } }
+                        { orderDate: { $gt:endDate,$lt:startDate } }
                     ]
                 }
             },
@@ -380,12 +398,20 @@ const loadSalesReport = async (req,res)=>{
             
           ]);
           
-        const orderCounts = getSalesReportCounts(orderData)
+        // const counts = getSalesReportCounts(orderData)
         // console.log("SlaesData :",orderCounts)
         // const k =  await Order.find().populate("i.productId")
         
+        if( req.query.salesReportDuration){
+            orders= orderData
+            orderCounts = getSalesReportCounts(orderData)
+        }else{
+            orders=orderData1
+            orderCounts = getSalesReportCounts(orderData1)
 
-        res.render("salesReport",{orders:orderData,users:userCount,totalOrders:orderData.length,onlinePayments:orderCounts.filterPaymentOnline,offlinePayments:orderCounts.filterPaymentOffline,cancelledOrders:orderCounts.filterOrderCancelled,totalAmount:orderCounts.totalSum})
+        }
+
+        res.render("salesReport",{orders:orders,users:userCount,totalOrders:orders.length,onlinePayments:orderCounts.filterPaymentOnline,offlinePayments:orderCounts.filterPaymentOffline,cancelledOrders:orderCounts.filterOrderCancelled,totalAmount:orderCounts.totalSum})
     } catch (error) {
         console.log(error.message)
         

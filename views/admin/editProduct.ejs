@@ -209,7 +209,7 @@
                 <div class="col-sm-6">
                     <script>
                     document.write(new Date().getFullYear())
-                    </script> ©, Evara - HTML Ecommerce Template .
+                    </script> ©, Monk Fashions.
                 </div>
                 <div class="col-sm-6">
                     <div class="text-sm-end">
@@ -223,92 +223,8 @@
 <!-- Sweet alert Js link  -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
-<!-- <script>
-     
-    document.getElementById('image-input').addEventListener('change', handleImageSelect);
-
-    function handleImageSelect(event) {
-        console.log("handle selected images worked")
-
-      const previewContainer = document.getElementById('image-preview-container');
-      previewContainer.innerHTML = ''; // Clear previous previews
-
-      const files = event.target.files;
-
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const reader = new FileReader();
-
-        reader.onload = function (e) {
-          const img = document.createElement('img');
-          img.src = e.target.result;
-          img.classList.add('preview-image');
-          img.setAttribute('data-index', i); // Set the data-index attribute with the image index
-
-          previewContainer.appendChild(img);
-
-          // Add a button with an onclick function that passes the image index
-          const button = document.createElement('button');
-          button.textContent = 'Delete';
-          button.onclick = function () {
-            // event.preventDefault();
-            console.log('worked')
-            handlePreviewClick(i);
-          };
-
-          previewContainer.appendChild(button);
-        };
-
-        reader.readAsDataURL(file);
-      }
-    }
-
-    function handlePreviewClick(index) {
-      console.log('Button clicked for image at index ')
-      // You can perform additional actions based on the index
-    }
-  </script> -->
 
 <script>
-//    function displaySelectedImages(input) {
-//     const previewContainer = document.getElementById('imagePreviewContainer');
-//     previewContainer.innerHTML = '';
-
-//     for (let i = 0; i < input.files.length; i++) {
-//         const file = input.files[i];
-//         const reader = new FileReader();
-
-//         reader.onload = function (e) {
-//             const imagePreviewItem = document.createElement('div');
-//             imagePreviewItem.classList.add('image-preview-item');
-
-//             const img = document.createElement('img');
-//             img.src = e.target.result;
-//             img.alt = 'Product Image';
-
-//             const deleteButton = document.createElement('a');
-//             deleteButton.href = '/home'; // Set a placeholder href, or you can link it to a delete action
-//             deleteButton.textContent = 'Delete';
-//             // Attach onclick function with index as an argument
-//             deleteButton.onclick = function () {
-//                 handleDeleteImage(i);
-//             };
-
-//             imagePreviewItem.appendChild(img);
-//             imagePreviewItem.appendChild(deleteButton);
-
-//             previewContainer.appendChild(imagePreviewItem);
-//         };
-
-//         reader.readAsDataURL(file);
-//     }
-// }
-
-// // Example of a function that handles image deletion using the index
-// function handleDeleteImage(index) {
-//     // Add your delete logic or actions here using the index
-//     alert('Delete button clicked for image at index ' + index);
-// }
 
 
 
@@ -399,103 +315,7 @@ function updateDeletedImagesInput(deletedImg) {
       console.log(fileListArr);
     });
     </script>
-<!-- <script>
-    function displaySelectedImages(input) {
-        console.log("display selected images worked")
-        const selectedImagesContainer = document.getElementById('image-preview-container');
-        selectedImagesContainer.innerHTML = '';
 
-        for (let i = 0; i < input.files.length; i++) {
-        const file = input.files[i];
-            const imageElement = document.createElement('img');
-            const customButton = document.createElement('button');//here
-
-            const button = document.createElement('button');
-          button.textContent = 'Delete';
-          button.onclick = function () {
-            event.preventDefault();
-            console.log('worked onclick')
-            newFunction(i)
-            // handlePreviewClick(i);
-          };
-            customButton.onclick = function (){
-                console.log("worked")
-                newFunction(i)
-            }
-
-            imageElement.src = URL.createObjectURL(file);
-            imageElement.alt = file.name;
-            imageElement.className = 'selected-image';
-
-            selectedImagesContainer.appendChild(imageElement);
-            selectedImagesContainer.appendChild(button);// added here
-        }
-    }
-
-    function newFunction(i){
-        console.log(i)
-        const input = document.getElementById("imageUpload");
-        console.log("input file :",input.files)
-
-
-  // Convert the FileList object to an array
-  const fileListArr = Array.from(input.files);
-
-  // Remove the second file from the array
-  fileListArr.splice(i, 1);
-
-  // Create a new FileList object
-  const newFileList = new DataTransfer();
-
-  // Add the remaining files to the new FileList
-  fileListArr.forEach((file) => {
-    newFileList.items.add(file);
-  });
-
-  // Set the new FileList to the input element
-  input.files = newFileList.files;
-
-  // Log the modified array to the console
-  console.log("sliced file :",fileListArr);
-
-    }
-    function handlePreviewClick(index) {
-    console.log('Delete button clicked for image at index ' + index);
-
-    // Get the existing input element
-    const existingInput = document.getElementById('imageUpload');
-
-    // Create a new DataTransfer object
-    const newDataTransfer = new DataTransfer();
-
-    // Populate the new DataTransfer object with files excluding the one at the specified index
-    Array.from(existingInput.files).forEach((file, i) => {
-        if (i !== index) {
-            newDataTransfer.items.add(file);
-        }
-    });
-
-   
-
-    // Create a new input element
-    const newInput = document.createElement('input');
-    newInput.type = 'file';
-    newInput.id = 'imageUpload';
-    newInput.name = 'image';
-
-    // Set the files property of the new input element with the updated DataTransfer object
-    newInput.files = newDataTransfer.files;
-
-    // Replace the existing input element with the new one
-    existingInput.parentNode.replaceChild(newInput, existingInput);
-
-    // Optionally, update the preview to reflect the changes
-    displaySelectedImages(newInput);
-}
-
-
-
-</script> -->
 <script>
 
 function validateField(element) {

@@ -96,6 +96,10 @@ const userSchema = new mongoose.Schema({
       type:Number,
       required:false
     },
+   referralId: {
+      type:String,
+      required:false
+   }
     
 });
 

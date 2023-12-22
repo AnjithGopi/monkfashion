@@ -50,6 +50,7 @@ app.use('/admin',adminRoute);
 app.use('/static',express.static(path.join(__dirname,'public')) )
 
 
+
 // Handling error
 app.use('*', (req, res) => {
    res.render("pages/404")

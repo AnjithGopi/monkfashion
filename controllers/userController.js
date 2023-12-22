@@ -2,15 +2,15 @@ const User = require('../models/userModal')
 const OTP = require('../functions/generateOTP')
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
-const { nextTick } = require('process');
-
 const Product = require('../models/productModal');
 const Order = require('../models/orderModel');
 const Cart = require('../models/cartModal');
 const Wallet = require('../models/walletModel');
-const { error } = require('console');
 const Categories = require('../models/categoriesModal');
 
+
+const {generateRefferalId} = require('../functions/generateRefferalId')
+const walletController = require('./walletController')
 const securePassword = async(password)=>{
 
     try{
@@ -26,18 +26,25 @@ const securePassword = async(password)=>{
 
 const sendVerifyMail = async (req,res) => {
     try {
-
+        console.log(req.body)
         const existingUser = await User.findOne({ email: req.body.email });
 
         if (existingUser) {
             // If the email already exists, render an error message
-            return res.render('registration', { emailexistmessage: "Email already exists. Choose a different email." });
+            console.log("Email found")
+           return res.status(500).json({success:false,
+                warningMessage: "Email already exists. Choose a different email."
+            });
+            
+
+            // return res.status(500).json( { warningMessage: "Email already exists. Choose a different email." });
         }
 
         req.session.name = req.body.name;
         req.session.email = req.body.email;
         req.session.mobile = req.body.mobile;
         req.session.password= req.body.password;
+        req.session.referral= req.body.referral;
 
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -72,7 +79,8 @@ const sendVerifyMail = async (req,res) => {
         const info = await transporter.sendMail(mailOptions);
 
         console.log('Message sent: %s', info.messageId);
-        res.redirect('/verifyotp')
+        // res.redirect('/verifyotp')
+        res.status(200).json({success:true,redirect:'/verifyotp'})
 
     } catch (error) {
         console.error('Error sending email:', error.message);
@@ -140,30 +148,31 @@ const loadRegsucess = async (req,res) =>{
 const newInsertUser = async(req,res,next)=>{
     const spass = await securePassword(req.session.password)
     try{
-        // const existingUser = await User.findOne({ email: req.bod.email });
 
-        // if (existingUser) {
-        //     // If the email already exists, render an error message
-        //     return res.render('registration', { emailexistmessage: "Email already exists. Choose a different email." });
-        // }
-
+      const referralId = generateRefferalId()
       const user = new  User({
         name:req.session.name,
         email:req.session.email,
         mobile:req.session.mobile,
-        password:spass
+        password:spass,
+        referralId:referralId
      
         });
 
         const userData = await user.save();
+        console.log("userData :",userData)
+        const validatereferralId = await User.findOne({referralId:req.session.referral})
+        if(validatereferralId){
+            console.log("findedd")
+            const addToWallet = await walletController.addToWallet(100,validatereferralId._id)
+            const addToWalletUser = await walletController.addToWallet(500,userData._id)
+        }
 
         if(userData){
             req.session.user_id = userData._id;  // Creating a session here because user need to directly redirect into home page after successfully creating an account.
             res.redirect('/home')
             console.log(userData)
             
-            // sendVerifyMail(req.body.name,req.body.email,userData._id)
-            // res.render('registrationSucess',{message : "Sucessfully Registered"});
         }else{
             res.render('registrationSucess',{message : "Registration failed."});
 
@@ -172,14 +181,14 @@ const newInsertUser = async(req,res,next)=>{
     }catch(error){
         console.log(error.message)
     }
-    next()
+   
 }
 
 
 const loadRegister = async(req,res)=>{
 
     try{
-        res.render('registration');
+        res.render('registration1');
     }catch(error){
         console.log(error.message);
     }
@@ -262,8 +271,11 @@ const loadHome = async(req,res)=>{
        console.log("product data ::",productData.length)
        let cartCount = 0
        console.log("........................................")
+       let userData = '';
        if(req.session.user_id){
         console.log(req.session.user_id)
+            const user = await User.findOne({_id:req.session.user_id})
+            userData = user
               const cartData = await Cart.find({userId:req.session.user_id});
             //   console.log("cart data",cartData)
               console.log("........................................")
@@ -272,8 +284,9 @@ const loadHome = async(req,res)=>{
 
        }
        console.log("cart count",cartCount)
+       console.log("cart count",userData)
     //    console.log("cart count",cartCount[0].product.length)
-        res.render('index',{product:productData,cartQuantity: cartCount });
+        res.render('index',{product:productData,cartQuantity: cartCount,userData:userData });
         //her cartquantity is removed and need to change it to previous
        
     }catch(error){
@@ -733,17 +746,34 @@ const loadOrderDetails = async (req,res)=>{
 }
 const loadAllProducts = async(req,res)=>{
     try{
+        console.log("Data in Body :",req.query.search)
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 3;
         const skip = (page - 1) * limit;
+
+        var search = ""
+        if( req.query.search){
+            search= req.query.search
+        }
         const totalProducts = await Product.countDocuments();
         const totalPages = Math.ceil(totalProducts / limit);
         const categoryData = await Categories.find({isActive:true})
 
         console.log("Load all producty worked")
-        const productData = await Product.find({isDeleted:false,isActive:true}).populate('categoryId').skip(skip).limit(limit);
-        console.log("All Product data",productData)
-        console.log("All Product data c:::",productData[1].categoryId.name)
+        const productData = await Product.find({
+            isDeleted: false,
+            isActive: true,
+            $or: [
+              { name: { $regex: search, $options: 'i' } }, // Case-insensitive search on productName
+              { parse: { $regex:search, $options: 'i' } }   // Case-insensitive search on description
+              // Add more fields as needed
+            ]
+          })
+            .populate('categoryId')
+            .skip(skip)
+            .limit(limit);
+        // console.log("All Product data",productData)
+        // console.log("All Product data c:::",productData[1].categoryId.name)
         res.render("allProducts",{products:productData,  currentPage: page,  totalPages: totalPages,categories:categoryData})
 
     }catch(error){
@@ -781,7 +811,6 @@ module.exports ={
     cancelOrder,
     loadOrderDetails,
     loadAllProducts
-   
-    
+     
 
 }

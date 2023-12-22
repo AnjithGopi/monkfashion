@@ -517,3 +517,118 @@ const orderCounts = getSalesReportCounts(orderData)
 
 
 res.render("salesReport",{orders:orderData,users:userCount,totalOrders:orderData.length,onlinePayments:orderCounts.filterPaymentOnline,offlinePayments:orderCounts.filterPaymentOffline,cancelledOrders:orderCounts.filterOrderCancelled,totalAmount:orderCounts.totalSum})
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beautiful Form</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+WyW8cF5hXvQDeUJ/zoDIa6Xy5HyoKIaIIJ"
+        crossorigin="anonymous">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <style>
+        /* Custom styles go here */
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            margin-top: 50px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .password i {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="mb-0">Form Validation</h2>
+                    </div>
+                    <div class="card-body">
+                        <form action="" method="post" id="signupForm" onsubmit="validateForm(event)">
+                            <div class="form-group">
+                                <label for="name">Full Name</label>
+                                <input type="text" name="name" id="name" class="form-control"
+                                    placeholder="Enter your full name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" name="email" id="email" class="form-control"
+                                    placeholder="Enter your email address" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="mobileNumber">Mobile Number</label>
+                                <input type="tel" id="mobileNumber" name="mobile" pattern="[0-9]{10}"
+                                    class="form-control" placeholder="Enter your mobile number" required>
+                            </div>
+                            <div class="form-group password">
+                                <label for="password">Password</label>
+                                <div class="input-group">
+                                    <input type="password" name="password" id="password" class="form-control"
+                                        placeholder="Enter your password" required>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" id="pass-toggle-btn-password">
+                                            <i class="fas fa-eye"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group password">
+                                <label for="confirmPassword">Confirm Password</label>
+                                <div class="input-group">
+                                    <input type="password" name="confirmPassword" id="confirmPassword"
+                                        class="form-control" placeholder="Enter your password again" required>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" id="pass-toggle-btn-confirm">
+                                            <i class="fas fa-eye"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <h4 class="text-success text-center" id="successMessage">
+                                <%= locals.message ? message : '' %>
+                            </h4>
+                            <div class="form-group text-center">
+                                <input type="submit" value="Register" class="btn btn-primary">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvXqZ2K5Ua"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+WyW8cF5hXvQDeUJ/zoDIa6Xy5HyoKIaIIJ"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>

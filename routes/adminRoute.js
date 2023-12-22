@@ -45,6 +45,7 @@ const adminController = require("../controllers/adminController")
 const categoriesController = require("../controllers/categoriesController")
 const productController = require("../controllers/productController")
 const couponController = require("../controllers/couponController")
+const offerController = require("../controllers/offerContoller")
 
 admin_route.get('/',auth.isLogout,adminController.loadLogin);
 admin_route.post('/',adminController.verifyLogin);
@@ -78,6 +79,11 @@ admin_route.get('/home/chart',auth.isLogin,adminController.loadChart);
 admin_route.get('/coupon',couponController.loadCoupon)
 admin_route.post('/coupon/createCoupon',couponController.createCoupon)
 admin_route.patch('/coupon/changeStatus',couponController.changeCouponStatus)
+
+// Admin Product Offers
+admin_route.get('/productOffer',offerController.loadProductOffer)
+admin_route.patch('/applyOffer',offerController.applyProductOffer)
+admin_route.get('/categoriesOffer',offerController.loadCategoriesOffer)
 
 // admin_route.use('*', (req, res) => {
 //     res.status(404).json({

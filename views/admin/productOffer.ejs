@@ -11,12 +11,9 @@
         <section class="content-main">
             <div class="content-header">
                 <div>
-                    <h2 class="content-title card-title">Product List </h2>
-                    <p>Lorem ipsum dolor sit amet.</p>
+                    <h2 class="content-title card-title">Product Offers </h2>
                 </div>
-                <div>
-                    <input type="text"  placeholder="Search order ID" class="form-control bg-white">
-                </div>
+              
             </div>
             <div class="card mb-4">
                 <header class="card-header">
@@ -58,17 +55,18 @@
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
-                            <thead>
+                            <thead style="background-color: #088178; color: white;">
                                 <tr>
                                     <th>#ID</th>
                                     <th scope="col">Image</th>
                                     <th scope="col">Name</th>
-                                    <th scope="col">Category</th>
+                                   
                                     <th scope="col">Selling Price</th>
                                     <th scope="col">Regular Price</th>
+                                    <th scope="col">Offer Percentage</th>
                                     <th scope="col">Status</th>
-                                    <th scope="col">Stock</th>
-                                    <th scope="col" class="text-end"> Action </th>
+                                    <th scope="col">Expiry Date</th>
+                                    <th scope="col" class="text-center"> Action </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -112,33 +110,22 @@
 
                                    </td>
                                     <td><b><%= products[i].name %></b></td>
-                                    <td><b><%= products[i].categoryId.name %></b></td>
-                                    <td><%= products[i].salePrice %></td>
+                                   
+                                    <td><span id="salePrice_<%= products[i]._id %>"><%= products[i].salePrice %></span></td>
                                     <td><%= products[i].regularPrice %></td>
                                     <td>
-                                        <% if(products[i].isActive == 1 ) {%>
                                         <span class="badge rounded-pill alert-success"
-                                          >Active</span
+                                          ><%= products[i].offer.percentage %>%</span
                                         >
                   
-                                        <% } else{%>
-                                        <span class="badge rounded-pill alert-danger"
-                                          >Inactive</span
-                                        >
-                  
-                                        <% }%>
                                       </td>               
-                                      <td><%= products[i].stock %></td>
-                                    <td class="text-end">
-                                        <a href="#" class="btn btn-md rounded font-sm"   onclick="confirmStatusChange('<%= products[i]._id %>','<%= products[i].isActive %>')">Change Status</a>
-                                        <div class="dropdown">
-                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                            <div class="dropdown-menu">
-                                               
-                                                <a class="dropdown-item" href="/admin/products/editProduct?id=<%= products[i]._id %>">Edit info</a>
-                                                <a class="dropdown-item text-danger" href="#" onclick="confirmDelete('<%= products[i]._id %>','<%= products[i].isActive %>')">Delete</a>
-                                            </div>
-                                        </div> 
+                                      <td><%= products[i].offer.status %></td>
+                                      <td><%= products[i].offer.expiryDate.toLocaleDateString() %></td>
+                                    <td class="text-center">
+                                        <a href="#" class="btn btn-md rounded font-sm"   onclick="applyOffer('<%= products[i]._id %>','<%= products[i].isActive %>')">Change Status</a>
+                                        <a href="#" class="btn btn-md rounded font-sm" onclick="showOfferDetails('<%= products[i]._id %>','<%= products[i].name %>','<%= products[i].offer.percentage %>','<%= products[i].offer.status %>','<%= products[i].offer.expiryDate %>')">Apply Offer</a>
+
+                                         
                                         <!-- dropdown //end -->
                                     </td>
                                 </tr>
@@ -177,108 +164,165 @@
             </div>
         </section> <!-- content-main end// -->
 <%- include('../../partials/adminFooter')-%>
-        
 
-   
-   
-        
-        
 
-      <script>
+<!-- Modal -->
+<div class="modal fade" id="offerModal" tabindex="-1" role="dialog" aria-labelledby="offerModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="offerModalLabel">Offer Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" onclick="closeModal()">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="text-center">
+                <h4 id="productName" class="text-success"></h4>
+            </div>
+          <form>
+            <input type="text" class="form-control" id="productId" >
+            <div class="form-group">
+              <label for="productPercentage">Product Offer:</label>
+              <input type="number" class="form-control" id="productPercentage" name="offer" oninput="validateField(this)" min="0" max="99" required>
+              <span id="offerError" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="productExpiryDate">Product Expiry Date</label>
+                <input type="Date" name="expiryDate" class="form-control" id="productExpiryDate" oninput="validateField(this)" required>
+              <span id="expiryDateError" class="text-danger"></span>
 
-        // function for confirmation while blocking a category
-            function confirmStatusChange(categoriesId, active) {
-                const confirmationMessage = "Are you sure you want to change the status of the Product?";
-                Swal.fire({
-                    title: 'Confirmation',
-                    text: confirmationMessage,
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes',
-                    cancelButtonText: 'No'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // If the user confirms, navigate to the changeStatus route
-                        window.location.href = `/admin/products/changeStatus?id=${categoriesId}&active=${active}`;
-                    }
-                });
+              </div>
+            
+            <!-- Add more editable input fields as needed -->
+  
+            <!-- "Apply Offer" button -->
+            <button type="button" class="btn btn-primary" onclick="applyOffer()" id="offerApplyButton">Apply Offer</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <!-- Close button within the modal footer -->
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+   <script>
+ function showOfferDetails(productId,productName,productPercentage,productStatus,productExpiryDate) {
+  // Set the content of the modal input fields
+  document.getElementById('productId').value = productId;
+  document.getElementById('productName').innerText = productName;
+  document.getElementById('productPercentage').value = productPercentage;
+  document.getElementById('productExpiryDate').value = formatDateString(productExpiryDate);
+
+  // Show the modal
+  $('#offerModal').modal('show');
+}
+
+function validateField(element) {
+    console.log("Validate worked")
+        const fieldName = element.name;
+        const fieldValue = element.value;
+        console.log(fieldValue)
+        const errorElement = document.getElementById(`${fieldName}Error`);
+
+        if (!fieldValue.trim()) {
+            errorElement.textContent = "This field is required.";
+            document.getElementById('offerApplyButton').style.display='none' 
+            return false
+        } else {
+            errorElement.textContent = "";
+
+            if (fieldName === "offer") {
+                // const offer = document.querySelector("[name='offer']").value;
+                if (parseFloat(fieldValue) <0 || parseFloat(fieldValue)  > 99 ) {
+                    errorElement.textContent = "Offer price must be in a range of 1-100";
+                    document.getElementById('offerApplyButton').style.display='none' 
+                    return false
+                }
             }
-        
-       
-
-        // function for confirmation while blocking a product
-             function confirmDelete(productId) {
-                const confirmationMessage = "Are you sure you want delete the Product?";
-                Swal.fire({
-                    title: 'Confirmation',
-                    text: confirmationMessage,
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes',
-                    cancelButtonText: 'No'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // If the user confirms, navigate to the changeStatus route
-                        window.location.href = `/admin/products/deleteProduct?id=${productId}`;
-                    }
-                });
+            if (fieldName === "expiryDate") {
+                if (fieldValue  <  formatDateString(Date.now())) {
+                    errorElement.textContent = "Choose a future Date";
+                    document.getElementById('offerApplyButton').style.display='none' 
+                    return false
+                }
             }
+        }
+        document.getElementById('offerApplyButton').style.display='block' 
+
+}
+function submitForm(){
+    console.log("Submit form worked")
+}
+function formatDateString(dateString) {
+    var date = new Date(dateString);
+    var year = date.getFullYear();
+    var month = ('0' + (date.getMonth() + 1)).slice(-2); // Adding 1 because months are zero-based
+    var day = ('0' + date.getDate()).slice(-2);
+
+    return `${year}-${month}-${day}`;
+  }
+
+function closeModal(){
+    console.log("close modal worked")
+    $('#offerModal').modal('hide');
     
-       
-      // Get the value of the span tag
-      const spanValue = document.getElementById('statusSpan').innerText;
-    
-      // Check if the value is 1
-      if (spanValue === '1') {
-        // Trigger SweetAlert
-        Swal.fire({
-          icon: 'warning',
-          title: 'Already Exist',
-          text: 'Product Already Exist !',
-        });
-        document.getElementById('statusSpan').innerText = 'none';
-    
-    
-      }
-      // Check if the value is 2
-      if (spanValue === '3') {
-        // Trigger SweetAlert
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: 'Product Updated  Sucessfully',
-        });
-        document.getElementById('statusSpan').innerText = 'none';
-    
-    
-      }
-    
-    
+}
+
+function applyOffer() {
+  // Add your logic for applying the offer here
+  // You can retrieve values from the input fields if needed
+  const productId= document.getElementById('productId').value;
+  const productPercentage =   document.getElementById('productPercentage').value 
+  const productExpiryDate =   document.getElementById('productExpiryDate').value 
+//   const isActive = document.getElementById('isActive').value;
+
+  // Perform actions based on the input values
+  console.log('Applying offer for product ID:', productId);
+  console.log('Is active:', productExpiryDate);
+  console.log('Is active:', productPercentage);
+  fetch('/admin/applyOffer', {
+      method: 'PATCH',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+          productId: productId,
+          productExpiryDate: productExpiryDate,
+          productPercentage: productPercentage,
           
-            function confirmDeleteCategories(categoriesId) {
-                Swal.fire({
-                title: "Are you sure ?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                    title: "Deleted!",
-                    text: "Category deleted Sucessfully.",
-                    icon: "success"
-                    });
-                 }
-            }).then((result) => {
-                    
-                        // If the user confirms, navigate to the changeStatus route
-                        window.location.href = `/admin/deleteCategories?id=${categoriesId}`;                
-                });;
-         }
-          
-    
-          </script>
+      }),
+  })
+  .then(response => response.json())
+  .then(data => {
+      console.log("got the response")
+      console.log(data)
+      if(data.success){
+      console.log("got the response2")
+        toastr.success(data.message)
+      }else{
+        toastr.warnning(data.message)
+      }
+  
+  })
+  .catch(error => {
+      console.error('Error :', error);
+  });
+
+  // You can make an AJAX request or perform any other actions as needed
+
+  // Close the modal if needed
+  $('#offerModal').modal('hide');
+}
+
+
+   </script>
+   
+        
+        
+
+     
  

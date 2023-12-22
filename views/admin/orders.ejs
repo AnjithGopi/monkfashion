@@ -77,14 +77,22 @@
                         <div class="col-lg-4 col-md-6 me-auto">
                             <input type="text" placeholder="Search..." class="form-control">
                         </div>
-                        <div class="col-lg-2 col-6 col-md-3">
-                            <select class="form-select">
-                                <option>Status</option>
-                                <option>Active</option>
-                                <option>Disabled</option>
-                                <option>Show all</option>
-                            </select>
-                        </div>
+                       
+                            <div class="col-lg-2 col-6 col-md-3">
+                                <form action="" id="formStatus">
+                                <select class="form-select" name="status" onchange="submitForm()">
+                                    <option value=" "></option>
+                                    <option value="Order Placed">Order Placed</option>
+                                    <option value="Shipped">Shipped</option>
+                                    <option value="Confirmed">Confirmed</option>
+                                    <option value="Delivered">Delivered</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                    <option value="Returned">Returned</option>
+                                    
+                                </select>
+                            </form>
+                            </div>
+                       
                         <div class="col-lg-2 col-6 col-md-3">
                             <select class="form-select">
                                 <option>Show 20</option>
@@ -129,14 +137,25 @@
                                     <td><span class="badge rounded-pill alert-primary" id="orderStatus_<%=index%>"><%= orderItem.orderStatus %></span></td>
                                     <td>
                                         <div class="col-lg-6 col-md-6 m-auto text-md-end w-100">
-                                            <select class="form-select d-inline-block mb-lg-0 mb-15 " name="updatedStatus" id="statusSelect_<%=index%>">
-                                                <option><%= orderItem.orderStatus %></option>
-                                                <option>Confirmed</option>
-                                                <option>Shipped</option>
-                                                <option>Delivered</option>
-                                                <option>Cancelled</option>
-                                                <option>Returned</option>
+                                            <select class="form-select d-inline-block mb-lg-0 mb-15" name="updatedStatus" id="statusSelect_<%=index%>">
+                                                <% if (orderItem.orderStatus === 'Order Placed') { %>
+                                                    <option><%= orderItem.orderStatus %></option>
+                                                    <option>Confirmed</option>
+                                                    <option>Shipped</option>
+                                                    <option>Delivered</option>
+                                                    <option>Cancelled</option>
+                                                <% } else if (orderItem.orderStatus === 'Confirmed') { %>
+                                                    <option><%= orderItem.orderStatus %></option>
+                                                    <option>Shipped</option>
+                                                    <option>Delivered</option>
+                                                <% } else if (orderItem.orderStatus === 'Shipped') { %>
+                                                        <option><%= orderItem.orderStatus %></option>
+                                                        <option>Delivered</option>
+                                                <% } else { %>
+                                                    <option><%= orderItem.orderStatus %></option>
+                                                <% } %>
                                             </select>
+                                            
                                            
                                         </div>
                                     </td>
@@ -162,18 +181,30 @@
                     </div> <!-- table-responsive //end -->
                 </div> <!-- card-body end// -->
             </div> <!-- card end// -->
-            <div class="pagination-area mt-15 mb-50">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-start">
-                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                        <li class="page-item"><a class="page-link" href="#">02</a></li>
-                        <li class="page-item"><a class="page-link" href="#">03</a></li>
-                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="#">16</a></li>
-                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
-                    </ul>
-                </nav>
-            </div>
+            <!-- Pagination  -->
+        <div class="pagination-area mt-15 mb-50">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-start">
+                    <% if (currentPage > 1) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                        </li>
+                    <% } %>
+        
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                            <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                        </li>
+                    <% } %>
+        
+                    <% if (currentPage < totalPages) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                        </li>
+                    <% } %>
+                </ul>
+            </nav>
+        </div>
         </section> <!-- content-main end// -->
         <footer class="main-footer font-xs">
             <div class="row pb-30 pt-15">
@@ -262,6 +293,12 @@
 // }
 
         </script>
+
+<script>
+    function submitForm() {
+        document.getElementById('formStatus').submit();
+    }
+</script>
 
         <script>
             function changeStatus(id,index) {

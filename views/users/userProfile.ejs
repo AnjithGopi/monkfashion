@@ -64,7 +64,10 @@
                                             <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#track-orders" role="tab" aria-controls="track-orders" aria-selected="false"><i class="fi-rs-shopping-cart-check mr-10"></i>Wallet</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="page-login-register.html"><i class="fi-rs-sign-out mr-10"></i>Logout</a>
+                                            <a class="nav-link" id="refferal-tab" data-bs-toggle="tab" href="#refferal" role="tab" aria-controls="track-refferal" aria-selected="false"><i class="fi-rs-shopping-cart-check mr-10"></i>Reffer & Earn</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/logout"><i class="fi-rs-sign-out mr-10"></i>Logout</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -171,6 +174,47 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <!-- Refer and Earn -->
+                                 <div class="tab-pane fade" id="refferal" role="tabpanel" aria-labelledby="refferal-tab">
+                                     <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="mb-0">Referral & Earn</h5>
+                                        </div>
+                                        <div class="card-body contact-form-area">
+                                            <div class="row d-flex align-items-center">
+                                                <div class="col-md-12">
+                                                    <div class="mb-20">
+                                                        <h2 class="h4">Your Referral ID</h2>
+                                                        <h3 class="text-success h5"><%= user.referralId %></h3>
+                                                    </div>
+                                                    <div class="mb-20">
+                                                        <h2 class="h4">Share the Love</h2>
+                                                        <p class="small">Invite your friends using your referral ID and earn rewards! They get benefits, and so do you.</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <!-- Add a referral link generator or sharing options here -->
+                                                    <h2 class="h4">Your Referral Link</h2>
+                                                    <p class="small">Share this link with your friends:</p>
+                                                    <div class="input-group mb-3">
+                                                        <input type="text" class="form-control small" value="https://yourwebsite.com/register?ref=<%= user.referralId %>" readonly>
+                                                        <button class="btn btn-outline-secondary btn-sm" type="button" onclick="copyReferralLink()">Copy</button>
+                                                    </div>
+                                                    <div class="mb-20">
+                                                        <h2 class="h4">Referral Rewards</h2>
+                                                        <p class="small">For each friend who signs up using your referral link:</p>
+                                                        <ul class="list-unstyled small">
+                                                            <li><h6>You earn: 100</h6></li>
+                                                            <li><h6>Your friend earns: 500</h6></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                 </div>
+
                                     <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
                                         <div class="row">
                                             <div class="ship_detail ml-20">

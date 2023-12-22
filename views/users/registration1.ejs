@@ -1,211 +1,267 @@
-<% include('../layouts/header.ejs') %>
+<%-include('../layouts/headerUser')-%>
+<%-include('../layouts/mobileHeaderUser')-%>
+<!-- Font Awesome CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+    crossorigin="anonymous">
 
-<!DOCTYPE html>
-<!-- Website - www.codingnepalweb.com -->
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Validation in HTML | CodingNepal</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Fontawesome CDN Link For Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
-  </head>
-  <body>
-    <!-- <form action="thank-you.html"> -->
-     <form action="" method="post"  id="signupForm" onsubmit="validateForm(event)">
-      <h2>Form Validation</h2>
-      <div class="form-group fullname">
-        <label for="fullname">Full Name</label>
-        <input type="text" name="name" id="name" placeholder="Enter your full name" required>
-      </div>
-      <div class="form-group email">
-        <label for="email">Email Address</label>
-        <input type="email" name="email" id="email" placeholder="Enter your email address" required>
-      </div>
-      <div class="form-group phone">
-        <label for="mobileNumber">Mobile Number:</label>
-        <input type="tel" id="mobileNumber" name="mobile" pattern="[0-9]{10}" placeholder="Enter your mobile number" required>
-        </div>
-      <div class="form-group password">
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" placeholder="Enter your password" required>
-        <i id="pass-toggle-btn" class="fa-solid fa-eye"></i>
-      </div>
-      <h4 class="alter text-success text center" id="sucessMessage">
-        <%=locals.message ?message:''%>
-      </h4>
-   
      
-      <div class="form-group submit-btn">
-        <input type="submit" value="Register">
-      </div>
-    </form>
+    <main class="main">
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="index.html" rel="nofollow">Home</a>
+                    <span></span> Pages
+                    <span></span> Login / Register
+                </div>
+            </div>
+        </div>
+        <section class="pt-100 pb-150 d-flex justify-content-center">
+            <div class="container ">
+                <div class="row ">
+                    <div class=" m-auto d-flex justify-content-center">
+                        <div class="row d-flex col-lg-5 justify-content-center">
+                            <div class="col-lg-12">
+                                <div class="login_wrap widget-taber-content p-30 background-white border-radius-10 mb-md-5 mb-lg-0 mb-sm-5  border-4">
+                                    <div class="padding_eight_all bg-white">
+                                        <div class="heading_s1">
+                                            <h3 class="mb-30">Login</h3>
+                                        </div>
+                                        <form id="signupForm" >
+                                          <h2 class="text-center">Form Validation</h2>
+                                          <div class="form-group">
+                                              <label for="name">Full Name</label>
+                                              <input type="text" name="name" id="name" class="form-control" placeholder="Enter your full name" required>
+                                              <span id="error-message-name" style="color: red; display: none;"></span>
 
-    <!-- <script src="script.js"></script> -->
+                                          </div>
+                                          <div class="form-group">
+                                              <label for="email">Email Address</label>
+                                              <input type="email" name="email" id="email" class="form-control" placeholder="Enter your email address" required>
+                                              <span id="error-message-email" style="color: red; display: none;"></span>
+
+                                          </div>
+                                          <div class="form-group">
+                                              <label for="mobileNumber">Mobile Number:</label>
+                                              <input type="tel" id="mobileNumber" name="mobile" pattern="[0-9]{10}" class="form-control"
+                                                  placeholder="Enter your mobile number" required>
+                                              <span id="error-message-mobile" style="color: red; display: none;"></span>
+
+                                          </div>
+                                          <div class="form-group">
+                                            <label for="referralId">Referral ID (if any) </label>
+                                            <input type="text" id="referralId" name="referralId" class="form-control" placeholder="Enter your referral ID">
+                                            <span id="error-message-referral" style="color: red; display: none;"></span>
+
+                                          </div>
+                                        
+                                          <div class="form-group password">
+                                              <label for="password">Password</label>
+                                              <div class="input-group">
+                                                  <input type="password" name="password" id="password" class="form-control" placeholder="Enter your password"
+                                                      required>
+                                                  
+                                              </div>
+                                              <span id="error-message-password" style="color: red; display: none;"></span>
+
+                                          </div>
+                                          <div class="form-group password">
+                                              <label for="confirmPassword">Confirm Password</label>
+                                              <div class="input-group">
+                                                  <input type="password" name="confirmPassword" id="confirmPassword" class="form-control"
+                                                      placeholder="Enter your password again" required>
+                                                  
+                                              </div>
+                                              <!-- Add this where you want the error message to appear -->
+                                                <span id="error-message-confirm-password" style="color: red; display: none;"></span>
+
+                                          </div>
+                                          <h4 class="text-success text-center" id="successMessage">
+                                              <%= locals.message ? message : '' %>
+                                          </h4>
+                                          <div class="form-group text-center">
+                                              <input type="button" value="Register" onclick="validateForm(event)" class="btn btn-success font-weight-bold">
+                                              <!-- <input type="submit" value="Register" class="btn btn-success font-weight-bold"> -->
+
+                                          </div>
+                                      </form>
+                                      
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-1"></div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <%-include('../layouts/footerUser')-%>
+
+    <script>
+      function validateForm() {
+          var name = document.getElementById('name').value;
+          var email = document.getElementById('email').value;
+          var mobileNumber = document.getElementById('mobileNumber').value;
+          var referralId = document.getElementById('referralId').value;
+          var password = document.getElementById('password').value;
+          var confirmPassword = document.getElementById('confirmPassword').value;
+  
+          // Reset error messages
+          resetErrorMessages();
+  
+          // Check for empty fields
+          if (!name || !email || !mobileNumber || !password || !confirmPassword) {
+            //  preventDefault();
+              displayErrorMessage('Please fill in all required fields.', 'error-message-general');
+              return;
+          }
+  
+          // Check for spaces in any field
+          if (containsSpace(name)) {
+              // preventDefault();
+              displayErrorMessage('Name cannot contain spaces.', 'error-message-name');
+              return;
+          }
+  
+          if (containsSpace(email)) {
+              // preventDefault();
+              displayErrorMessage('Email cannot contain spaces.', 'error-message-email');
+              return;
+          }
+  
+          if (containsSpace(mobileNumber)) {
+              // preventDefault();
+              displayErrorMessage('Mobile Number cannot contain spaces.', 'error-message-mobile');
+              return;
+          }
+  
+          if (containsSpace(referralId)) {
+              // preventDefault();
+              displayErrorMessage('Referral ID cannot contain spaces.', 'error-message-referral');
+              return;
+          }
+  
+          if (containsSpace(password)) {
+              // preventDefault();
+              displayErrorMessage('Password cannot contain spaces.', 'error-message-password');
+              return;
+          }
+  
+          if (containsSpace(confirmPassword)) {
+              // preventDefault();
+              displayErrorMessage('Confirm Password cannot contain spaces.', 'error-message-confirm-password');
+              return;
+          }
+  
+          // Check email format
+          if (!isValidEmail(email)) {
+              // preventDefault();
+              displayErrorMessage('Please enter a valid email address.', 'error-message-email');
+              return;
+          }
+  
+          // Check password match
+          if (password !== confirmPassword) {
+              // preventDefault();
+              displayErrorMessage('Passwords do not match', 'error-message-confirm-password');
+            return false;
+
+          }
+          submitForm()
+
+      }
+
+       // Function to submit the form
+       function submitForm(){
+          console.log("Submit form worked")
+            const name = document.getElementById('name').value;
+            console.log(name)
+            const email = document.getElementById('email').value
+            const password = document.getElementById('password').value;
+            const referral = document.getElementById('referralId').value;
+            const mobile = document.getElementById('mobileNumber').value;
+          // var referral = document.getElementById('referralId').value;
+          // var password = document.getElementById('password').value;
+            console.log(name,email,password,mobile,referral)
+
+            fetch('/register', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                    mobile: mobile,
+                    name: name,
+                    referral: referral,
+                }),
+            })
+            .then(res => res.json())
+            .then(data => {
+                // Handle data here
+              console.log("Worked 2")
+              if(data.warningMessage){
+                  toastr.warning(data.warningMessage)
+                }
+                console.log(data);
+                if(data.success){
+                  window.location.href = "/verifyotp"
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+            });
+        }
+  
+      function displayErrorMessage(message, errorMessageId) {
+          var errorMessageElement = document.getElementById(errorMessageId);
+          errorMessageElement.innerHTML = message;
+          errorMessageElement.style.color = 'red';
+          errorMessageElement.style.display = 'block';
+  
+          // Automatically hide the error message after 4 seconds
+          setTimeout(function () {
+              errorMessageElement.style.display = 'none';
+          }, 4000);
+      }
+  
+      function containsSpace(value) {
+          return /\s/.test(value);
+      }
+  
+      function isValidEmail(email) {
+          var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          return emailRegex.test(email);
+      }
+  
+      function resetErrorMessages() {
+          // Reset error messages to hide them initially
+          var errorMessages = document.querySelectorAll('[id^="error-message-"]');
+          errorMessages.forEach(function (errorMessage) {
+              errorMessage.innerHTML = '';
+              errorMessage.style.display = 'none';
+          });
+      }
+  </script>
+  
+  
+  
   
 
-<!-- javascript-->
-<script>
-  function validateForm(event) {
-    // Prevent form submission if validation fails
-    event.preventDefault();
+    <script>
+       
+    
 
-    // Get form elements
-    const nameInput = document.getElementById('name');
-    const emailInput = document.getElementById('email');
-    const mobileInput = document.getElementById('mobile');
-    const passwordInput = document.getElementById('password');
-
-    // Simple validation for demonstration purposes
-    if (!nameInput.value.trim()) {
-      alert('Please enter your name.');
-      return;
-    }
-
-    if (!emailInput.value.trim() || !isValidEmail(emailInput.value.trim())) {
-      alert('Please enter a valid email address.');
-      return;
-    }
-
-    if (!mobileInput.value.trim() || !isValidMobile(mobileInput.value.trim())) {
-      alert('Please enter a valid 10-digit mobile number.');
-      return;
-    }
-
-    if (!passwordInput.value.trim()) {
-      alert('Please enter your password.');
-      return;
-    }
-
-    // If all validations pass, you can submit the form
-    alert('Form submitted successfully!');
-    // You may want to submit the form to the server using AJAX or other methods.
-  }
-
-  function isValidEmail(email) {
-    // Simple email validation regex
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-
-  function isValidMobile(mobile) {
-    // Simple 10-digit mobile number validation regex
-    const mobileRegex = /^\d{10}$/;
-    return mobileRegex.test(mobile);
-  }
-</script>
+        // Function to clear the messages thar appeared while validating the form
+       function clearMessage(id){
+            setTimeout(()=>{
+                document.getElementById(id).innerText = ""
+            },3000)
+        }
+    </script>
 
 
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap');
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Open Sans', sans-serif;
-}
-
-body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 10px;
-  min-height: 100vh;
-  background: #1BB295;
-}
-
-form {
-  padding: 25px;
-  background: #fff;
-  max-width: 500px;
-  width: 100%;
-  border-radius: 7px;
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05);
-}
-
-form h2 {
-  font-size: 27px;
-  text-align: center;
-  margin: 0px 0 30px;
-}
-
-form .form-group {
-  margin-bottom: 15px;
-  position: relative;
-}
-
-form label {
-  display: block;
-  font-size: 15px;
-  margin-bottom: 7px;
-}
-
-form input,
-form select {
-  height: 45px;
-  padding: 10px;
-  width: 100%;
-  font-size: 15px;
-  outline: none;
-  background: #fff;
-  border-radius: 3px;
-  border: 1px solid #bfbfbf;
-}
-
-form input:focus,
-form select:focus {
-  border-color: #9a9a9a;
-}
-
-form input.error,
-form select.error {
-  border-color: #f91919;
-  background: #f9f0f1;
-}
-
-form small {
-  font-size: 14px;
-  margin-top: 5px;
-  display: block;
-  color: #f91919;
-}
-
-form .password i {
-  position: absolute;
-  right: 0px;
-  height: 45px;
-  top: 28px;
-  font-size: 13px;
-  line-height: 45px;
-  width: 45px;
-  cursor: pointer;
-  color: #939393;
-  text-align: center;
-}
-
-.submit-btn {
-  margin-top: 30px;
-}
-
-.submit-btn input {
-  color: white;
-  border: none;
-  height: auto;
-  font-size: 16px;
-  padding: 13px 0;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: 500;
-  text-align: center;
-  background: #1BB295;
-  transition: 0.2s ease;
-}
-
-.submit-btn input:hover {
-  background: #179b81;
-}
-    </style>
-
-<% include('../layouts/footer.ejs') %>

@@ -106,11 +106,9 @@ const loadProduct = async (req,res)=>{
         const limit = parseInt(req.query.limit) || 5;
         const skip = (page - 1) * limit;
         
-        var search = '';
-        var category = '';
-        if(req.query.search){
-            search = req.query.search;
-        }
+        var search = req.query.search || '';
+        var category = req.query.category ||'';
+      
         console.log("Search Key :",search)
         let productData = null
         if(req.query.category){
@@ -146,6 +144,8 @@ const loadProduct = async (req,res)=>{
             categories:categoriesData,
             currentPage: page,
             totalPages: totalPages,
+            search:search,
+            category:category
         });
 
       

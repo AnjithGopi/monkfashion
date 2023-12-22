@@ -46,7 +46,7 @@ user_route.get('/verifyotp',auth.isLogout,userController.loadOtp)
 user_route.post('/verifyotp',userController.verifyOTP,userController.newInsertUser);
 // Route to load the login page
 // user_route.get('/login',auth.isLogout,userController.loadLogin);
-user_route.get('/login',userController.loadLogin);
+user_route.get('/login',auth.isLogout,userController.loadLogin);
 // Route to verify the login
 user_route.post('/login',userController.verifyLogin);
 // Route to load the home page
@@ -54,7 +54,7 @@ user_route.get('/home',userController.loadHome);
 // Route to load the single product 
 user_route.get('/products',auth.isLogin,userController.loadProduct);
 // Route to view all Products
-user_route.get('/user/allProducts',auth.isLogin,userController.loadAllProducts);
+user_route.get('/home/allProducts',auth.isLogin,userController.loadAllProducts);
 // Route to Logout the User
 user_route.get('/logout',auth.isLogin,userController.logoutUser)
 // To Load the Cart page
@@ -100,6 +100,7 @@ user_route.post("/home/profile/updateProfile/otp",auth.isLogin,userController.ch
 user_route.post("/home/profile/cancelOrder",auth.isLogin,userController.cancelOrder)
 user_route.get("/home/profile/order/orderDetails",auth.isLogin,userController.loadOrderDetails)
 user_route.post("/home/profile/order/orderDetails/cancelOrder",auth.isLogin,orderController.cancelSingleOrder)
+user_route.post("/home/profile/order/orderDetails/returnOrder",auth.isLogin,orderController.returnSingleOrder)
 
 
 user_route.post("/clearOtp",auth.isLogin,userController.clearOtp)

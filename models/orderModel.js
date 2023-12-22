@@ -59,10 +59,20 @@ const orderSchema = new mongoose.Schema({
                type:String,
                enum:['Order Placed','Cancelled','Returned'],
                default:'Order Placed'
-            },reason:{
+            },
+            reason:{
                type:String,
                required:false
-            },cancelledQuantity:{
+            },
+            cancelledQuantity:{
+               type:Number,
+               required:false
+            },
+            returnedReason:{
+               type:String,
+               required:false
+            },
+            returnedQuantity:{
                type:Number,
                required:false
             }
@@ -83,7 +93,7 @@ const orderSchema = new mongoose.Schema({
      },
      paymentStatus:{
         type:String,
-        enum:['Pending','Success','Failed'],
+        enum:['Pending','Success','Failed','Refund'],
         default:'Pending'
      },
      orderDate:{
