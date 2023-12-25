@@ -82,8 +82,13 @@ admin_route.patch('/coupon/changeStatus',couponController.changeCouponStatus)
 
 // Admin Product Offers
 admin_route.get('/productOffer',offerController.loadProductOffer)
-admin_route.patch('/applyOffer',offerController.applyProductOffer)
+admin_route.patch('/productOffer/changeStatus',offerController.productOfferChangestatus)
+admin_route.patch('/productOffer/applyOffer',offerController.applyProductOffer)
 admin_route.get('/categoriesOffer',offerController.loadCategoriesOffer)
+admin_route.patch('/categoriesOffer/changeStatus',offerController.categoriesOfferChangestatus)
+admin_route.patch('/categoriesOffer/applyOffer',offerController.applyCategoryOffer)
+
+
 
 // admin_route.use('*', (req, res) => {
 //     res.status(404).json({

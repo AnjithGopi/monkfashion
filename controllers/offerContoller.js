@@ -26,7 +26,7 @@ const loadProductOffer = async (req, res) => {
          .skip(skip)
          .limit(limit);
         //     category = categoriesId._id
-        console.log("categoryData  ;",productData)
+        // console.log("categoryData  ;",productData)
     }else{
          productData = await Product.find({
             isDeleted:false,
@@ -39,13 +39,13 @@ const loadProductOffer = async (req, res) => {
             .skip(skip)
             .limit(limit);
 
-            console.log("Data ::",productData)
+            // console.log("Data ::",productData)
 
     }
 
 
       const categoriesData = await Categories.find({isDeleted:false})
-      console.log("caat data ::",categoriesData)
+    //   console.log("caat data ::",categoriesData)
         const totalProducts = await Product.countDocuments();
         const totalPages = Math.ceil(totalProducts / limit);
         res.render('productOffer', {
@@ -62,14 +62,69 @@ const loadProductOffer = async (req, res) => {
     }
 };
 
+
+const applyProductOffer  = async (req, res) => {
+    try {
+        console.log("Apply product offer received")
+        console.log(req.body)
+        const {productId ,productExpiryDate,productPercentage} = req.body
+       if(new Date(productExpiryDate) > new Date()) {
+        // console.log()
+        const product =  new mongoose.Types.ObjectId(productId)
+        // console.log(product)
+        const productData = await Product.findOne({_id:product}).populate('categoryId')
+        console.log("Caste ;" , productData.categoryId.offer.percentage)
+        let percentage = productData.categoryId.offer.percentage >  parseInt(productPercentage) ? productData.categoryId.offer.percentage :  parseInt(productPercentage)
+        productData.offer.percentage = parseInt(productPercentage)
+        productData.offer.expiryDate = new Date(productExpiryDate)
+        productData.salePrice= productData.regularPrice - (productData.regularPrice *percentage /100)
+        const updateProductPrice =  await  productData.save()
+        // console.log(productData)
+        if (updateProductPrice){
+            res.status(200).json({success:true,message:"Offer Applied Successfully",salePrice:updateProductPrice.salePrice})
+        }else{
+            res.status(400).json({success:false,message:"Failed to Apply Offer  "})
+        }
+    }else{
+
+        res.status(400).json({success:false,message:"Failed Please check the Expiry Date  "})
+    }
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+const productOfferChangestatus = async (req, res) => {
+    try {
+        console.log("change staus received")
+        console.log(req.body)
+        const  {productId ,status} = req.body
+        let change = status === "true" ? false :true;
+        const changeStatus = await Product.findByIdAndUpdate({_id:new mongoose.Types.ObjectId(productId)},{$set:{'offer.status':change}},{new:true})
+        // console.log(changeStatus)
+        if(changeStatus){
+            res.status(200).json({success:true,message:"Status changed",status:changeStatus.offer.status})
+        }else{
+            res.status(400).json({success:false,message:"Failed to Change Status ",status:""})
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
 const loadCategoriesOffer = async(req,res)=>{
     try{
+        console.log("load Category offer received")
         var search = req.query.search || '';
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 5;
         const skip = (page - 1) * limit;
 
-        const categoriesData = await Categories.find({})  .skip(skip)
+        const categoriesData = await Categories.find({ isDeleted:false,
+            $or:[
+                {name:{$regex:'.*'+search+'.*',$options:'i'}}
+               
+            ]
+         } ) .skip(skip)
          .limit(limit);
         // console.log(categoriesData)
         const totalCategories = await Categories.countDocuments();
@@ -80,23 +135,58 @@ const loadCategoriesOffer = async(req,res)=>{
         console.log(error.message)
     }
 }
-const applyProductOffer  = async (req, res) => {
+
+const categoriesOfferChangestatus = async (req, res) => {
+    try {
+        console.log("Category change staus received")
+        console.log(req.body)
+        const  {categoryId ,status} = req.body
+        let change = status === "true" ? false :true;
+        const changeStatus = await Categories.findByIdAndUpdate({_id:new mongoose.Types.ObjectId(categoryId)},{$set:{'offer.status':change}},{new:true})
+        // console.log(changeStatus)
+        if(changeStatus){
+            res.status(200).json({success:true,message:"Status changed",status:changeStatus.offer.status})
+        }else{
+            res.status(400).json({success:false,message:"Failed to Change Status ",status:""})
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+const applyCategoryOffer  = async (req, res) => {
     try {
         console.log("Apply product offer received")
         console.log(req.body)
-        const {productId ,productExpiryDate,productPercentage} = req.body
+        const {categoryId ,categoryExpiryDate,categoryPercentage} = req.body
        
-        // console.log()
-        const product =  new mongoose.Types.ObjectId(productId)
-        console.log(product)
-        const productData = await Product.findOne({_id:product})
-        productData.offer.percentage = parseInt(productPercentage)
-        productData.offer.expiryDate = new Date(productExpiryDate)
-        productData.salePrice= productData.regularPrice - (productData.regularPrice * parseInt(productPercentage) /100)
-        const updateProductPrice =  await  productData.save()
-        console.log(productData)
-        if (updateProductPrice){
-            res.status(200).json({success:true,message:"Offer Applied Successfully",salePrice:updateProductPrice.salePrice})
+        // // console.log()
+        const category =  new mongoose.Types.ObjectId(categoryId)
+        // console.log(category)
+        const categoryData = await Product.find({categoryId:category})
+        const updatedProducts = await Promise.all(categoryData.map(async (data) => {
+            const productPercentage = data.offer.percentage || 0;
+            // if (parseInt(categoryPercentage) > productPercentage) {
+                // data.offer.percentage = parseInt(categoryPercentage);
+                // data.offer.expiryDate = new Date(categoryExpiryDate);
+                const greaterOfferPercentage = Math.max(parseInt(categoryPercentage), productPercentage);
+
+                data.salePrice = data.regularPrice - (data.regularPrice * greaterOfferPercentage/ 100);
+            
+                // console.log(data);
+
+                return data.save();
+            // } else {
+            //     console.log(`Category offer (${categoryPercentage}%) is not greater than product offer (${productPercentage}%). Skipping product.`);
+            //     return data; 
+            //   }
+          }));
+    console.log("Updated Product :",updatedProducts)
+
+        if (updatedProducts.length > 0){
+            const updateOfferInCategory = await Categories.findByIdAndUpdate({_id:new mongoose.Types.ObjectId(categoryId)},{$set:{'offer.percentage':categoryPercentage,'offer.expiryDate':categoryExpiryDate}},{new:true})
+
+            res.status(200).json({success:true,message:"Offer Applied Successfully",offer:categoryPercentage})
         }else{
             res.status(400).json({success:false,message:"Failed to Apply Offer  "})
         }
@@ -105,10 +195,16 @@ const applyProductOffer  = async (req, res) => {
         console.log(error.message);
     }
 };
+
+
 const exp = require('../functions/offerExpiry')
-exp.productOfferExpiry
+// exp.productOfferExpiry
 module.exports = {
     loadProductOffer,
     loadCategoriesOffer,
-    applyProductOffer
+    applyProductOffer,
+    productOfferChangestatus,
+    categoriesOfferChangestatus,
+    applyCategoryOffer,
+
 }

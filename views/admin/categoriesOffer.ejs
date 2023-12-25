@@ -1,42 +1,365 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>Bootstrap Example</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-</head>
+<%- include('../../partials/adminHeader')-%>
+
 <body>
-
-<div class="container">
-  <h2>Modal Example</h2>
-  <!-- Trigger the modal with a button -->
-  <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button>
-
-  <!-- Modal -->
-  <div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <div class="screen-overlay"></div>
+<%- include('./aside')-%>
     
-      <!-- Modal content-->
+    <main class="main-wrap">
+<%- include('../../partials/adminNavbar')-%>
+       
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">categories Offers </h2>
+                </div>
+              
+            </div>
+            <div class="card mb-4">
+                <header class="card-header">
+                    <div class="row gx-3 d-flex">
+                        
+                            <!-- <div class="col-lg-4 col-md-6 me-auto">
+                                <input type="text" placeholder="Search..." class="form-control">
+                                 <input type="submit" class="m-2 btn rounded-3 btn-primary" value="Search"/>
+                            </div> -->
+                            <div class=" col-lg-4 col-md-6 me-auto">
+
+                                <form action="">
+                                  <div class=" d-flex ">
+                                        <input list="search_terms" type="text" name="search"  class="form-control" placeholder="Search term">
+                                        <button class="btn btn-light bg" type="submit"> <i class="material-icons md-search"></i></button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class=" col-lg-2 col-6 col-md-3">
+
+                                <form action="">
+                                 <div class="d-flex">
+                                     <select class="form-select" name="category">
+                                        
+                                      
+                                     </select>
+                                     <button class="btn btn-light bg" type="submit"> <i class="material-icons md-search"></i></button>
+         
+                                 </div>
+                             </form>
+                            </div>
+                   
+                    </div>
+                </header> <!-- card-header end// -->
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead style="background-color: #088178; color: white;">
+                                <tr>
+                                    <th>#ID</th>
+                                   
+                                    <th scope="col">Image</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Offer Percentage</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Expiry Date</th>
+                                    <th scope="col" class="text-center"> Action </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                   
+                                <span hidden id="statusSpan"><%=locals.message  ? message: ''%></span>
+                                <span hidden id="statusSpan"><%=locals.errorData  ? errorData: ''%></span>
+                            
+                                 
+                                <% if( categories.length > 0 ) { for( let i = 0 ; i < categories.length ; i ++){ %>
+                                  <% if(!categories[i].isDeleted) {%>
+
+                                <tr class="justify-content-center ">
+                                    <td><%= i+1 %></td>
+                                   
+                                   <td>
+                                       
+                                        
+                                      
+                                    <div class="container  " style="overflow: hidden; height: 100px; width: 100px;">
+                                        <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel" style="overflow: hidden;">
+                                            <div class="carousel-inner">
+                                              <p>kgkgkgkg</p>
+                                               
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                        
+
+                                   </td>
+                                    <td><b><%= categories[i].name %></b></td>
+                                   
+                                    <td>
+                                        <span class="badge rounded-pill alert-success" id="offerPercentage_<%=categories[i]._id%>"
+                                          ><%= categories[i].offer.percentage %>%</span
+                                        >
+                  
+                                      </td>               
+                                      <td> <% if(categories[i].offer.status) {%>
+                                        <span class="badge rounded-pill alert-success" id="offerStatus_active_<%=categories[i]._id%>"
+                                          >Active</span
+                                        >                 
+                                        <% } else{%>
+                                        <span class="badge rounded-pill alert-danger" id="offerStatus_inactive_<%=categories[i]._id%>"
+                                          >Expired</span
+                                        >
+                  
+                                        <% }%></td>
+                                      <td><%= categories[i].offer.expiryDate.toLocaleDateString() %></td>
+                                    <td class="text-center">
+                                        <!-- <a href="#" class="btn btn-md rounded font-sm text-warnning"   onclick="changeStatus('<%= categories[i]._id %>','<%= categories[i].offer.status %>')">Change Status</a> -->
+                                        <a href="#" class="btn btn-md rounded font-sm" onclick="showOfferDetails('<%= categories[i]._id %>','<%= categories[i].name %>','<%= categories[i].offer.percentage %>','<%= categories[i].offer.status %>','<%= categories[i].offer.expiryDate %>')">Apply Offer</a>
+
+                                         
+                                        <!-- dropdown //end -->
+                                    </td>
+                                </tr>
+                                <% } } }  else{ %> Product Not Found <% } %>
+                             
+                             
+                               
+                            </tbody>
+                        </table>
+                    </div> <!-- table-responsive //end -->
+                </div> <!-- card-body end// -->
+            </div> <!-- card end// -->
+            <div class="pagination-area mt-15 mb-50">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <% if (currentPage > 1) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage - 1 %>&search=<%= search %>">Previous</a>
+                            </li>
+                        <% } %>
+                
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>&search=<%= search %>"><%= i %></a>
+                            </li>
+                        <% } %>
+                
+                        <% if (currentPage < totalPages) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage + 1 %>&search=<%= search %>">Next</a>
+                            </li>
+                        <% } %>
+                    </ul>
+                </nav>
+                
+            </div>
+        </section> <!-- content-main end// -->
+<%- include('../../partials/adminFooter')-%>
+
+
+<!-- Modal -->
+<div class="modal fade" id="offerModal" tabindex="-1" role="dialog" aria-labelledby="offerModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Modal Header</h4>
+          <h5 class="modal-title" id="offerModalLabel">Offer Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" onclick="closeModal()">&times;</span>
+          </button>
         </div>
         <div class="modal-body">
-          <p>Some text in the modal.</p>
+            <div class="text-center">
+                <h4 id="categoryName" class="text-success"></h4>
+            </div>
+          <form>
+            <input type="text" class="form-control" id="categoryId" >
+            <div class="form-group">
+              <label for="categoryPercentage">Category Offer:</label>
+              <input type="number" class="form-control" id="categoryPercentage" name="offer" oninput="validateField(this)" min="0" max="99" required>
+              <span id="offerError" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="categoryExpiryDate">Category Expiry Date</label>
+                <input type="Date" name="expiryDate" class="form-control" id="categoryExpiryDate" oninput="validateField(this)" required>
+              <span id="expiryDateError" class="text-danger"></span>
+
+              </div>
+            
+            <!-- Add more editable input fields as needed -->
+  
+            <!-- "Apply Offer" button -->
+            <button type="button" class="btn btn-primary" onclick="applyOffer()" id="offerApplyButton">Apply Offer</button>
+          </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <!-- Close button within the modal footer -->
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
         </div>
       </div>
-      
     </div>
   </div>
   
-</div>
+  
+   <script>
+ function showOfferDetails(categoryId,categoryName,categoryPercentage,categoryStatus,categoryExpiryDate) {
+  // Set the content of the modal input fields
+  document.getElementById('categoryId').value = categoryId;
+  document.getElementById('categoryName').innerText = categoryName;
+  document.getElementById('categoryPercentage').value = categoryPercentage;
+  document.getElementById('categoryExpiryDate').value = formatDateString(categoryExpiryDate);
 
-</body>
-</html>
+  // Show the modal
+  $('#offerModal').modal('show');
+}
+
+function validateField(element) {
+    console.log("Validate worked")
+        const fieldName = element.name;
+        const fieldValue = element.value;
+        console.log(fieldValue)
+        const errorElement = document.getElementById(`${fieldName}Error`);
+
+        if (!fieldValue.trim()) {
+            errorElement.textContent = "This field is required.";
+            document.getElementById('offerApplyButton').style.display='none' 
+            return false
+        } else {
+            errorElement.textContent = "";
+
+            if (fieldName === "offer") {
+                // const offer = document.querySelector("[name='offer']").value;
+                if (parseFloat(fieldValue) <0 || parseFloat(fieldValue)  > 99 ) {
+                    errorElement.textContent = "Offer price must be in a range of 1-100";
+                    document.getElementById('offerApplyButton').style.display='none' 
+                    return false
+                }
+            }
+            if (fieldName === "expiryDate") {
+                if (fieldValue  <  formatDateString(Date.now())) {
+                    errorElement.textContent = "Choose a future Date";
+                    document.getElementById('offerApplyButton').style.display='none' 
+                    return false
+                }
+            }
+        }
+        document.getElementById('offerApplyButton').style.display='block' 
+
+}
+function submitForm(){
+    console.log("Submit form worked")
+}
+function formatDateString(dateString) {
+    var date = new Date(dateString);
+    var year = date.getFullYear();
+    var month = ('0' + (date.getMonth() + 1)).slice(-2); // Adding 1 because months are zero-based
+    var day = ('0' + date.getDate()).slice(-2);
+
+    return `${year}-${month}-${day}`;
+  }
+
+function closeModal(){
+    console.log("close modal worked")
+    $('#offerModal').modal('hide');
+    
+}
+
+function applyOffer() {
+  // Add your logic for applying the offer here
+  // You can retrieve values from the input fields if needed
+  const categoryId= document.getElementById('categoryId').value;
+  const categoryPercentage =   document.getElementById('categoryPercentage').value 
+  const categoryExpiryDate =   document.getElementById('categoryExpiryDate').value 
+//   const isActive = document.getElementById('isActive').value;
+
+  console.log('Applying offer for product ID:', categoryId);
+  console.log('Is active:', categoryExpiryDate);
+  console.log('Is active:', categoryPercentage);
+  fetch('/admin/categoriesOffer/applyOffer', {
+      method: 'PATCH',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+          categoryId: categoryId,
+          categoryExpiryDate: categoryExpiryDate,
+          categoryPercentage: categoryPercentage,
+          
+      }),
+  })
+  .then(response => response.json())
+  .then(data => {
+      console.log("got the response")
+      console.log(data)
+      if(data.success){
+      console.log("got the response2")
+      if(data.salePrice){
+        document.getElementById(`salePrice_${categoryId}`).innerText = data.salePrice
+    }
+    document.getElementById(`offerPercentage_${categoryId}`).innerText = data.offer+'%'
+        toastr.success(data.message)
+      }else{
+        toastr.warnning(data.message)
+      }
+  
+  })
+  .catch(error => {
+      console.error('Error :', error);
+  });
+
+
+  // Close the modal
+  $('#offerModal').modal('hide');
+}
+
+// to change the category offer status
+function changeStatus(categoryId,status) {
+    const confirmationMessage = "Are you sure you want to change the status of the Category offer ?";
+    Swal.fire({
+        title: 'Confirmation',
+        text: confirmationMessage,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            
+            fetch('/admin/categoriesOffer/changeStatus', {
+                method: 'PATCH', 
+                headers: {
+                    'Content-Type': 'application/json',
+                    
+                },
+                body: JSON.stringify({categoryId:categoryId,status:status }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response data as needed
+                console.log(data);
+                if(data.success){
+                  toastr.success(data.message)
+                  location.reload()
+                 
+                }
+                toastr.warnning(data.message)
+
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('Error:', error);
+            });
+        } else {
+           
+            console.log('Operation cancelled');
+        }
+    });
+}
+
+   </script>
+   
+        
+        
+
+     
+ 

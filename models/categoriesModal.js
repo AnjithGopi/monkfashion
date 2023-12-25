@@ -7,6 +7,21 @@ const categoriesSchema = new mongoose.Schema({
             required:true,
             unique:true
         },
+        offer:{
+            percentage:{
+               type:Number,
+               default:0
+            },
+            expiryDate:{
+               type:Date,
+           default:Date.now
+   
+            },
+            status:{
+               type:Boolean,
+               default:true
+            }
+        },
         isActive:{
             type:Boolean,
             default:true

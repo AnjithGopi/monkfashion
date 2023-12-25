@@ -119,17 +119,26 @@
                                         >
                   
                                       </td>               
-                                      <td><%= products[i].offer.status %></td>
+                                      <td> <% if(products[i].offer.status) {%>
+                                        <span class="badge rounded-pill alert-success"
+                                          >Active</span
+                                        >                 
+                                        <% } else{%>
+                                        <span class="badge rounded-pill alert-danger"
+                                          >Expired</span
+                                        >
+                  
+                                        <% }%></td>
                                       <td><%= products[i].offer.expiryDate.toLocaleDateString() %></td>
                                     <td class="text-center">
-                                        <a href="#" class="btn btn-md rounded font-sm"   onclick="applyOffer('<%= products[i]._id %>','<%= products[i].isActive %>')">Change Status</a>
+                                        <!-- <a href="#" class="btn btn-md rounded font-sm text-warnning"   onclick="changeStatus('<%= products[i]._id %>','<%= products[i].offer.status %>')">Change Status</a> -->
                                         <a href="#" class="btn btn-md rounded font-sm" onclick="showOfferDetails('<%= products[i]._id %>','<%= products[i].name %>','<%= products[i].offer.percentage %>','<%= products[i].offer.status %>','<%= products[i].offer.expiryDate %>')">Apply Offer</a>
 
                                          
                                         <!-- dropdown //end -->
                                     </td>
                                 </tr>
-                                <% } } }  else{ %> Users Not Found <% } %>
+                                <% } } }  else{ %> Product Not Found <% } %>
                              
                              
                                
@@ -280,11 +289,10 @@ function applyOffer() {
   const productExpiryDate =   document.getElementById('productExpiryDate').value 
 //   const isActive = document.getElementById('isActive').value;
 
-  // Perform actions based on the input values
   console.log('Applying offer for product ID:', productId);
   console.log('Is active:', productExpiryDate);
   console.log('Is active:', productPercentage);
-  fetch('/admin/applyOffer', {
+  fetch('/admin/productOffer/applyOffer', {
       method: 'PATCH',
       headers: {
           'Content-Type': 'application/json',
@@ -302,9 +310,12 @@ function applyOffer() {
       console.log(data)
       if(data.success){
       console.log("got the response2")
+      if(data.salePrice){
+        document.getElementById(`salePrice_${productId}`).innerText = data.salePrice
+      }
         toastr.success(data.message)
       }else{
-        toastr.warnning(data.message)
+        toastr.warning(data.message)
       }
   
   })
@@ -312,12 +323,53 @@ function applyOffer() {
       console.error('Error :', error);
   });
 
-  // You can make an AJAX request or perform any other actions as needed
 
-  // Close the modal if needed
+  // Close the modal
   $('#offerModal').modal('hide');
 }
 
+function changeStatus(productId,status) {
+    const confirmationMessage = "Are you sure you want to change the status of the Product?";
+    Swal.fire({
+        title: 'Confirmation',
+        text: confirmationMessage,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            
+            fetch('/admin/productOffer/changeStatus', {
+                method: 'PATCH', 
+                headers: {
+                    'Content-Type': 'application/json',
+                    
+                },
+                body: JSON.stringify({ productId: productId,status:status }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response data as needed
+                console.log(data);
+                if(data.success){
+                  toastr.success(data.message)
+                  location.reload()
+                 
+                }
+                toastr.warnning(data.message)
+
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('Error:', error);
+            });
+        } else {
+           
+            console.log('Operation cancelled');
+        }
+    });
+}
 
    </script>
    

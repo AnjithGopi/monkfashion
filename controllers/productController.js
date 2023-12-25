@@ -112,12 +112,12 @@ const loadProduct = async (req,res)=>{
         console.log("Search Key :",search)
         let productData = null
         if(req.query.category){
-            console.log("Category :",req.query.category)
-         productData = await Product.find({categoryId:req.query.category})  .populate('categoryId')
+            // console.log("Category :",req.query.category)
+         productData = await Product.find({categoryId:req.query.category}) .populate('categoryId')
          .skip(skip)
          .limit(limit);
         //     category = categoriesId._id
-        console.log("categoryData  ;",productData)
+        // console.log("categoryData  ;",productData)
     }else{
          productData = await Product.find({
             isDeleted:false,
@@ -130,13 +130,13 @@ const loadProduct = async (req,res)=>{
             .skip(skip)
             .limit(limit);
 
-            console.log("Data ::",productData)
+            // console.log("Data ::",productData)
 
     }
 
 
       const categoriesData = await Categories.find({isDeleted:false})
-      console.log("caat data ::",categoriesData)
+    //   console.log("caat data ::",categoriesData)
         const totalProducts = await Product.countDocuments();
         const totalPages = Math.ceil(totalProducts / limit);
         res.render('products', {
