@@ -107,6 +107,10 @@ const orderSchema = new mongoose.Schema({
     totalAmount:{
       type:Number,
       default:0
+    },
+    couponAmount:{
+      type:Number,
+      required:false
     }
        
 });

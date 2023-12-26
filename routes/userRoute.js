@@ -94,7 +94,7 @@ user_route.get('/home/profile/editProfile',auth.isLogin,userController.loadUpdat
 user_route.post('/home/profile/editProfile',auth.isLogin,userController.updateUserProfile)
 // To change user Password
 user_route.get('/home/profile/changePassword',auth.isLogin,userController.loadChangePassword)
-user_route.post('/home/profile/changePassword',auth.isLogin,userController.verifyChangePasword,userController.changePasswordSendOtp,userController.changePasswordVerifyOtp)
+user_route.post('/home/profile/changePassword',auth.isLogin,userController.verifyChangePasword)
 user_route.get("/home/profile/updateProfile/otp",auth.isLogin,userController.loadChangePasswordOtp)
 user_route.post("/home/profile/updateProfile/otp",auth.isLogin,userController.changePasswordVerifyOtp)
 user_route.post("/home/profile/cancelOrder",auth.isLogin,userController.cancelOrder)

@@ -47,7 +47,7 @@ const loadCart = async (req, res) => {
             .populate("product.productId"); // Populate the productId field in the product array
 
         console.log(cartData);
-        console.log("User Data :", userData);
+        console.log("User Data :", cartData[0].product.length);
         // console.log(cartData[1])
         // console.log(cartData[0])
         console.log("........................");
@@ -61,7 +61,7 @@ const loadCart = async (req, res) => {
         // console.log(cartData.product);
 
         if (userData.cart) {
-            res.render("cart", { cart: cartData });
+            res.render("cart", { cart: cartData ,cartQuantity:cartData[0].product.length});
         } else {
             const productData = await Product.find()
             //    console.log(productData)
@@ -422,7 +422,7 @@ const placeOrder = async (req, res) => {
     try {
         console.log("Place order recieved");
         console.log(req.body);
-        const { addressIndex, paymentMethod,paymentStatus } = req.body;
+        const { addressIndex, paymentMethod,paymentStatus,appliedCouponAmount } = req.body;
         console.log(
             "Address Index :",
             addressIndex,
@@ -459,6 +459,7 @@ const placeOrder = async (req, res) => {
             paymentMethod: paymentMethod,
             orderId: orderId,
             totalAmount: totalAmount,
+            couponAmount:appliedCouponAmount
         });
         if(paymentStatus == "Success"){
             order.paymentStatus = "Success"
@@ -597,8 +598,11 @@ const cancelSingleOrder = async (req,res)=>{
        const userId = req.session.user_id
        const {productId,orderId,cancelledQuantity,reason} = req.body
        const particularOrder = await Order.findById(orderId)
+       
        const product = await Product.find({_id:productId})
-       const totalAmountOfCancelledProduct = product[0].salePrice * cancelledQuantity;
+       let couponDiscount = (particularOrder.couponAmount/particularOrder.totalAmount *product[0].salePrice)*cancelledQuantity 
+       console.log("Coupon Discount ",couponDiscount)
+       const totalAmountOfCancelledProduct = product[0].salePrice * cancelledQuantity - couponDiscount;
        console.log("Total cancle amount :",totalAmountOfCancelledProduct) 
        
        const changeStatus = await Order.updateOne({_id:orderId,"items.productId":productId},{$inc:{'totalAmount':-totalAmountOfCancelledProduct},$set:{'items.$.productStatus':"Cancelled",'items.$.cancelledQuantity':cancelledQuantity,'items.$.reason':reason},$unset:{'items.$.quantity':0}})
@@ -606,7 +610,7 @@ const cancelSingleOrder = async (req,res)=>{
        if(changeStatus){
           if(particularOrder.paymentStatus == "Success"){
             // console.log("particular order data ",particularOrder)
-              const addToWallet = await walletController.addToWallet(totalAmountOfCancelledProduct,userId)
+              const addToWallet = await walletController.addToWallet(totalAmountOfCancelledProduct,userId,)
               console.log("amount added to wallet ")
           }
            const increaseQuantity = await Product.findByIdAndUpdate({_id:productId},{$inc:{stock:cancelledQuantity}})

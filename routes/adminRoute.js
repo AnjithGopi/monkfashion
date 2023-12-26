@@ -76,17 +76,17 @@ admin_route.get('/dashboard/salesReport',adminController.loadSalesReport)
 admin_route.get('/home/chart',auth.isLogin,adminController.loadChart);
 
 // Admin Coupon Management
-admin_route.get('/coupon',couponController.loadCoupon)
-admin_route.post('/coupon/createCoupon',couponController.createCoupon)
-admin_route.patch('/coupon/changeStatus',couponController.changeCouponStatus)
+admin_route.get('/coupon',auth.isLogin,couponController.loadCoupon)
+admin_route.post('/coupon/createCoupon',auth.isLogin,couponController.createCoupon)
+admin_route.patch('/coupon/changeStatus',auth.isLogin,couponController.changeCouponStatus)
 
 // Admin Product Offers
-admin_route.get('/productOffer',offerController.loadProductOffer)
-admin_route.patch('/productOffer/changeStatus',offerController.productOfferChangestatus)
-admin_route.patch('/productOffer/applyOffer',offerController.applyProductOffer)
-admin_route.get('/categoriesOffer',offerController.loadCategoriesOffer)
-admin_route.patch('/categoriesOffer/changeStatus',offerController.categoriesOfferChangestatus)
-admin_route.patch('/categoriesOffer/applyOffer',offerController.applyCategoryOffer)
+admin_route.get('/productOffer',auth.isLogin,offerController.loadProductOffer)
+admin_route.patch('/productOffer/changeStatus',auth.isLogin,offerController.productOfferChangestatus)
+admin_route.patch('/productOffer/applyOffer',auth.isLogin,offerController.applyProductOffer)
+admin_route.get('/categoriesOffer',auth.isLogin,offerController.loadCategoriesOffer)
+admin_route.patch('/categoriesOffer/changeStatus',auth.isLogin,offerController.categoriesOfferChangestatus)
+admin_route.patch('/categoriesOffer/applyOffer',auth.isLogin,offerController.applyCategoryOffer)
 
 
 

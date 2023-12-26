@@ -12,7 +12,7 @@ async function addToWallet(amount,userId){
         const userWallet = await Wallet.find({userId:userId})
         console.log("user wallet data",userWallet)
         if(userWallet.length > 0){
-            const addAmount = await Wallet.updateOne({userId:userId},{$inc:{balance:amount}})
+            const addAmount = await Wallet.updateOne({userId:userId},{$inc:{balance:amount},$push:{transaction:{amount:amount,mode:"Credited"}}})
             console.log("Amount added to wallet")
             return true
         }else{

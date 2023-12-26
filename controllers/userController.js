@@ -266,7 +266,8 @@ const verifyLogin = async(req,res)=>{
 const loadHome = async(req,res)=>{
 
     try{
-       const productData = await Product.find({isDeleted:false,isActive:true})
+       const productData = await Product.find({isDeleted:false,isActive:true}).limit(12)
+       const newProducts = await Product.find({isDeleted:false,isActive:true}).sort({createdOn:1}).limit(10)
     //    console.log("product data ::",productData)
        console.log("product data ::",productData.length)
        let cartCount = 0
@@ -286,7 +287,7 @@ const loadHome = async(req,res)=>{
        console.log("cart count",cartCount)
        console.log("cart count",userData)
     //    console.log("cart count",cartCount[0].product.length)
-        res.render('index',{product:productData,cartQuantity: cartCount,userData:userData });
+        res.render('index',{product:productData,cartQuantity: cartCount,userData:userData,newProducts:newProducts });
         //her cartquantity is removed and need to change it to previous
        
     }catch(error){
@@ -303,6 +304,7 @@ const loadProduct = async(req,res)=>{
         res.render('shopProduct',{product:productData});
        
     }catch(error){
+        res.render('../pages/error',{error:error.message})
         console.log(error.message)
     }
 }
@@ -573,7 +575,19 @@ const verifyChangePasword = async (req,res,next) =>{
                     // console.log("result :",result)
                     console.log("Password matched ")
                     req.session.cpassword = cpassword
-                    next()
+                    // const cpassword =  req.session.cpassword
+                    const spass = await securePassword(cpassword)
+                    const result = await User.findOneAndUpdate({_id:userId},{password:spass})
+                   
+                    const orderData = await Order.find({userId:userId})
+                    if(result){
+                        res.render('userProfile',{user:userData,successMessage:"Password Changed Sucessfully",order:orderData});
+                        
+                    }
+                    else
+                        res.render('userProfile',{user:userData,failedMessage:"Failed to change the password",order:orderData});
+                       
+                    // next()
                     return
                     console.log("Password matched ")
 

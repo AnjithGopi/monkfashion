@@ -11,7 +11,24 @@ const walletSchema = new mongoose.Schema({
     balance:{
         type:Number,
         default:0
-    }
+    },
+    transaction:[
+      {  amount:{
+            type:Number,
+            requied:false
+        },
+        mode:{
+            type:String,
+            enum:['Credited','Debited'],
+            requied:false
+        },
+        createdOn:{
+            type:Date,
+            default:Date.now()
+        }
+     }
+    ]
+    
      
 })
 

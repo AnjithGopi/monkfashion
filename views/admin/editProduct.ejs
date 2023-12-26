@@ -92,8 +92,8 @@
             </div>
         </header>
         <section class="content-main">
+            <form method="post" enctype="multipart/form-data">
             <div class="row">
-                <form method="post" enctype="multipart/form-data">
                 <div class="col-9">
                     <div class="content-header">
                         <h2 class="content-title">Edit Product</h2>
@@ -200,29 +200,12 @@
                     </div> <!-- card end// -->
                     
                 </div>
-            </form>
-            <div id="image-preview-container"></div>
+                <div id="image-preview-container"></div>
             </div>
+        </form>
         </section> <!-- content-main end// -->
-        <footer class="main-footer font-xs">
-            <div class="row pb-30 pt-15">
-                <div class="col-sm-6">
-                    <script>
-                    document.write(new Date().getFullYear())
-                    </script> ©, Monk Fashions.
-                </div>
-                <div class="col-sm-6">
-                    <div class="text-sm-end">
-                        All rights reserved
-                    </div>
-                </div>
-            </div>
-        </footer>
-    </main>
 
-<!-- Sweet alert Js link  -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-
+        <%- include('../../partials/adminFooter')-%>
 
 <script>
 
@@ -284,17 +267,28 @@ function updateDeletedImagesInput(deletedImg) {
     
       // Create and append img elements and buttons for each file
       fileListArr.forEach((file, index) => {
+        console.log("for each")
         const img = document.createElement('img');
+        console.log("for each 1")
         img.src = URL.createObjectURL(file);
+        console.log("for each 9")
+
         img.alt = file.name;
+        console.log("for each 2")
+
         img.style.maxWidth = '100px'; // Set a maximum width for preview
+        console.log("for each 3")
+
         previewContainer.appendChild(img);
+        console.log("for each 3")
     
         const button = document.createElement('button');
         button.textContent = 'Remove';
         button.addEventListener('click', () => {
+            console.log("Remove button worked")
           // Remove the corresponding file from the array
           fileListArr.splice(index, 1);
+          console.log("file after splice",fileListArr)
           // Re-render the previews after removing the file
           input.dispatchEvent(new Event('change'));
             // Create a new FileList object
@@ -307,12 +301,15 @@ function updateDeletedImagesInput(deletedImg) {
     
     // Set the new FileList to the input element
     input.files = newFileList.files;
+    console.log("modified array ",newFileList);
+
         });
         previewContainer.appendChild(button);
       });
     
       // Log the modified array to the console
-      console.log(fileListArr);
+      console.log("modified array ",fileListArr);
+    //   console.log("modified array ",newFileList);
     });
     </script>
 
@@ -409,16 +406,7 @@ function validateField(element) {
   // Get the value of the span tag
   const spanValue = document.getElementById('statusSpan').innerText;
 console.log(spanValue)
-// Check if the value is 1
-// if(locals.errorMessage){
-//     Swal.fire({
-//     icon: 'warning',
-//     title: 'Some error occured',
-//     // text: errorMessage,
-//   });
-//   document.getElementById('statusSpan').innerText = 'none';
 
-// }
 if(spanValue === '3'){
     Swal.fire({
     icon: 'warning',
@@ -451,16 +439,4 @@ if (spanValue === '2') {
 
 
 }
-    </script>
-    <script src="/static/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
-    <script src="/static/admin-assets/js/vendors/bootstrap.bundle.min.js"></script>
-    <script src="/static/admin-assets/js/vendors/select2.min.js"></script>
-    <script src="/static/admin-assets/js/vendors/perfect-scrollbar.js"></script>
-    <script src="/static/admin-assets/js/vendors/jquery.fullscreen.min.js"></script>
-    <!-- Main Script -->
-    <script src="/static/admin-assets/js/main.js" type="text/javascript"></script>
-</body>
-
-
-<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-form-product-1.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:32 GMT -->
-</html>
+  

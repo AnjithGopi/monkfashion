@@ -452,7 +452,8 @@
                                             <input type="text" placeholder="Enter Coupon Code..." id="couponCode"/>
                                         </div>
                                         <div class="form-group">
-                                           <a class="btn  mr-10 mb-sm-15" onclick="applyCoupon()" ><i class="fi-rs-shuffle mr-10"></i>Apply Coupon</a>
+                                           <a class="btn  mr-10 mb-sm-15" id="applyCouponBtn" onclick="applyCoupon()" ></i>Apply Coupon</a>
+                                           <a class="btn  mr-10 mb-sm-15" id="removeCouponBtn" style="display: none;" onclick="removeCoupon()" ></i>Remove Coupon</a>
                                         </div>
                                 </div>
                                 <div class="bt-1 border-color-1 mt-30 mb-30"></div>
@@ -526,6 +527,8 @@
                     toastr.success(data.successMessage)
                     document.getElementById("checkoutPrice").innerText = data.amountAfterApplyingCoupon
                     document.getElementById("couponAmount").innerText = data.couponAmount
+                    document.getElementById('applyCouponBtn').style.display = 'none';
+                    document.getElementById('removeCouponBtn').style.display = 'inline-block';
                 }else{
                     console.log("not Success ")
                     toastr.warning(data.warningMessage)
@@ -536,8 +539,20 @@
 
             }))
         }
-        function test(){
+        function removeCoupon(){
             console.log("click")
+             // Update UI to show the "Apply Coupon" button and hide the "Remove Coupon" button
+                document.getElementById('applyCouponBtn').style.display = 'inline-block';
+                document.getElementById('removeCouponBtn').style.display = 'none';
+
+                // Update other UI elements if needed
+                // document.getElementById("checkoutPrice").innerText = data.amountWithoutCoupon;
+               let couponAmount =  document.getElementById("couponAmount").innerText 
+               document.getElementById("couponAmount").innerText  = '';
+            //    document.getElementById("checkoutPrice").innerText = 
+            updateTotal();
+
+
         }
     </script>
 
@@ -580,11 +595,8 @@
 
                     }else{
                         let paymentStatus = "Pending"
-                        sendOrderToBackend(selectedValuePayment,selectedValueAddress,paymentStatus)
+                        sendOrderToBackend(selectedValuePayment,selectedValueAddress,paymentStatus,appliedCouponAmount)
                     }
-                    
-                    
-              
 
                 } else {
                     // Handle the canceled action here
@@ -598,6 +610,8 @@
     }
 
     function sendOrderToBackend(paymentMethod,address,paymentStatus){
+        const appliedCouponAmount = document.getElementById('couponAmount').innerText;
+
         console.log("SEND ORDER BACKEND FUNCTION RECIEVED")
 
         fetch('/home/cart/checkout/placeorder', {
@@ -608,15 +622,15 @@
                 body: JSON.stringify({
                     addressIndex: address,
                     paymentMethod: paymentMethod,
-                    paymentStatus: paymentStatus
+                    paymentStatus: paymentStatus,
+                    appliedCouponAmount:appliedCouponAmount
                     
                     
                 }),
             })
             .then(response => response.json())
             .then(data => {
-                console.log("got the response of...")
-                // location.reload();
+               
               
                 if( data.warningMessage){
                      toastr.warning(data.warningMessage);
@@ -636,16 +650,7 @@
                                         window.location.href = '/home'; // Change this to the actual URL of your home page
                                     }
                                 });
-                    // console.log(data.key_id);
-                    // console.log(data.orderData);
-                    // console.log("total amount",data.orderData.totalAmount);
-                    // console.log(typeof(data.orderData.totalAmount));
-                    // console.log("order id",data.orderData.orderId);
-                    // console.log(typeof(data.orderData.totalAmount));
-                  
-
-
-                    
+                   
 
                  } else{
                     alert('FAILEDD')
@@ -682,67 +687,64 @@
 
                  }
                  if (data.success) {
-    console.log("Success worked");
-    console.log(data.key_id);
-    console.log(data.orderData);
-    console.log("total amount",data.orderData.totalAmount);
-    console.log(typeof(data.orderData.totalAmount));
-    console.log("order id",data.orderData.id);
-    console.log(typeof(data.orderData.totalAmount));
-                    const amount = JSON.stringify(data.orderData.totalAmount)*100;
-                    console.log(amount)
-                    console.log(typeof(amount))
-                    var options = {
-                        "key":""+data.key_id+"",
-                        "amount":data.totalAmount,
-                        "currency": "INR",
-                        "name": "Monk Fashion",
-                        "description": "Test Transaction",
-                        "image": "/static/asset/images/MONK FASHIONS.png",
-                        "order_id":data.orderData.id,
-                        "handler": function (status) {
-                            // toastr.success("Payment Success");
-                            if (status.razorpay_payment_id) {
-                                // Payment success
-                                toastr.success("Payment Success");
-                        let paymentStatus = "Success"
+                    console.log("Success worked");
+                    console.log(data.key_id);
+                    console.log(data.orderData);
+                    console.log("total amount",data.orderData.totalAmount);
+                    console.log(typeof(data.orderData.totalAmount));
+                    console.log("order id",data.orderData.id);
+                    console.log(typeof(data.orderData.totalAmount));
+                                    const amount = JSON.stringify(data.orderData.totalAmount)*100;
+                                    console.log(amount)
+                                    console.log(typeof(amount))
+                                    var options = {
+                                        "key":""+data.key_id+"",
+                                        "amount":data.totalAmount,
+                                        "currency": "INR",
+                                        "name": "Monk Fashion",
+                                        "description": "Test Transaction",
+                                        "image": "/static/asset/images/MONK FASHIONS.png",
+                                        "order_id":data.orderData.id,
+                                        "handler": function (status) {
+                                            // toastr.success("Payment Success");
+                                            if (status.razorpay_payment_id) {
+                                                // Payment success
+                                                toastr.success("Payment Success");
+                                        let paymentStatus = "Success"
 
-                        sendOrderToBackend(paymentMethod,address,paymentStatus)
+                                        sendOrderToBackend(paymentMethod,address,paymentStatus)
 
-                               
-                             } else {
-                                // Payment failed
-                                toastr.error("Payment Failed");
-                                // alert("Payment failed");
-                            }
-                        },
-                        "prefill": {
-                            "name": "Abhilash V S",
-                            "email": "abhilash@example.com",
-                            "contact": "9000090000"
-                        },
-                        "notes": {
-                            "address": "Razorpay Corporate Office"
-                        },
-                        "theme": {
-                            "color": "#088178"
+                                            
+                                            } else {
+                                                // Payment failed
+                                                toastr.error("Payment Failed");
+                                                // alert("Payment failed");
+                                            }
+                                        },
+                                        "prefill": {
+                                            "name": "Abhilash V S",
+                                            "email": "abhilash@example.com",
+                                            "contact": "9000090000"
+                                        },
+                                        "notes": {
+                                            "address": "Razorpay Corporate Office"
+                                        },
+                                        "theme": {
+                                            "color": "#088178"
+                                        }
+                                    };
+
+                                    var rzp1 = new Razorpay(options);
+
+                                    rzp1.on('payment_failed', function (data) {
+                                        alert("Payment failed");
+                                    });
+
+                                    rzp1.open();
+
+                        } else{
+                            alert('FAILEDD')
                         }
-                    };
-
-                    var rzp1 = new Razorpay(options);
-
-                    rzp1.on('payment_failed', function (data) {
-                        alert("Payment failed");
-                    });
-
-                    rzp1.open();
-
-
-                    
-
-                 } else{
-                    alert('FAILEDD')
-                 }
 
             })
             .catch(error => {

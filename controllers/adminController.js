@@ -143,7 +143,7 @@ const changeStatus = async (req,res)=>{
     try{
         const id =req.query.id;
         const admin = req.query.admin;
-       const userSessionId = process.env.SESSION_SECRET_KEY
+        const userSessionId = process.env.SESSION_SECRET_KEY
         const updateValue = admin === "true" ? false : true;
 
         const statusUpdation =  await User.findByIdAndUpdate({_id:id},{$set:{isActive:updateValue}})
@@ -264,13 +264,16 @@ const loadSalesReport = async (req,res)=>{
         }
         console.log("Search Key :",search)
         if( req.query.fromDate && req.query.toDate){
-            startDate = new Date(req.query.toDate)
-            endDate =new Date(req.query.fromDate)
-        const dateData = await Order.aggregate([
+            console.log("Query worked")
+            startDate = new Date(req.query.fromDate);
+            endDate = new Date(req.query.toDate);
+            endDate.setHours(23, 59, 59, 999);
+            console.log(startDate,endDate)
+         const dateData = await Order.aggregate([
             {
                 $match: {
                     $or: [
-                        { orderDate: { $gt:endDate,$lt:startDate } }
+                        { orderDate: { $gte: startDate, $lte: endDate } }
                     ]
                 }
             },
@@ -297,11 +300,17 @@ const loadSalesReport = async (req,res)=>{
                 $unwind: '$productDetails'
             },
             {
+                $match: {
+                    "orderStatus": "Delivered"  
+                }
+            },
+            {
                 $sort:{
                     orderDate:-1
                 }
             }
         ]);
+        // console.log("date Data",dateData)
         const orderCounts =  getSalesReportCounts(dateData)
         res.render("salesReport",{orders:dateData,users:userCount,totalOrders:dateData.length,onlinePayments:orderCounts.filterPaymentOnline,offlinePayments:orderCounts.filterPaymentOffline,cancelledOrders:orderCounts.filterOrderCancelled,totalAmount:orderCounts.totalSum})
 
@@ -342,14 +351,18 @@ const loadSalesReport = async (req,res)=>{
                 $unwind: '$productDetails'
             },
             {
+                $match: {
+                    "orderStatus": "Delivered"  
+                }
+            },
+            {
                 $sort:{
                     orderDate:-1
                 }
             }
-            
-              
-           
+                 
         ]);
+        // console.log("Order data 1",orderData1)
 
         const day = salesReportDuration === "Weekly" ? 7 : salesReportDuration === "Monthly" ? 30  : salesReportDuration === "Yearly" ? 365 : 0;
         console.log("Report Duration :",day);
@@ -391,12 +404,18 @@ const loadSalesReport = async (req,res)=>{
                 $unwind: '$productDetails'
             },
             {
+                $match: {
+                    "orderStatus": "Delivered"  
+                }
+            },
+            {
                 $sort:{
                     orderDate:-1
                 }
             }
             
           ]);
+        // console.log("Order data",orderData)
           
         // const counts = getSalesReportCounts(orderData)
         // console.log("SlaesData :",orderCounts)
