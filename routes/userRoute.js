@@ -34,6 +34,9 @@ const orderController = require("../controllers/orderController")
 // importing the coupon Controller
 const couponController = require("../controllers/couponController")
 
+// import the page controller
+const pageController = require("../controllers/pagesController")
+
 
 user_route.get('/',userController.loadHome);
 // router to load registration form
@@ -47,6 +50,12 @@ user_route.post('/verifyotp',userController.verifyOTP,userController.newInsertUs
 // Route to load the login page
 // user_route.get('/login',auth.isLogout,userController.loadLogin);
 user_route.get('/login',auth.isLogout,userController.loadLogin);
+// Forget password
+user_route.get('/forgetPassword',auth.isLogout,userController.loadForgetPassword)
+user_route.post('/forgetPassword',auth.isLogout,userController.sendOtp,userController.forgetPasswordOtp)
+user_route.get('/forgetPasswordOtp',auth.isLogout,userController.loadChangePasswordOtp)
+user_route.post('/forgetPasswordOtp',auth.isLogout,userController.changePasswordVerifyOtp)
+
 // Route to verify the login
 user_route.post('/login',userController.verifyLogin);
 // Route to load the home page
@@ -95,8 +104,8 @@ user_route.post('/home/profile/editProfile',auth.isLogin,userController.updateUs
 // To change user Password
 user_route.get('/home/profile/changePassword',auth.isLogin,userController.loadChangePassword)
 user_route.post('/home/profile/changePassword',auth.isLogin,userController.verifyChangePasword)
-user_route.get("/home/profile/updateProfile/otp",auth.isLogin,userController.loadChangePasswordOtp)
-user_route.post("/home/profile/updateProfile/otp",auth.isLogin,userController.changePasswordVerifyOtp)
+// user_route.get("/home/profile/updateProfile/otp",auth.isLogin,userController.loadChangePasswordOtp)
+// user_route.post("/home/profile/updateProfile/otp",auth.isLogin,userController.changePasswordVerifyOtp)
 user_route.post("/home/profile/cancelOrder",auth.isLogin,userController.cancelOrder)
 user_route.get("/home/profile/order/orderDetails",auth.isLogin,userController.loadOrderDetails)
 user_route.post("/home/profile/order/orderDetails/cancelOrder",auth.isLogin,orderController.cancelSingleOrder)
@@ -105,6 +114,10 @@ user_route.post("/home/profile/order/orderDetails/returnOrder",auth.isLogin,orde
 
 user_route.post("/clearOtp",auth.isLogin,userController.clearOtp)
 // user_route.p("/clearOtp",auth.isLogin,userController.clearOtp)
+
+// Pages
+user_route.get("/contact",pageController.loadContact)
+
 
 // user_route.use('*', (req, res) => {
 //     res.status(404).json({

@@ -3,7 +3,7 @@
         console.log("add product worked")
         console.log("Product ID",productId)
 
-   
+    
             fetch(`/user/addToCart/${productId}`, {
                 method: 'GET',
                 headers: {

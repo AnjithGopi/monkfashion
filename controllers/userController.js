@@ -7,7 +7,8 @@ const Order = require('../models/orderModel');
 const Cart = require('../models/cartModal');
 const Wallet = require('../models/walletModel');
 const Categories = require('../models/categoriesModal');
-
+const Banner = require('../models/bannerModal');
+const mongoose = require('mongoose');
 
 const {generateRefferalId} = require('../functions/generateRefferalId')
 const walletController = require('./walletController')
@@ -98,20 +99,69 @@ const loadotpRedirect = async(req,res)=>{
     }
 }
 
+const sendOtp = async(req,res,next)=>{
+    try{
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL,
+                pass:process.env.EMAIL_PASSWORD,
+
+            },
+        });
+
+        const otp = OTP.generateOTP();
+        req.session.changePassword = req.body.password
+        req.session.email = req.body.email
+        req.session.otp = otp
+        console.log("sendmail - generatd-otp:",otp)
+        const mailOptions = {
+            from: 'abhilash.brototype@gmail.com',
+            to: req.body.email,
+            subject: 'Verification Mail',
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2 style="color: #007bff;">Verification Code</h2>
+                    <p>Dear User,</p>
+                    <p>Your verification code is: <strong style="font-size: 1.2em; color: #28a745;">${otp}</strong></p>
+                    <p>Please use this code to complete the verification process.</p>
+                    <p>If you did not request this code, please ignore this email.</p>
+                    <p>Best regards,<br> Mong Fashion's Team</p>
+                </div>
+            `,
+        };
+
+        // Use Promise style for sending mail
+        const info = await transporter.sendMail(mailOptions);
+        if (info.accepted.length > 0) {
+            console.log('Message sent: %s', info.messageId);
+            next()
+        }else{
+            console.log("Otp failed to send")
+        }
+    }catch(error){
+        console.log(error.message)
+    }
+}
 
 
 const loadOtp = async(req,res)=>{
 
     try{
-    //    const userData = await User.findById({_id:req.session.user_id})
-    // res.setHeader('Custom-Header', '/htmlotp'); 
-    // res.setHeader('')
+    
         res.render('otp',{email:req.session.email});
     }catch(error){
         console.log(error.message)
     }
     // next()
 }
+const forgetPasswordOtp = async(req,res)=>{
+    try{
+        res.redirect('forgetPasswordOtp')
+    }catch(err){
+        console.log(err.message)
+    }
+} 
 
 const verifyOTP = async (req,res,next)=>{
     const userEnteredOtp = req.body.otp;
@@ -262,12 +312,24 @@ const verifyLogin = async(req,res)=>{
             console.log(error.message)
         }
     }
+
+const loadForgetPassword  = async (req, res) => {
+    try {
+        console.log("forget password received")
+        res.render('forgetPassword')
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
 // Website Home Page
 const loadHome = async(req,res)=>{
 
     try{
        const productData = await Product.find({isDeleted:false,isActive:true}).limit(12)
        const newProducts = await Product.find({isDeleted:false,isActive:true}).sort({createdOn:1}).limit(10)
+       const bannerData = await Banner.find()
+       const categoriesData = await Categories.find({isDeleted:false,isActive:true})
     //    console.log("product data ::",productData)
        console.log("product data ::",productData.length)
        let cartCount = 0
@@ -286,9 +348,33 @@ const loadHome = async(req,res)=>{
        }
        console.log("cart count",cartCount)
        console.log("cart count",userData)
-    //    console.log("cart count",cartCount[0].product.length)
-        res.render('index',{product:productData,cartQuantity: cartCount,userData:userData,newProducts:newProducts });
-        //her cartquantity is removed and need to change it to previous
+    // let data = await Product.find().sort({selledQuantity:-1}).limit(3)
+   let data = await Order.aggregate([
+        { $unwind: "$items" },
+        {
+          $group: {
+            _id: "$items.productId",
+            totalQuantity: { $sum: "$items.quantity" }
+          }
+        },
+        { $sort: { totalQuantity: -1 } },
+        {
+            $limit: 10 
+         },
+        {
+            $lookup:{
+                from:'products',
+                localField:'_id',
+                foreignField:'_id',
+                as:'productDetails'
+            }
+        }
+      ]);
+      
+    console.log(data)
+    console.log('1',data[0].productDetails)
+    console.log('2',data[0].productDetails[0].name)
+        res.render('index',{product:productData,cartQuantity: cartCount,userData:userData,newProducts:newProducts,banner:bannerData,categories:categoriesData,bestSeller:data });
        
     }catch(error){
         console.log(error.message)
@@ -300,8 +386,10 @@ const loadProduct = async(req,res)=>{
 
     try{
        const productData = await Product.findById({_id:req.query.id})
+       const similarProductData = await Product.find({categoryId:productData.categoryId}).populate('categoryId').limit(4)
+       console.log(similarProductData)
      
-        res.render('shopProduct',{product:productData});
+        res.render('shopProduct',{product:productData,similarProduct : similarProductData});
        
     }catch(error){
         res.render('../pages/error',{error:error.message})
@@ -337,13 +425,13 @@ const loadProfile = async(req,res)=>{
         // console.log("ORder data :",orderData)
         // console.log(userData)
         // console.log(userData.address[0].fullName)
-        const walletData = await Wallet.find({userId:userId})
-       let walletBalance = 0
-        if(walletData.length > 0){
-            walletBalance = walletData[0].balance
-        }
+        const walletData = await Wallet.findOne({userId:userId})
+    //    let walletBalance = 0
+    //     if(walletData.length){
+    //         walletBalance = walletData.balance
+    //     }
         console.log(walletData)
-        res.render('userProfile',{user:userData,order:orderData,wallet:walletBalance})
+        res.render('userProfile',{user:userData,order:orderData,wallet:walletData})
 
     }catch(error){
         console.log("Load profile catch recieved")
@@ -632,6 +720,8 @@ const changePasswordSendOtp = async(req,res)=>{
 
         const otp = OTP.generateOTP();
         req.session.changePassword = otp
+        req.session.otp = otp;
+        console.log(req.session.otp)
         console.log("sendmail - generatd-otp:",otp)
         const mailOptions = {
             from: process.env.EMAIL,
@@ -659,6 +749,8 @@ const changePasswordSendOtp = async(req,res)=>{
         console.log(error.message)
     }
 }
+
+
 
 
 const loadChangePasswordOtp = async (req,res) =>{
@@ -691,26 +783,23 @@ const  changePasswordVerifyOtp = async (req,res)=>{
     try{
 
         const otpUser = req.body.otp.join("")
-        const userId = req.session.user_id
         console.log("User otp :",otpUser)
         console.log("User otp :",req.session.changePassword) 
+        console.log("User otp :",req.session.otp) 
         console.log("User otp :",typeof(otpUser))
-        if( otpUser === req.session.changePassword ){
-                    const cpassword =  req.session.cpassword
+        if( otpUser === req.session.otp ){
+                    const cpassword =  req.session.changePassword
+                    const email =  req.session.email
                     const spass = await securePassword(cpassword)
-                    const userData = await User.findById(userId)
-                    console.log("spass :",spass)
-                    const result = await User.findOneAndUpdate({_id:userId},{password:spass})
+                    const result = await User.findOneAndUpdate({email:email},{password:spass})
                     console.log("result :",result)
-                    const orderData = await Order.find({userId:userId})
                     if(result){
-                        res.render('userProfile',{user:userData,successMessage:"Password Changed Sucessfully",order:orderData});
-                        delete req.session.changePassword
-                        req.session.save()
+                        res.render('../pages/login',{successMessage:"Successfully changed Password"})
+   
                     }
                     else
-                        res.render('userProfile',{user:userData,failedMessage:"Failed to change the password",order:orderData});
-                        // delete req.session.email;
+                    res.render('../pages/login',{warnningMessage:"Failed to change Password"})
+                    req.session.destroy()
         }else{
             console.log("Wromg otp")
             res.render('otp2',{errorMessage:"Wrong password"})
@@ -760,7 +849,7 @@ const loadOrderDetails = async (req,res)=>{
 }
 const loadAllProducts = async(req,res)=>{
     try{
-        console.log("Data in Body :",req.query.search)
+        // console.log("Data in Body :",req.body)
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 3;
         const skip = (page - 1) * limit;
@@ -772,23 +861,32 @@ const loadAllProducts = async(req,res)=>{
         const totalProducts = await Product.countDocuments();
         const totalPages = Math.ceil(totalProducts / limit);
         const categoryData = await Categories.find({isActive:true})
+        const cartData = await Cart.find({userId:req.session.user_id});
 
-        console.log("Load all producty worked")
-        const productData = await Product.find({
-            isDeleted: false,
-            isActive: true,
-            $or: [
-              { name: { $regex: search, $options: 'i' } }, // Case-insensitive search on productName
-              { parse: { $regex:search, $options: 'i' } }   // Case-insensitive search on description
-              // Add more fields as needed
-            ]
-          })
-            .populate('categoryId')
-            .skip(skip)
-            .limit(limit);
-        // console.log("All Product data",productData)
-        // console.log("All Product data c:::",productData[1].categoryId.name)
-        res.render("allProducts",{products:productData,  currentPage: page,  totalPages: totalPages,categories:categoryData})
+        
+        console.log("Load all products worked")
+           
+                const productQuery = {
+                    isDeleted: false,
+                    isActive: true,
+                    $or: [
+                        { name: { $regex: search, $options: 'i' } } 
+                    ]
+                };
+
+                if (req.query.categoryId) {
+                    productQuery.categoryId = new mongoose.Types.ObjectId(req.query.categoryId);
+                }
+
+                const productData = await Product.find(productQuery)
+                    .populate('categoryId')
+                    .skip(skip)
+                    .limit(limit);
+
+                const productDataToPass = productData;
+            
+          
+        res.render("allProducts",{products:productDataToPass,cartQuantity:cartData[0].product.length, currentPage: page,  totalPages: totalPages,categories:categoryData,search:req.query.search,categoryId:req.query.categoryId})
 
     }catch(error){
         console.log(error.message)
@@ -804,9 +902,12 @@ module.exports ={
     sendVerifyMail,
     loadOtp,
     verifyOTP,
+    forgetPasswordOtp,
     newInsertUser,
     loadotpRedirect ,
     loadRegsucess,
+    loadForgetPassword,
+    sendOtp,
     loadProduct,
     logoutUser,
     loadProfile,
@@ -825,6 +926,5 @@ module.exports ={
     cancelOrder,
     loadOrderDetails,
     loadAllProducts
-     
-
+    
 }

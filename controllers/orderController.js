@@ -3,7 +3,8 @@ const Product = require("../models/productModal");
 const User = require("../models/userModal");
 const Order = require("../models/orderModel")
 const Coupon = require("../models/couponModal")
-const walletController = require("../controllers/walletController")
+const Wallet = require("../models/walletModel")
+const walletController = require('../controllers/walletController')
 const Razorpay = require('razorpay')
 const { v4: uuidv4 } = require('uuid');
 const mongoose = require('mongoose');
@@ -35,6 +36,7 @@ function generateOrderId() {
 // Function to load the cart Page
 const loadCart = async (req, res) => {
     try {
+        console.log("Load cart received")
         // const cartData = await Cart.find({userId:req.session.user_id}).populate('product.productId');
         // console.log(cartData)
         // res.render('cart',{cart:cartData})
@@ -47,7 +49,8 @@ const loadCart = async (req, res) => {
             .populate("product.productId"); // Populate the productId field in the product array
 
         console.log(cartData);
-        console.log("User Data :", cartData[0].product.length);
+        // if(cartData.length > 0 && ) 
+        // console.log("User Data :", cartData[0].product.length);
         // console.log(cartData[1])
         // console.log(cartData[0])
         console.log("........................");
@@ -57,15 +60,13 @@ const loadCart = async (req, res) => {
         // console.log(cartData[0].product[1].productId.name);
         console.log("........................");
 
-        // console.log(cartData[0].quantity);
-        // console.log(cartData.product);
 
         if (userData.cart) {
             res.render("cart", { cart: cartData ,cartQuantity:cartData[0].product.length});
         } else {
-            const productData = await Product.find()
-            //    console.log(productData)
-            res.render('index', { product: productData, warningMessage: "Cart is empty" });
+            const productData = await Product.find({isDeleted:false,isActive:true}).limit(12)
+             const newProducts = await Product.find({isDeleted:false,isActive:true}).sort({createdOn:1}).limit(10)
+            res.render('index', { product: productData, warningMessage: "Cart is empty", newProducts:newProducts });
         }
     } catch (error) {
         console.log(error.message);
@@ -364,9 +365,10 @@ const loadCheckout = async (req, res) => {
             .populate("userId")
             .populate("product.productId");
         const user = await User.findById(req.session.user_id)
-        console.log("aadress : ", user.address)
-        console.log("cart data :", cartData)
-        res.render('checkout', { cartData: cartData, address: user.address })
+        const couponData = await Coupon.find({isActive:true})
+        const walletData = await Wallet.findOne({userId:req.session.user_id})
+        console.log(couponData)
+        res.render('checkout', { cartData: cartData, address: user.address ,coupon:couponData,walletBalance:walletData.balance})
     } catch (error) {
         console.log(error.message)
     }
@@ -422,7 +424,7 @@ const placeOrder = async (req, res) => {
     try {
         console.log("Place order recieved");
         console.log(req.body);
-        const { addressIndex, paymentMethod,paymentStatus,appliedCouponAmount } = req.body;
+        const { addressIndex, paymentMethod,paymentStatus,appliedCouponAmount,appliedWalletAmount } = req.body;
         console.log(
             "Address Index :",
             addressIndex,
@@ -459,7 +461,8 @@ const placeOrder = async (req, res) => {
             paymentMethod: paymentMethod,
             orderId: orderId,
             totalAmount: totalAmount,
-            couponAmount:appliedCouponAmount
+            couponAmount:appliedCouponAmount,
+            appliedWalletAmount:appliedWalletAmount
         });
         if(paymentStatus == "Success"){
             order.paymentStatus = "Success"
@@ -479,7 +482,11 @@ const placeOrder = async (req, res) => {
                     console.log("Sucessfully added user id to coupon")
                 }
             }
-
+            if(appliedWalletAmount >0){
+                const addToWallet = await walletController.debitFromWallet(appliedWalletAmount,userId)
+                
+            }
+                
             updateStock();
             // clearing the cart refernce stored in the user data
             const clearCartFromUser = await User.updateOne(
@@ -600,6 +607,12 @@ const cancelSingleOrder = async (req,res)=>{
        const particularOrder = await Order.findById(orderId)
        
        const product = await Product.find({_id:productId})
+       let appliedWalletAmount = 0;
+       if(particularOrder.appliedWalletAmount){
+        appliedWalletAmount = (particularOrder.appliedWalletAmount/particularOrder.totalAmount *product[0].salePrice)*cancelledQuantity;
+    //    let couponDiscount = (particularOrder.couponAmount/particularOrder.totalAmount *product[0].salePrice)*cancelledQuantity 
+
+       }
        let couponDiscount = (particularOrder.couponAmount/particularOrder.totalAmount *product[0].salePrice)*cancelledQuantity 
        console.log("Coupon Discount ",couponDiscount)
        const totalAmountOfCancelledProduct = product[0].salePrice * cancelledQuantity - couponDiscount;
@@ -609,8 +622,7 @@ const cancelSingleOrder = async (req,res)=>{
        console.log("product after changing ",changeStatus.totalAmount)
        if(changeStatus){
           if(particularOrder.paymentStatus == "Success"){
-            // console.log("particular order data ",particularOrder)
-              const addToWallet = await walletController.addToWallet(totalAmountOfCancelledProduct,userId,)
+              const addToWallet = await walletController.addToWallet(totalAmountOfCancelledProduct,userId)
               console.log("amount added to wallet ")
           }
            const increaseQuantity = await Product.findByIdAndUpdate({_id:productId},{$inc:{stock:cancelledQuantity}})

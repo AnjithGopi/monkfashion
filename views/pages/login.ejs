@@ -36,7 +36,7 @@
                                             <h4 class="alter text-success " id="sucessMessage"><%=locals.message ?message:''%></h4>
 
                                                 
-                                                <a class="text-muted" href="#">Forgot password?</a>
+                                                <a class="text-muted" href="/forgetPassword">Forgot password?</a>
                                             </div>
                                             <div class="form-group d-flex justify-content-center">
                                                 <button type="button" onclick="validateForm()" class="btn btn-fill-out btn-block hover-up" name="login">Log in</button>
@@ -59,7 +59,16 @@
     </main>
     <%-include('../layouts/footerUser')-%>
 
-    
+    <script>
+        if( '<%= locals.successMessage %>'){
+            console.log('success')
+            toastr.success('<%= locals.successMessage %>')
+        }
+        if( '<%= locals.warnningMessage %>'){
+            console.log('success')
+            toastr.warning('<%= locals.warnningMessage %>')
+        }
+    </script>
 
     <script>
         // form vaildation js code

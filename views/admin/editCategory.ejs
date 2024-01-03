@@ -13,12 +13,16 @@
               <h2 class="text-uppercase text-center mb-5">Edit Categories</h2>
               
               
-              <form  method="post" >
+              <form  method="post" enctype="multipart/form-data" >
                 <div class="mb-4">
-                    <label for="product_name" class="form-label">Category title</label>
+                    <label for="categories_name" class="form-label">Category title</label>
                     <input type="hidden" name="id" value="<%= categories._id%>">
-                    <input type="text" name="name" placeholder="Type here" value="<%= categories.name %> " class="form-control" id="product_name">
+                    <input type="text" name="name" placeholder="Type here" value="<%= categories.name %>" class="form-control" id="product_name">
                 </div>
+                <div class="mb-4">
+                  <label for="product_name" class="form-label">Category image</label><br>
+                  <input type="file" name="image" id="image" multiple>
+              </div>
                
                
                

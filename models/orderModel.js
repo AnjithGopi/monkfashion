@@ -111,6 +111,10 @@ const orderSchema = new mongoose.Schema({
     couponAmount:{
       type:Number,
       required:false
+    },
+    appliedWalletAmount:{
+      type:Number,
+      required:false
     }
        
 });

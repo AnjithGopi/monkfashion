@@ -45,17 +45,10 @@ const insertProduct  =  async (req,res)=>{
                     // Save the cropped image
                     await sharp(croppedImageBuffer)
                         .toFile(outputPath);
-                        // const croppedFilename = `cropped_${filename}`;
-    
-                        // Save the cropped image to the static directory
-                        // fs.writeFileSync(outputPath, croppedImageBuffer);
-            
-                    // Push the new cropped image filename to the array
+                      
                     newImages.push(croppedFilename);
                 }
             
-                // Add the new cropped images to the product
-                // product.image.push(...newImages);
             
                 console.log("Cropped Images:", newImages);
             }
@@ -116,8 +109,7 @@ const loadProduct = async (req,res)=>{
          productData = await Product.find({categoryId:req.query.category}) .populate('categoryId')
          .skip(skip)
          .limit(limit);
-        //     category = categoriesId._id
-        // console.log("categoryData  ;",productData)
+
     }else{
          productData = await Product.find({
             isDeleted:false,
@@ -129,8 +121,6 @@ const loadProduct = async (req,res)=>{
             .populate('categoryId')
             .skip(skip)
             .limit(limit);
-
-            // console.log("Data ::",productData)
 
     }
 
@@ -230,7 +220,7 @@ const loadEditProduct = async (req,res)=>{
 
 const editProduct = async (req,res)=>{
     try{
-console.log("Dleted Image",req.body.deletedImages)
+console.log("Deleted Image",req.body.deletedImages)
         const productId = req.session.editProductId ;
         
         console.log(productId)
@@ -287,12 +277,7 @@ product.image = product.image.filter(image => !deletedImages.includes(image));
                 // Save the cropped image
                 await sharp(croppedImageBuffer)
                     .toFile(outputPath);
-                    // const croppedFilename = `cropped_${filename}`;
-
-                    // Save the cropped image to the static directory
-                    // fs.writeFileSync(outputPath, croppedImageBuffer);
-        
-                // Push the new cropped image filename to the array
+                    
                 newImages.push(croppedFilename);
             }
         
@@ -310,10 +295,7 @@ product.image = product.image.filter(image => !deletedImages.includes(image));
 
 
         console.log("Product updated successfully:", updatedProduct);
-        // console.log("product ::",productDataAfterUpdation)
-        // res.send('Product updated successfully');
-        // res.render('products',{products:productDataAfterUpdation,message:3})
-        res.redirect("/admin/products")
+         res.redirect("/admin/products")
 
 
     }catch(error){

@@ -19,13 +19,33 @@ async function addToWallet(amount,userId){
             console.log("wallet not created till now")
             const wallet = await createUserWallet(userId)
             if(wallet){
-             const addAmount = await Wallet.updateOne({userId:userId},{$inc:{balance:amount}})
+             const addAmount = await Wallet.updateOne({userId:userId},{$inc:{balance:amount},$push:{transaction:{amount:amount,mode:"Credited"}}})
              console.log("Amount added to wallet")
                 return true
             }else{
              console.log("Failed to create wallet")
              return false
             }
+        }
+    }catch(error){
+        console.log(error.message)
+    }
+}
+
+async function debitFromWallet(amount,userId){
+    try{
+        console.log("add to wallet received")
+
+        // const userId = req.session.user_id
+        const userWallet = await Wallet.find({userId:userId})
+        console.log("user wallet data",userWallet)
+        if(userWallet.length > 0){
+            const addAmount = await Wallet.updateOne({userId:userId},{$inc:{balance:-amount},$push:{transaction:{amount:amount,mode:"Debited"}}})
+            console.log("Amount debited from wallet")
+            return true
+        }else{
+            console.log("Wallet Not Exist !!")
+            
         }
     }catch(error){
         console.log(error.message)
@@ -51,5 +71,6 @@ async function createUserWallet(userIdd){
 }
 
 module.exports = {
-    addToWallet
+    addToWallet,
+    debitFromWallet
 }

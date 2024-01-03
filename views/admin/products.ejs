@@ -12,7 +12,6 @@
             <div class="content-header">
                 <div>
                     <h2 class="content-title card-title">Product List </h2>
-                    <p>Lorem ipsum dolor sit amet.</p>
                 </div>
                 <div>
                     <input type="text"  placeholder="Search order ID" class="form-control bg-white">
@@ -22,15 +21,11 @@
                 <header class="card-header">
                     <div class="row gx-3 d-flex">
                         
-                            <!-- <div class="col-lg-4 col-md-6 me-auto">
-                                <input type="text" placeholder="Search..." class="form-control">
-                                 <input type="submit" class="m-2 btn rounded-3 btn-primary" value="Search"/>
-                            </div> -->
                             <div class=" col-lg-4 col-md-6 me-auto">
 
                                 <form action="">
                                   <div class=" d-flex ">
-                                        <input list="search_terms" type="text" name="search"  class="form-control" placeholder="Search term">
+                                        <input list="search_terms" type="text" name="search"  class="form-control" value="<%= search%>" placeholder="Search term">
                                         <button class="btn btn-light bg" type="submit"> <i class="material-icons md-search"></i></button>
                                     </div>
                                 </form>
@@ -84,32 +79,24 @@
 
                                 <tr class="justify-content-center ">
                                     <td><%= i+1 %></td>
-                                    <!-- <td><img src="/static/admin/images/<%=products[i].image[0] %>" alt=""></td> -->
-                                    <!-- <td> <img class="" src="/static/admin/images/product/<%=products[i].image[0] %>" alt="" width="100" height="80">
-                                   </td> -->
+                                    
                                    <td>
                                        
-                                        
-                                      
-                                    <div class="container  " style="overflow: hidden; height: 100px; width: 100px;">
-                                        <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel" style="overflow: hidden;">
-                                            <div class="carousel-inner">
-                                    <% for(let j=0 ;j < products[i].image.length ; j++){ %>
+                                        <div class="container  " style="overflow: hidden; height: 100px; width: 100px;">
+                                                <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel" style="overflow: hidden;">
+                                                    <div class="carousel-inner">
+                                            <% for(let j=0 ;j < products[i].image.length ; j++){ %>
 
-                                                <div class="carousel-item <% if (j==0) { %> active <% } %> ">
-                                                    <div class="image-wrapper">
-                                                        <img src="/static/admin/images/product/<%=products[i].image[j] %>" class="d-block " alt="..." style="object-fit: cover; object-position: center center;" width="100" height="100">
+                                                        <div class="carousel-item <% if (j==0) { %> active <% } %> ">
+                                                            <div class="image-wrapper">
+                                                                <img src="/static/admin/images/product/<%=products[i].image[j] %>" class="d-block " alt="..." style="object-fit: cover; object-position: center center;" width="100" height="100">
+                                                            </div>
+                                                        </div>
+                                                        <% } %>
+                                                    
                                                     </div>
                                                 </div>
-                                                <% } %>
-                                               
-                                            </div>
                                         </div>
-                                    </div>
-                                    
-                                    
-                                        
-
                                    </td>
                                     <td><b><%= products[i].name %></b></td>
                                     <td><b><%= products[i].categoryId.name %></b></td>
@@ -179,11 +166,6 @@
 <%- include('../../partials/adminFooter')-%>
         
 
-   
-   
-        
-        
-
       <script>
 
         // function for confirmation while blocking a category
@@ -203,8 +185,6 @@
                     }
                 });
             }
-        
-       
 
         // function for confirmation while blocking a product
              function confirmDelete(productId) {
@@ -252,9 +232,7 @@
     
     
       }
-    
-    
-          
+     
             function confirmDeleteCategories(categoriesId) {
                 Swal.fire({
                 title: "Are you sure ?",

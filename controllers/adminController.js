@@ -207,7 +207,7 @@ const loadOrders = async (req,res) =>{
         .limit(limit);
         const totalUsers = await Order.countDocuments();
         const totalPages = Math.ceil(totalUsers / limit);
-        res.render('orders',{order:orderData,currentPage: page,totalPages: totalPages})
+        res.render('orders',{order:orderData,currentPage: page,totalPages: totalPages,search:search})
     } catch (error) {
         console.log(error.message)
     }

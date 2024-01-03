@@ -1,0 +1,368 @@
+<%- include('../../partials/adminHeader')-%>
+<body>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <div class="screen-overlay"></div>
+<%- include('../../partials/adminAside')-%>
+   
+    <main class="main-wrap">
+<%- include('../../partials/adminNavbar')-%>
+        
+        <section class="content-main">
+            <div class="content-header">
+                <h2 class="content-title">Banner</h2>
+                <button onclick="create()" >create</button>
+            </div>
+            <div class="card mb-4">
+              
+                <div class="row gx-3 row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-xl-3 row-cols-xxl-3">
+                    <% if(banner) { %>
+                        <% banner.forEach((banner, index) => { %>
+                            <div class="col">
+                                <h3 class="col d-flex align-items-center flex-column" style="color: #088178;"><%= banner.name%></h3>
+                                <div class="card card-product-grid">
+                
+                                    <div class="container" >
+                                        <div id="carouselExample<%= index %>" class="carousel slide" data-bs-ride="carousel" style="overflow: hidden;">
+                                            <div class="carousel-inner">
+                                                <%  banner.image.forEach((image, imageIndex) => { %>
+                                                    <div class="carousel-item <%= imageIndex === 0 ? 'active' : '' %>">
+                                                        <div class="image-wrapper">
+                                                            <img src="/static/admin/images/banner/<%= image %>" class="d-block " alt="..."
+                                                                style="object-fit: cover; object-position: center center;">
+                                                        </div>
+                                                    </div>
+                                                <% })  %>
+                                            </div>
+                                        </div>
+                                    </div>
+                
+                                    <div class="info-wrap">
+                                         <h3 class="col d-flex align-items-center flex-column" style="color: #088178;"><%= banner.text %></h3>
+                                         <h3 class="col d-flex align-items-center flex-column" style="color: #088178;"><%= banner.text2 %></h3>
+
+                                        <a onclick="showBannerDetails('<%=banner._id %>','<%=banner.name %>','<%=banner.target %>','<%= banner.image %>','<%=banner.text %>','<%=banner.text2 %>','<%=banner.expiryDate %>')" class="btn btn-sm font-sm rounded btn-brand">
+                                            <i class="material-icons md-edit"></i> Edit
+                                        </a>
+                                        <a href="#" class="btn btn-sm font-sm btn-light rounded">
+                                            <i class="material-icons md-delete_forever"></i> Delete
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <p>No Banners are available</p>
+                    <% } %>
+                </div>
+                                
+            </div> <!-- card end// -->
+            <div class="pagination-area mt-15 mb-50">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                        <li class="page-item"><a class="page-link" href="#">02</a></li>
+                        <li class="page-item"><a class="page-link" href="#">03</a></li>
+                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                        <li class="page-item"><a class="page-link" href="#">16</a></li>
+                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </section> <!-- content-main end// -->
+
+<%- include('../../partials/adminFooter')-%>
+
+
+        
+<!-- Modal -->
+
+<div class="modal fade" id="offerModal" tabindex="-1" role="dialog" aria-labelledby="offerModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="offerModalLabel">Offer Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" onclick="closeModal()">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="text-center">
+                <h4 id="bannermName" class="text-success"></h4>
+            </div>
+          <form action="/admin/banner/addBanner" method="post" enctype="multipart/form-data">
+            <input type="text" class="form-control" id="bannerId" >
+            <div class="form-group">
+              <label for="bannerName">Banner Name:</label>
+              <input type="text" class="form-control" id="bannerName" name="bannerName" oninput="validateField(this)"  required>
+              <span id="bannerNameError" class="text-danger"> </span>
+            </div>
+            <div class="form-group">
+                <label for="bannerText">Banner Heading:</label>
+                <input type="text" class="form-control" id="bannerText" name="bannerText" oninput="validateField(this)"  required>
+                <span id="bannerTextError" class="text-danger"> </span>
+              </div>
+              <div class="form-group">
+                <label for="bannerText">Banner  Text :</label>
+                <input type="text" class="form-control" id="bannerText2" name="bannerText2" oninput="validateField(this)"  required>
+                <span id="bannerTextError" class="text-danger"> </span>
+              </div>
+              <div class="form-group">
+                <label for="image">Banner Image:</label>
+                <input type="file" class="form-control" id="image" name="image" multiple accept="image/*">
+                <span id="imageError" class="text-danger"> </span>
+              </div>
+              <div class="form-group">
+                <input class="form-check-input" type="checkbox" id="cropStatus" name="cropStatus">
+                <label class="form-check-label" for="cropStatus">Crop Image</label>
+                <div id="preview-image"></div>
+            </div>
+            <div class="form-group">
+                <label for="bannerExpiryDate">Banner Expiry Date</label>
+                <input type="Date" name="bannerExpiryDate" class="form-control" id="bannerExpiryDate" oninput="validateField(this)" required>
+              <span id="bannerExpiryDateError" class="text-danger"> </span>
+
+              </div>
+            
+            <!-- Add more editable input fields as needed -->
+  
+            <!-- "Apply Offer" button -->
+            <button type="submit" class="btn btn-primary"  id="offerApplyButton">Apply Offer</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <!-- Close button within the modal footer -->
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+       
+<!-- Modal -->
+<div class="modal fade" id="bannerModal" tabindex="-1" role="dialog" aria-labelledby="bannerModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="offerModalLabel">Banner Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" onclick="closeModal()">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="text-center">
+               
+            </div>
+          <form action="/admin/banner/updateBanner" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+              <label for="bannerName">Banner Name:</label>
+              <input type="text" name="bannerId" id="bannerid">
+              <input type="text" class="form-control" id="bannername" name="bannerName" oninput="validateField(this)"  required>
+              <span id="bannerNameError" class="text-danger"> </span>
+            </div>
+            <div class="form-group">
+                <label for="bannerText">Banner Heading:</label>
+                <input type="text" class="form-control" id="bannertext" name="bannerText" oninput="validateField(this)"  required>
+                <span id="bannerTextError" class="text-danger"> </span>
+              </div>
+              <div class="form-group">
+                <label for="bannerText2">Banner  Text :</label>
+                <input type="text" class="form-control" id="bannertext2" name="bannerText2" oninput="validateField(this)"  required>
+                <span id="bannerTextError" class="text-danger"> </span>
+              </div>
+              <div class="form-group">
+                <label for="bannerText2">Target :</label>
+                <input type="text" class="form-control" id="target" name="target" >
+              </div>
+              <div class="form-group">
+                <label for="image">Banner Image:</label>
+                <input type="file" class="form-control" id="bannerimage" name="image" multiple accept="image/*">
+                <div id="bannerImages"></div>
+                <span id="imageError" class="text-danger"> </span>
+              </div>
+              <div class="form-group">
+                <input class="form-check-input" type="checkbox" id="cropstatus" name="cropStatus">
+                <label class="form-check-label" for="cropStatus">Crop Image</label>
+                <div id="preview-image"></div>
+            </div>
+            <div class="form-group">
+                <label for="bannerExpiryDate">Banner Expiry Date</label>
+                <input type="Date" id="bannerexpirydate" class="form-control" name="bannerExpiryDate" oninput="validateField(this)" required>
+              <span id="bannerExpiryDateError" class="text-danger"> </span>
+
+              </div>
+            
+            <button type="submit" class="btn btn-primary"  id="updateBanner">Update Banner</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+
+<script>
+     function showBannerDetails(id,name,target,images,text1,text2,expiryDate) {
+
+  document.getElementById('bannerid').value = id;
+  document.getElementById('bannername').value = name;
+  document.getElementById('target').value = target;
+  document.getElementById('bannertext').value = text1;
+  document.getElementById('bannertext2').value = text2;
+  document.getElementById('bannerexpirydate').value = formatDateString(expiryDate);
+
+  var imageContainer = document.getElementById('bannerImages');
+  imageContainer.innerHTML = '';
+  var imageNames = images.split(',');
+
+    for (var i = 0; i < imageNames.length; i++) {
+    var img = document.createElement('img');
+    img.src = '/static/admin/images/banner/' + imageNames[i].trim(); 
+    img.alt = 'Banner Image ' + (i + 1);
+    img.classList.add('modal-image'); 
+    imageContainer.appendChild(img);
+    img.height = 100;
+    img.width = 150;
+    }
+
+  $('#bannerModal').modal('show');
+}
+    function updateBanner1(){
+        event.preventDefault();
+        
+        console.log("update banner worked")
+        console.log("update banner worked")
+        
+        // console.log(typeof(images))
+        const id =   document.getElementById('bannerid').value ;
+        const name =  document.getElementById('bannername').value 
+        const text1 =  document.getElementById('bannertext').value 
+        const text2  =  document.getElementById('bannertext2').value 
+        const cropStatus  =  document.getElementById('cropstatus').value 
+        const image  =  document.getElementById('bannerimage')
+        const expiryDate = document.getElementById('bannerexpirydate').value 
+
+        console.log(id,name,image,text1,text2,expiryDate)
+        console.log(image.files)
+
+        const imageFiles = image.files;
+const imageArray = [];
+
+for (let i = 0; i < imageFiles.length; i++) {
+    imageArray.push(imageFiles[i].name);
+}
+
+
+     
+    fetch('/admin/banner/updateBanner', {
+      method: 'PATCH',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+          id:id,
+          name:name,
+          text1:text1,
+          text2:text2,
+          image:imageArray, 
+          cropStatus:cropStatus,
+          expiryDate:expiryDate
+          
+      }),
+  })
+  .then(response => response.json())
+  .then(data => {
+      console.log("got the response")
+      console.log(data)
+      if(data.success){
+      console.log("got the response2")
+      if(data.salePrice){
+        document.getElementById(`salePrice_${categoryId}`).innerText = data.salePrice
+    }
+    document.getElementById(`offerPercentage_${categoryId}`).innerText = data.offer+'%'
+        toastr.success(data.message)
+      }else{
+        toastr.warnning(data.message)
+      }
+  
+  })
+  .catch(error => {
+      console.error('Error :', error);
+  });
+    }
+
+
+    function formatDateString(dateString) {
+    var date = new Date(dateString);
+    var year = date.getFullYear();
+    var month = ('0' + (date.getMonth() + 1)).slice(-2); // Adding 1 because months are zero-based
+    var day = ('0' + date.getDate()).slice(-2);
+
+    return `${year}-${month}-${day}`;
+  }
+
+    function validateField(element) {
+        event.preventDefault();
+      console.log("Validate worked");
+    const fieldName = element.name;
+    const fieldValue = element.value;
+    console.log(fieldName,fieldValue)
+    console.log(fieldValue);
+    const errorElement = document.getElementById(`${fieldName}Error`);
+    const applyButton = document.getElementById('offerApplyButton');
+    // Check if the error element is null before trying to update its textContent
+    if (!errorElement) {
+        console.error(`Error: Element with ID '${fieldName}Error' not found.`);
+        return false;
+    }
+
+    if (!fieldValue.trim()) {
+        errorElement.textContent = "This field is required.";
+        applyButton.style.display = 'none';
+        return false;
+    } else {
+        errorElement.textContent = "";
+
+        if (fieldName === "bannerName" || fieldName === "bannerText") {
+            // Validation specific to productName and bannerText fields
+            // You can add more specific validation if needed for these fields
+        }
+
+        if (fieldName === "bannerExpiryDate") {
+            // Validation for bannerExpiryDate field
+            const currentDate = new Date();
+            const selectedDate = new Date(fieldValue);
+
+            if (selectedDate <= currentDate) {
+                errorElement.textContent = "Choose a future date.";
+                applyButton.style.display = 'none';
+                return false;
+            }
+        }
+
+        // Reset display for the Apply Offer button if no errors
+        applyButton.style.display = 'block';
+    }
+    return true; // Return true if validation passes
+}
+
+    function create(){
+        console.log("Create worked")
+         // Show the modal
+  $('#offerModal').modal('show');
+    }
+
+    function closeModal(){
+    console.log("close modal worked")
+    $('#offerModal').modal('hide');
+    $('#bannerModal').modal('hide');
+    
+}
+</script>
+
+

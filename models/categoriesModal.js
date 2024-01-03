@@ -7,6 +7,10 @@ const categoriesSchema = new mongoose.Schema({
             required:true,
             unique:true
         },
+        image:{
+            type:Array,
+            required:false
+        },
         offer:{
             percentage:{
                type:Number,

@@ -1,6 +1,6 @@
 const Categories = require('../models/categoriesModal')
-
-
+const sharp = require('sharp')
+const path = require('path')
 
 const loadCategories = async(req,res)=>{
     try{
@@ -85,22 +85,7 @@ const changeCategoriesStatus = async (req,res)=>{
     }
 }
 
-// const deleteCategories = async (req,res)=>{
-//         try{
-//             const id =  req.query.id
-//             const userdata = await Categories.deleteOne({_id:id})
-//             // req.flash('success', 'Message to display on the next page');
-    
-//             const message = "Category-deleted-Sucessfully"
-//             console.log("Delete sucessfully ")
-//             res.redirect('/admin/categories?message=${message}')
-//             // res.redirect(`/admin/dashboard?message=${message}`)
 
-//         }catch(error){
-//             console.log(error.message)
-//         }
-    
-// }
 
 const deleteCategories = async (req,res)=>{
     try{
@@ -133,14 +118,46 @@ const loadEditCategories = async (req,res)=>{
 const editCategories = async (req,res)=>{
     try{  
         const categoriesName = req.body.name;
-        console.log(categoriesName);
+        const categoriesId = req.body.id;
+        console.log(req.body);
         const id = req.body.id
         console.log("id:",id)
-        const categories = await Categories.findByIdAndUpdate({_id:id},{$set:{name:categoriesName}})
+        
+        const categories = await Categories.findOne({_id:categoriesId});
 
-        if(categories){
+        categories.name = categoriesName;
+ 
+        console.log("req . file data", req.files)
+
+        if (req.files && req.files.length > 0) {
+            const newImages = [];
+        
+            for (const file of req.files) {
+                const filename = file.filename;
+        
+                // Use Sharp to crop the image (adjust the crop options as needed)
+                const croppedImageBuffer = await sharp(file.path)
+                    .resize({ width: 500, height: 600, fit: 'cover' }) // Example cropping options
+                    .toBuffer();
+        
+                const croppedFilename = `cropped_${filename}`;
+        
+                const outputPath = path.join(__dirname,`../public/admin/images/category/${croppedFilename}`);
+                // Save the cropped image
+                await sharp(croppedImageBuffer)
+                    .toFile(outputPath);
+                    
+                newImages.push(croppedFilename);
+            }  
+            categories.image = newImages;
+            console.log("Cropped Images:", newImages);
+        }
+      
+          const updatedCategories = await categories.save();
+
+        if(updatedCategories){
             console.log('updated category sucessfully')
-            console.log(categories)
+            // console.log(categories)
             res.redirect('/admin/categories')
         }else{
             console.log("failed to update data category")
