@@ -4,6 +4,7 @@ const User = require("../models/userModal");
 const Order = require("../models/orderModel")
 const Coupon = require("../models/couponModal")
 const Wallet = require("../models/walletModel")
+const Wallet = require("../models/bannerModel")
 const walletController = require('../controllers/walletController')
 const Razorpay = require('razorpay')
 const { v4: uuidv4 } = require('uuid');
@@ -32,7 +33,6 @@ const loadCart = async (req, res) => {
         const userId = req.session.user_id
         const userData = await User.findById(userId)
 
-        //  Query to retrieve cart data with populated productId
         const cartData = await Cart.find({ userId: req.session.user_id })
             .populate("userId")
             .populate("product.productId"); // Populate the productId field in the product array
@@ -44,7 +44,34 @@ const loadCart = async (req, res) => {
         } else {
             const productData = await Product.find({isDeleted:false,isActive:true}).limit(12)
              const newProducts = await Product.find({isDeleted:false,isActive:true}).sort({createdOn:1}).limit(10)
-            res.render('index', { product: productData, warningMessage: "Cart is empty", newProducts:newProducts });
+             const bannerData = await Banner.find()
+        const userData = await User.findById(userId)
+
+       const categoriesData = await Categories.find({isDeleted:false,isActive:true})
+
+             let data = await Order.aggregate([
+                  { $unwind: "$items" },
+                  {
+                    $group: {
+                      _id: "$items.productId",
+                      totalQuantity: { $sum: "$items.quantity" }
+                    }
+                  },
+                  { $sort: { totalQuantity: -1 } },
+                  {
+                      $limit: 10 
+                   },
+                  {
+                      $lookup:{
+                          from:'products',
+                          localField:'_id',
+                          foreignField:'_id',
+                          as:'productDetails'
+                      }
+                  }
+                ]);
+            res.render('index', { product: productData,userData:userData, warningMessage: "Cart is empty", newProducts:newProducts,banner:bannerData,categories:categoriesData,bestSeller:data });
+
         }
     } catch (error) {
         console.log(error.message);

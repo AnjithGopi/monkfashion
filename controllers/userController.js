@@ -348,7 +348,7 @@ const loadHome = async(req,res)=>{
        }
        console.log("cart count",cartCount)
        console.log("cart count",userData)
-    // let data = await Product.find().sort({selledQuantity:-1}).limit(3)
+       
    let data = await Order.aggregate([
         { $unwind: "$items" },
         {
