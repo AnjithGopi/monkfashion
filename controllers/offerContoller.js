@@ -6,9 +6,6 @@ const mongoose = require('mongoose');
 
 
 
-
-
-
 const loadProductOffer = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
@@ -25,8 +22,7 @@ const loadProductOffer = async (req, res) => {
          productData = await Product.find({categoryId:req.query.category})  .populate('categoryId')
          .skip(skip)
          .limit(limit);
-        //     category = categoriesId._id
-        // console.log("categoryData  ;",productData)
+     
     }else{
          productData = await Product.find({
             isDeleted:false,
@@ -39,13 +35,11 @@ const loadProductOffer = async (req, res) => {
             .skip(skip)
             .limit(limit);
 
-            // console.log("Data ::",productData)
 
     }
 
 
       const categoriesData = await Categories.find({isDeleted:false})
-    //   console.log("caat data ::",categoriesData)
         const totalProducts = await Product.countDocuments();
         const totalPages = Math.ceil(totalProducts / limit);
         res.render('productOffer', {
@@ -69,17 +63,13 @@ const applyProductOffer  = async (req, res) => {
         console.log(req.body)
         const {productId ,productExpiryDate,productPercentage} = req.body
        if(new Date(productExpiryDate) > new Date()) {
-        // console.log()
         const product =  new mongoose.Types.ObjectId(productId)
-        // console.log(product)
         const productData = await Product.findOne({_id:product}).populate('categoryId')
-        console.log("Caste ;" , productData.categoryId.offer.percentage)
         let percentage = productData.categoryId.offer.percentage >  parseInt(productPercentage) ? productData.categoryId.offer.percentage :  parseInt(productPercentage)
         productData.offer.percentage = parseInt(productPercentage)
         productData.offer.expiryDate = new Date(productExpiryDate)
         productData.salePrice= productData.regularPrice - (productData.regularPrice *percentage /100)
         const updateProductPrice =  await  productData.save()
-        // console.log(productData)
         if (updateProductPrice){
             res.status(200).json({success:true,message:"Offer Applied Successfully",salePrice:updateProductPrice.salePrice})
         }else{
@@ -100,7 +90,6 @@ const productOfferChangestatus = async (req, res) => {
         const  {productId ,status} = req.body
         let change = status === "true" ? false :true;
         const changeStatus = await Product.findByIdAndUpdate({_id:new mongoose.Types.ObjectId(productId)},{$set:{'offer.status':change}},{new:true})
-        // console.log(changeStatus)
         if(changeStatus){
             res.status(200).json({success:true,message:"Status changed",status:changeStatus.offer.status})
         }else{
@@ -126,7 +115,6 @@ const loadCategoriesOffer = async(req,res)=>{
             ]
          } ) .skip(skip)
          .limit(limit);
-        // console.log(categoriesData)
         const totalCategories = await Categories.countDocuments();
         const totalPages = Math.ceil(totalCategories / limit);
         res.render('categoriesOffer',{categories:categoriesData,currentPage: page, search:search,
@@ -166,20 +154,13 @@ const applyCategoryOffer  = async (req, res) => {
         const categoryData = await Product.find({categoryId:category})
         const updatedProducts = await Promise.all(categoryData.map(async (data) => {
             const productPercentage = data.offer.percentage || 0;
-            // if (parseInt(categoryPercentage) > productPercentage) {
-                // data.offer.percentage = parseInt(categoryPercentage);
-                // data.offer.expiryDate = new Date(categoryExpiryDate);
+           
                 const greaterOfferPercentage = Math.max(parseInt(categoryPercentage), productPercentage);
 
                 data.salePrice = data.regularPrice - (data.regularPrice * greaterOfferPercentage/ 100);
             
-                // console.log(data);
-
                 return data.save();
-            // } else {
-            //     console.log(`Category offer (${categoryPercentage}%) is not greater than product offer (${productPercentage}%). Skipping product.`);
-            //     return data; 
-            //   }
+         
           }));
     console.log("Updated Product :",updatedProducts)
 
@@ -198,7 +179,6 @@ const applyCategoryOffer  = async (req, res) => {
 
 
 const exp = require('../functions/offerExpiry')
-// exp.productOfferExpiry
 module.exports = {
     loadProductOffer,
     loadCategoriesOffer,

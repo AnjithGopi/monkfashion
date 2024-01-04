@@ -21,14 +21,6 @@ function generateOrderId() {
     return uuidv4();
 }
 
-// function to genrate a unique orderId
-// function generateOrderId() {
-//     const timestamp = Date.now().toString();
-//     const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-
-//     return `${timestamp}-${randomNum}`;
-// }
-
 
 // .........................................................................................
 
@@ -37,9 +29,6 @@ function generateOrderId() {
 const loadCart = async (req, res) => {
     try {
         console.log("Load cart received")
-        // const cartData = await Cart.find({userId:req.session.user_id}).populate('product.productId');
-        // console.log(cartData)
-        // res.render('cart',{cart:cartData})
         const userId = req.session.user_id
         const userData = await User.findById(userId)
 
@@ -49,18 +38,7 @@ const loadCart = async (req, res) => {
             .populate("product.productId"); // Populate the productId field in the product array
 
         console.log(cartData);
-        // if(cartData.length > 0 && ) 
-        // console.log("User Data :", cartData[0].product.length);
-        // console.log(cartData[1])
-        // console.log(cartData[0])
-        console.log("........................");
-        // console.log(cartData[0].product[0]);
-        console.log("........................");
-
-        // console.log(cartData[0].product[1].productId.name);
-        console.log("........................");
-
-
+       
         if (userData.cart) {
             res.render("cart", { cart: cartData ,cartQuantity:cartData[0].product.length});
         } else {
@@ -75,23 +53,16 @@ const loadCart = async (req, res) => {
 
 function findQuantityByProductId(cartData, productId) {
     const cartObject = cartData[0]; // Assuming there's only one object in the array
-    console.log("1")
-    console.log("Cart d",cartObject.product)
+    
     if (cartObject) {
-    console.log("2")
 
       for (const productItem of cartObject.product) {
-    console.log("3")
-
-        console.log(productItem.quantity)
         if (productItem.productId == productId) {
-    console.log("4")
-
           return productItem.quantity;
         }
       }
     }
-    return 0; // Return 0 if the product is not found in the cart
+    return 0; 
   }
 
 // Function to add Product to the cart
@@ -106,8 +77,6 @@ const addToCart = async (req, res) => {
         console.log("session ID", req.session.user_id);
         console.log("Cart Data checking ", cartUser);
         console.log("Current product data :",currentProductData)
-        console.log("Current product stock:",currentProductData.stock)
-        // console.log("Product id In the cart  ;",cartUser.product[0].productId)
         let quantity = 0
         if(  cartUser.length > 0){
         if (cartUser[0].product.length > 0){
@@ -116,14 +85,10 @@ const addToCart = async (req, res) => {
         }
     }
 
-// If the product is found, retrieve the quantity
-// const quantityOfDesiredProduct = foundProduct ? foundProduct.quantity : 0;
 
-        // console.log("checkedProductCart",checkProductInCart)
         console.log("checkedProductCart quantity :",quantity)
         if( currentProductData.stock > quantity){
         if (cartUser.length > 0) {
-            // const productInCart = await cartUser.product({productId:productId})
             const productInCart = await Cart.find({
                 userId: userId,
                 product: { $elemMatch: { productId: productId } },
@@ -145,7 +110,6 @@ const addToCart = async (req, res) => {
                     message: message
                 });
 
-                // res.status(200).render('index', { product: productData, message: message ,cartQuantity:cartCount[0].product.length || 0});
 
             } else {
                 console.log("not in the cart");
@@ -169,9 +133,7 @@ const addToCart = async (req, res) => {
                     message: message
                 });
 
-                // res.status(200).json( { product: productData, message: message,cartQuantity:cartCount[0].product.length || 0});
-                // res.status(200).render('index', { product: productData, message: message,cartQuantity:cartCount[0].product.length || 0});
-
+                
             }
         } else {
             console.log("New cart Created");
@@ -188,8 +150,7 @@ const addToCart = async (req, res) => {
 
             if (cartData) {
                 console.log("Added to cart sucessfully ");
-                // console.log("Added to cart sucessfully ", cartData);
-                // const userData = await User.findById(userId)
+               
 
                 const result = await User.updateOne(
                     { _id: userId },
@@ -204,10 +165,8 @@ const addToCart = async (req, res) => {
 
                 let cartCount = 0
                 const cartData1 = await Cart.find({userId:req.session.user_id});
-                // console.log("cart data",cartData1)
                 console.log("........................................")
                 if(cartData1.length > 0){
-                    // console.log("cc",cartData1[0].product.length)
 
                     cartCount = cartData1[0].product.length
                 }
@@ -217,7 +176,6 @@ const addToCart = async (req, res) => {
                     cartQuantity: cartData1[0].product.length || 0,
                     message: message
                 });
-                // res.status(200).render('index', { product: productData, message: message,cartQuantity:cartCount });
 
             } else {
                 let message = 'Failed to add to the cart ';
@@ -227,8 +185,6 @@ const addToCart = async (req, res) => {
                     cartQuantity: cartCount[0].product.length || 0,
                     warningMessage: message
                 });
-                // res.status(500).render('index', { product: productData, warningMessage: message, cartQuantity: 0});
-
 
             }
         }
@@ -243,7 +199,6 @@ const addToCart = async (req, res) => {
             warningMessage: message
         });
 
-        // res.status(500).render('index', { product: productData, warningMessage: message, cartQuantity: 0});
     }
     } catch (error) {
         console.log(error.message);
@@ -258,7 +213,6 @@ const updateQuantity = async (req, res) => {
 
         console.log(req.body);
 
-        // const cartData = await Cart.findOne({userId:req.session.user_id, 'product.productId': productId})
         const cartData = await Cart.findOne({
             userId: req.session.user_id,
             "product.productId": productId,
@@ -267,16 +221,10 @@ const updateQuantity = async (req, res) => {
         const quantityInCart = parseInt(req.body.quantity);
 
         const quantityToChange = parseInt(quantityChange);
-        console.log(
-            quantityInCart,
-            quantityToChange,
-            cartData.product[index].productId.stock
-        );
+       
         console.log("sum :", quantityToChange + quantityInCart);
         let sum = quantityInCart + quantityToChange;
         let totalStock = cartData.product[index].productId.stock;
-        console.log("sum total-stock ", sum, totalStock);
-        console.log("quantity in cart :", quantityInCart);
 
         const newQuantity = await Cart.findOne({ userId: req.session.user_id })
         console.log("newQuantity data ", newQuantity)
@@ -286,7 +234,6 @@ const updateQuantity = async (req, res) => {
         if (newQuantityInCart >= 1 && newSum <= totalStock) {
             if (!(quantityChange == -1 && newQuantityInCart == 1)) {
                 console.log("Before", cartData.product[index].quantity);
-                // console.log( "QQQQQ  ...",cartData.product[0].productId.quantity)
                 console.log(".............................");
                 const newres = cartData.product.findIndex(
                     (product) => product.productId === productId
@@ -294,12 +241,9 @@ const updateQuantity = async (req, res) => {
                 console.log(newres);
                 console.log(".............................");
 
-                // cartData.product[.productId.quantity+=quantityChange
                 cartData.product[index].quantity += quantityChange;
                 console.log("After :", cartData.product[index].quantity);
-                // console.log("quantity of stock :",cartData.product[0].productId.stock)
-                // console.log("quantity of stock :",cartData.product[0].productId)
-
+              
                 const updateData = await cartData.save();
 
                 console.log("data after updastion", updateData);
@@ -346,11 +290,6 @@ const removeItemFromCart = async (req, res) => {
             { $pull: { product: { productId: productToDeleteId } } }
         );
         console.log(result)
-        // if (result.nModified > 0) {
-        //     // Display Toastr confirmation
-        //     toastr.success('Product removed successfully.', 'Confirmation');
-
-        // } 
         res.status(200).json({ success: true, message: 'Product removed successfully.' });
 
     } catch (error) {
@@ -407,11 +346,8 @@ const addAddress = async (req, res) => {
             .populate("userId")
             .populate("product.productId");
 
-        // console.log(updatedUser)
         console.log("cart data :", cartData)
-        // console.log(cartData.product[0].productId.image[0])
         res.status(201).render('checkout', { cartData: cartData, address: updatedUser.address })
-        // res.render('checkout',{cartData:cartData,address:user.address})
 
     } catch (error) {
         console.log(error.message)
@@ -448,10 +384,8 @@ const placeOrder = async (req, res) => {
         };
         console.log("...........................................");
         const totalAmount = await calculateTotalPrice(cartData._id);
-        console.log("total amount .. :", totalAmount);
 
         const orderId = generateOrderId();
-        console.log("Order Id :", orderId);
 
         console.log("...........................................");
         const order = new Order({
@@ -610,7 +544,6 @@ const cancelSingleOrder = async (req,res)=>{
        let appliedWalletAmount = 0;
        if(particularOrder.appliedWalletAmount){
         appliedWalletAmount = (particularOrder.appliedWalletAmount/particularOrder.totalAmount *product[0].salePrice)*cancelledQuantity;
-    //    let couponDiscount = (particularOrder.couponAmount/particularOrder.totalAmount *product[0].salePrice)*cancelledQuantity 
 
        }
        let couponDiscount = (particularOrder.couponAmount/particularOrder.totalAmount *product[0].salePrice)*cancelledQuantity 

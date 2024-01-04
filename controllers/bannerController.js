@@ -53,25 +53,19 @@ const addBanner = async(req,res) =>{
                 }
             }
             
-        
-
             console.log("Cropped Images:", newImages);
         }
-        // console.log("Images :",images)
         console.log("Images :",req.body)
         const newProduct = new Banner({
             name:req.body.bannerName,
             text:req.body.bannerText,
             text2:req.body.bannerText2,
             expiryDate:req.body.bannerExpiryDate
-            // image:images
 
         })
 
         
-        // console.log('inages  ;',req.body.image)
         console.log("kkk")
-        // console.log(images)
         newProduct.image.push(...newImages)
         const productInsertedData = await newProduct.save()
         const bannerData =  await Banner.find()
@@ -82,7 +76,6 @@ const addBanner = async(req,res) =>{
             console.log("not inserted")
             res.render('banner',{banner:bannerData,successMessage:"Banner Updated "})
         }
-        
         
     } catch (error) {
         console.log(error.message)
@@ -95,7 +88,6 @@ const updateBanner  = async (req, res) => {
         console.log('update Banner received')
         console.log(req.body)
         
-        // console.log(req.files)
         const cropStatus = req.body.cropStatus || 'off'
         const newImages = [];
         const  { id,bannerName,bannerText,bannerText2,bannerExpiryDate,target} = req.body
@@ -128,7 +120,6 @@ const updateBanner  = async (req, res) => {
                        
                     newImages.push(croppedFilename);
                 }
-                // banner.image.push(...newImages);
                 banner.image = newImages
 
 
@@ -140,7 +131,6 @@ const updateBanner  = async (req, res) => {
                     }     
                     console.log("Cropped Images:", newImages);
                 }
-                // banner.image.push(...newImages);
                 banner.image = newImages
 
             }

@@ -1,7 +1,4 @@
-// const { stat } = require('fs')
 const Coupon = require('../models/couponModal')
-// const { changeStatus } = require('./adminController')
-// Assuming couponId is an ObjectId, you can create it using mongoose.Types.ObjectId
 const mongoose = require('mongoose');
 
 const loadCoupon = async(req,res)=>{
@@ -19,7 +16,6 @@ const createCoupon = async(req,res)=>{
         console.log(req.body)
         
         const { name,couponId,minimumAmount,discountAmount,limit,expirationDate}  = req.body
-        // const nameAndId = await Coupon.find({name:name,couponId:couponId})
         const existingCoupon = await Coupon.find({ $or: [{ name: name }, { code: couponId }] });
         if(!existingCoupon.length > 0){
             const coupon = new Coupon({
@@ -124,8 +120,6 @@ const applyCoupon = async (req,res)=>{
         
     }
 }
-// const job = require('../cronJob')
-// job.add
 
 const schedule = require('node-schedule')
 

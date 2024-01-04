@@ -52,8 +52,6 @@ const logout = async (req,res)=>{
                 }else{
                     req.session.admin = adminData;
                     res.redirect("/admin/home")
-                    // res.end("Sucessfull")
-                    // res.render('index')
                 }
     
             }else{
@@ -119,7 +117,6 @@ const loadUserList = async(req,res)=>{
             search = req.query.search;
         }
 
-
         const userData = await User.find({isAdmin:false,
         
             $or:[
@@ -132,7 +129,6 @@ const loadUserList = async(req,res)=>{
         .limit(limit);
         const totalUsers = await User.countDocuments();
         const totalPages = Math.ceil(totalUsers / limit);
-        // console.log("USer dataaa",userData)
         res.render('user-list',{users:userData,currentPage: page,totalPages: totalPages})
     }catch(error){
         console.log(error.message)
@@ -159,12 +155,6 @@ const changeStatus = async (req,res)=>{
                     delete req.session.user_id
                     req.session.save()
                 
-                    // if ( !data) {
-                    //     console.error('Error destroying session:', err);
-                    //     res.status(500).send('Internal Server Error');
-                    // } else {
-                    //     console.log("loading rendereing")
-                    // }
                     res.redirect('/admin/userList');
             
             } else{
@@ -201,7 +191,6 @@ const loadOrders = async (req,res) =>{
         const orderData = await Order.find({ 
             $or:[
             {orderStatus:{$regex:'.*'+search+'.*',$options:'i'}}
-            // {email:{$regex:'.*'+search+'.*',$options:'i'}}
         ]})
         .skip(skip)
         .limit(limit);
@@ -310,11 +299,9 @@ const loadSalesReport = async (req,res)=>{
                 }
             }
         ]);
-        // console.log("date Data",dateData)
         const orderCounts =  getSalesReportCounts(dateData)
         res.render("salesReport",{orders:dateData,users:userCount,totalOrders:dateData.length,onlinePayments:orderCounts.filterPaymentOnline,offlinePayments:orderCounts.filterPaymentOffline,cancelledOrders:orderCounts.filterOrderCancelled,totalAmount:orderCounts.totalSum})
 
-        // res.render("salesReport",{orders:dateData})
         return
 
         }
@@ -362,7 +349,6 @@ const loadSalesReport = async (req,res)=>{
             }
                  
         ]);
-        // console.log("Order data 1",orderData1)
 
         const day = salesReportDuration === "Weekly" ? 7 : salesReportDuration === "Monthly" ? 30  : salesReportDuration === "Yearly" ? 365 : 0;
         console.log("Report Duration :",day);
@@ -415,12 +401,6 @@ const loadSalesReport = async (req,res)=>{
             }
             
           ]);
-        // console.log("Order data",orderData)
-          
-        // const counts = getSalesReportCounts(orderData)
-        // console.log("SlaesData :",orderCounts)
-        // const k =  await Order.find().populate("i.productId")
-        
         if( req.query.salesReportDuration){
             orders= orderData
             orderCounts = getSalesReportCounts(orderData)
@@ -486,8 +466,6 @@ const loadChart = async (req,res)=>{
         console.log("Monthlu users:",monthlyUsers)
         console.log("Monthlu sales:",monthlySales)
 
-
-        
         console.log("Monthly Orders:",monthlyOrders)
                 res.json({monthlyOrders,monthlySales,monthlyUsers});
     }catch(error){

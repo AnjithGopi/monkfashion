@@ -17,7 +17,6 @@ const insertProduct  =  async (req,res)=>{
     try{
         const searchProduct = await Product.findOne({ name: new RegExp('^' + req.body.name + '$', 'i') })
 
-        // const searchReturnData = await Product.find()
         const productData = await Categories.find({isDeleted:false})
         const categoriesId = await Categories.findOne({name:req.body.categories})
        console.log("categoriews Id :",categoriesId._id)
@@ -25,9 +24,7 @@ const insertProduct  =  async (req,res)=>{
             console.log("Worked the sweet")
             res.render('add-product',{message: '1',categories:productData})
 
-            // res.redirect('/admin/categories')
         }else{
-            // const images = req.files.map(file => file.filename);
             const newImages = [];
             if (req.files && req.files.length > 0) {
             
@@ -42,7 +39,6 @@ const insertProduct  =  async (req,res)=>{
                     const croppedFilename = `cropped_${filename}`;
             
                     const outputPath = path.join(__dirname,`../public/admin/images/product/${croppedFilename}`);
-                    // Save the cropped image
                     await sharp(croppedImageBuffer)
                         .toFile(outputPath);
                       
@@ -52,7 +48,6 @@ const insertProduct  =  async (req,res)=>{
             
                 console.log("Cropped Images:", newImages);
             }
-            // console.log("Images :",images)
             console.log("Images :",req.body)
             const newProduct = new Product({
                 name:req.body.name,
@@ -65,10 +60,6 @@ const insertProduct  =  async (req,res)=>{
 
             })
 
-            
-            // console.log('inages  ;',req.body.image)
-            console.log("kkk")
-            // console.log(images)
             newProduct.image.push(...newImages)
             const productInsertedData = await newProduct.save()
             if(productInsertedData){
@@ -155,10 +146,7 @@ const loadProduct = async (req,res)=>{
 const changeStatus = async (req,res)=>{
     try{
         const id =req.query.id;
-        console.log(id)
         const active = req.query.active;
-        console.log(active)
-        console.log(typeof(active))
        
         if(active == 'true'){
             updateValue =false
@@ -170,9 +158,7 @@ const changeStatus = async (req,res)=>{
 
         const statusUpdation =  await Product.findByIdAndUpdate({_id:id},{$set:{isActive:updateValue}})
 
-              console.log(statusUpdation)
         if(statusUpdation){
-            // res.redirect('/userList')
              const message = "Product blocked Sucessfully"
         res.redirect(`/admin/products?message=${message}`)
         }
@@ -192,7 +178,6 @@ const deleteProduct = async (req,res)=>{
 
               console.log(statusUpdation)
         if(statusUpdation){
-            // res.redirect('/userList')
              const message = "Product deleted Sucessfully"
         res.redirect(`/admin/products?message=${message}`)
         }
@@ -224,20 +209,13 @@ console.log("Deleted Image",req.body.deletedImages)
         const productId = req.session.editProductId ;
         
         console.log(productId)
-        // const productId = req.params.productId;
 
-
-        // Access form data from req.body
         const { name, description, regularPrice, salePrice, stock, categories } = req.body;
         console.log(req.body)
-        // Getting the category Id from Category 
         const categoriesId = await Categories.findOne({ name: categories });
         console.log("Category Name",categories)
         console.log(categoriesId)
-        // Find the product by ID
         const product = await Product.findOne({_id:productId});
-
-        // Update the product properties
         product.name = name;
         product.description = description;
         product.regularPrice = regularPrice;
@@ -256,9 +234,6 @@ const deletedImages = req.body.deletedImages;
 
 // Remove deleted images from the product
 product.image = product.image.filter(image => !deletedImages.includes(image));
-
-      
-
 
         if (req.files && req.files.length > 0) {
             const newImages = [];
@@ -289,7 +264,6 @@ product.image = product.image.filter(image => !deletedImages.includes(image));
       
 
           const updatedProduct = await product.save();
-        // Save the updated product to the database
        
         const productDataAfterUpdation = await Product.find().populate('_id').populate("categoryId")
 

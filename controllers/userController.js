@@ -372,8 +372,7 @@ const loadHome = async(req,res)=>{
       ]);
       
     console.log(data)
-    console.log('1',data[0].productDetails)
-    console.log('2',data[0].productDetails[0].name)
+   
         res.render('index',{product:productData,cartQuantity: cartCount,userData:userData,newProducts:newProducts,banner:bannerData,categories:categoriesData,bestSeller:data });
        
     }catch(error){
@@ -422,14 +421,8 @@ const loadProfile = async(req,res)=>{
         const userId = req.session.user_id
         const userData = await User.findById(req.session.user_id)
         const orderData = await Order.find({userId:userId}).sort({orderDate:-1})
-        // console.log("ORder data :",orderData)
-        // console.log(userData)
-        // console.log(userData.address[0].fullName)
+      
         const walletData = await Wallet.findOne({userId:userId})
-    //    let walletBalance = 0
-    //     if(walletData.length){
-    //         walletBalance = walletData.balance
-    //     }
         console.log(walletData)
         res.render('userProfile',{user:userData,order:orderData,wallet:walletData})
 
@@ -446,7 +439,6 @@ const loadProfile = async(req,res)=>{
         const walletData = await Wallet.find({userId:userId})
         console.log(walletData)
         res.render('userProfile',{user:userData,errorMessage:"Failed Some error occurs ",order:orderData,error:errorData,wallet:walletData[0].balance})
-
         console.log(error.message)
     }
 }
@@ -454,7 +446,6 @@ const loadProfile = async(req,res)=>{
 // To add address
 const addAddress = async (req,res)=>{
     console.log("Add address post received")
-    // console.log(req.body)
     try{
         const userId = req.session.user_id
         console.log("user Id :",userId)
@@ -513,11 +504,7 @@ const removeAddress = async (req,res)=>{
             { _id: userId },
             { $pull: { address: null } }
         );
-        // if (result.nModified > 0) {
-        //     // Display Toastr confirmation
-        //     toastr.success('Product removed successfully.', 'Confirmation');
-            
-        // } 
+       
         res.status(200).json({ success: true, message: 'Product removed successfully.' });
     }catch(error){
         console.log(error.message)
@@ -532,14 +519,6 @@ const loadEditAddress = async( req,res)=>{
         const index = req.query.index
         console.log("id :",addressId)
         const userData = await User.findById(userId)
-        // const result = await User.updateOne(
-        //     { _id: userId, [`address._id`]: addressId },
-        //     {$set:{
-        //         city:"New York"
-        //     }}
-        // );
-        
-        // console.log(result)
         res.render('editAddress',{address:userData.address[`${index}`]})
     }catch(error){
         console.log(error.message)
@@ -549,7 +528,6 @@ const loadEditAddress = async( req,res)=>{
 const editAddress = async ( req,res)=>{
     try{
         console.log("Edit address Post recieved")
-        // console.log(req.body)
         const userId = req.session.user_id
         const addressIdToUpdate = req.body.id
 
@@ -657,13 +635,9 @@ const verifyChangePasword = async (req,res,next) =>{
                 const passwordMatch = await  bcrypt.compare(password,userData.password);
                 console.log("passwordMatch :",passwordMatch)
                 if(passwordMatch){
-                    // const spass = await securePassword(cpassword)
-                    // console.log("spass :",spass)
-                    // const result = await User.findOneAndUpdate({_id:userId},{password:spass})
-                    // console.log("result :",result)
+                   
                     console.log("Password matched ")
                     req.session.cpassword = cpassword
-                    // const cpassword =  req.session.cpassword
                     const spass = await securePassword(cpassword)
                     const result = await User.findOneAndUpdate({_id:userId},{password:spass})
                    
@@ -677,13 +651,8 @@ const verifyChangePasword = async (req,res,next) =>{
                        
                     // next()
                     return
-                    console.log("Password matched ")
 
-                    // if(result)
-                    //    res.render('userProfile',{user:userData,successMessage:"Password Changed Sucessfully"});
-                    //  else
-                    //    res.render('userProfile',{user:userData,failedMessage:"Failed to change the password"});
-                }else{
+                    }else{
                       const orderData = await Order.find({userId:userId})
                     res.render('userProfile',{user:userData,failedMessage:"Password Mismatch ",order:orderData});
 
@@ -691,8 +660,6 @@ const verifyChangePasword = async (req,res,next) =>{
     
             }else{
                 res.render('userProfile',{user:userData,failedMessage:"Failed to change the password 2"});
-
-    
             }
     }else{
         res.render('userProfile',{user:userData,failedMessage:"Failed to change the password 3"});
@@ -712,9 +679,7 @@ const changePasswordSendOtp = async(req,res)=>{
             service: 'gmail',
             auth: {
                 user: process.env.EMAIL,
-                // pass: 'nfjy xgfz fyxo rimf',
                 pass:process.env.EMAIL_PASSWORD,
-
             },
         });
 
@@ -739,7 +704,6 @@ const changePasswordSendOtp = async(req,res)=>{
             `,
         };
         
-
         // Use Promise style for sending mail
         const info = await transporter.sendMail(mailOptions);
         if(info)
@@ -749,9 +713,6 @@ const changePasswordSendOtp = async(req,res)=>{
         console.log(error.message)
     }
 }
-
-
-
 
 const loadChangePasswordOtp = async (req,res) =>{
     try{
@@ -849,7 +810,6 @@ const loadOrderDetails = async (req,res)=>{
 }
 const loadAllProducts = async(req,res)=>{
     try{
-        // console.log("Data in Body :",req.body)
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 3;
         const skip = (page - 1) * limit;
@@ -863,7 +823,6 @@ const loadAllProducts = async(req,res)=>{
         const categoryData = await Categories.find({isActive:true})
         const cartData = await Cart.find({userId:req.session.user_id});
 
-        
         console.log("Load all products worked")
            
                 const productQuery = {
