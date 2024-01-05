@@ -4,7 +4,8 @@ const User = require("../models/userModal");
 const Order = require("../models/orderModel")
 const Coupon = require("../models/couponModal")
 const Wallet = require("../models/walletModel")
-const Wallet = require("../models/bannerModel")
+const Categories = require("../models/categoriesModal")
+const Banner = require("../models/bannerModal")
 const walletController = require('../controllers/walletController')
 const Razorpay = require('razorpay')
 const { v4: uuidv4 } = require('uuid');
@@ -334,7 +335,7 @@ const loadCheckout = async (req, res) => {
         const couponData = await Coupon.find({isActive:true})
         const walletData = await Wallet.findOne({userId:req.session.user_id})
         console.log(couponData)
-        res.render('checkout', { cartData: cartData, address: user.address ,coupon:couponData,walletBalance:walletData.balance})
+        res.render('checkout', { cartData: cartData, address: user.address ,coupon:couponData,walletBalance:walletData.balance || 0})
     } catch (error) {
         console.log(error.message)
     }
@@ -346,22 +347,27 @@ const addAddress = async (req, res) => {
     // console.log(req.body)
     try {
         const userId = req.session.user_id
-        console.log("user Id :", userId)
-        const { fullName, phone, phone2, houseName, state, city, pincode, landMark } = req.body;
+        console.log("user Id :",userId)
+        console.log(typeof(req.body.phone))
+        console.log(req.body)
+
+
         const user = await User.findById(userId)
-        if (!user) {
+        if(!user){
             console.log("User Not found")
             return
         }
+        console.log("11")
+
         const newAddress = {
-            fullName: req.body.fname,
-            phone: req.body.phoneNumber,
-            phone2: req.body.phone2,
-            houseName: req.body.cname,
-            state: req.body.state,
-            city: req.body.city,
-            pincode: req.body.pincode,
-            landMark: req.body.landMark
+            fullName:req.body.name,
+            phone:parseInt(req.body.phone),
+            phone2:parseInt(req.body.phone2),
+            houseName:req.body.house,
+            state:req.body.state,
+            city:req.body.city,
+            pincode:parseInt(req.body.pincode),
+            landMark:req.body.landMark
         };
 
         // Add the new address to the user's address array
@@ -369,12 +375,13 @@ const addAddress = async (req, res) => {
 
         // Save the user with the updated address array
         const updatedUser = await user.save();
-        const cartData = await Cart.find({ userId: req.session.user_id })
-            .populate("userId")
-            .populate("product.productId");
+  
+        if( updatedUser){
+            res.status(200).json({ success:true,successMessage:"Address Added Successfully "})
+        }else{
+            res.status(400).json({ success:false,warningMessage:"Failed to Add Address "})
 
-        console.log("cart data :", cartData)
-        res.status(201).render('checkout', { cartData: cartData, address: updatedUser.address })
+        }
 
     } catch (error) {
         console.log(error.message)

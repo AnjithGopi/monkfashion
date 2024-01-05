@@ -61,7 +61,7 @@
                                             <div class="product-price primary-color float-left">
                                                 <ins><span class="text-brand">RS:<%=product.salePrice %></span></ins>
                                                 <ins><span class="old-price font-md ml-15">RS: <%=product.regularPrice %></span></ins>
-                                                <span class="save-price  font-md color3 ml-15">25% Off</span>
+                                                <span class="save-price  font-md color3 ml-15"><%=product.offer.percentage %> %</span>
                                             </div>
                                         </div>
                                         <div class="bt-1 border-color-1 mt-15 mb-15"></div>
@@ -70,7 +70,7 @@
                                         </div>
                                         <div class="product_sort_info font-xs mb-30">
                                             <ul>
-                                                <li class="mb-10"><i class="fi-rs-crown mr-5"></i> 1 Year AL Jazeera Brand Warranty</li>
+                                                <li class="mb-10"><i class="fi-rs-crown mr-5"></i> 1 Year  Brand Warranty</li>
                                                 <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 30 Day Return Policy</li>
                                                 <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery available</li>
                                             </ul>
@@ -81,13 +81,12 @@
                                            
                                             <div class="product-extra-link2">
                                                <button type="button" onclick="addToCart('<%=product._id%>')"  class="button button-add-to-cart">Add to carrt</button>
-                                                <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                <a aria-label="Add To Wishlist" class="action-btn hover-up" href="home/wishlist"><i class="fi-rs-heart"></i></a>
+                                                <a aria-label="Compare" class="action-btn hover-up" onclick="shareProduct()"><i class="fi-rs-share"></i></a>
                                             </div>
                                         </div>
                                         <ul class="product-meta font-xs color-grey mt-50">
                                             <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
-                                            <!-- <li class="mb-5">Tags: <a href="#" rel="tag">Cloth</a>, <a href="#" rel="tag">Women</a>, <a href="#" rel="tag">Dress</a> </li> -->
                                             <li>Availability:<span class="in-stock text-success ml-5"><%=product.stock %> Items In Stock</span></li>
       
                                         </ul>
@@ -100,9 +99,7 @@
                                     <h2 class="section-title style-1 mb-30">Description</h2>
                                     <div class="description mb-50">
                                        <p><%=product.description %></p>
-                                        
                                     </div>
-                                   
                                     <div class="social-icons single-share">
                                         <ul class="text-grey-5 d-inline-block">
                                             <li><strong class="mr-10">Share this:</strong></li>
@@ -136,7 +133,7 @@
                                                     <div class="product-action-1">
                                                     </div>
                                                     <div class="product-badges product-badges-position product-badges-mrg">
-                                                        <span class="sale"><%= product.offer.percentage %></span>
+                                                        <span class="sale"><%= product.offer.percentage %> %</span>
                                                     </div>
                                                 </div>
                                                 <div class="product-content-wrap">
@@ -170,6 +167,31 @@
    
 
    <%-include('../layouts/footerUser')-%>
+
+   <script>
+    function shareProduct() {
+    if (navigator.share) {
+        const productName = '<%= product.name %>';
+        const productURL = window.location.href;
+
+        // Create a share object
+        const shareData = {
+            title: productName,
+            text: 'Check out this product!',
+            url: productURL,
+        };
+
+        // Call the navigator.share method to open the native share dialog
+        navigator.share(shareData)
+            .then(() => console.log('Shared successfully'))
+            .catch((error) => console.error('Error sharing:', error));
+    } else {
+        // Fallback if navigator.share is not supported
+        alert('Sharing is not supported in your browser.');
+    }
+}
+
+   </script>
 
 <script>
             

@@ -72,5 +72,6 @@ async function createUserWallet(userIdd){
 
 module.exports = {
     addToWallet,
-    debitFromWallet
+    debitFromWallet,
+    createUserWallet
 }

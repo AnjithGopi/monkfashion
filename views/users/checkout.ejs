@@ -29,45 +29,55 @@
                         </div>
                     </div>
                     <div id="collapseAddress" class="different_address collapse in ml-10">
-                        <form action="/addAddress" method="post">
+                        <form >
                             <div class="">
                                 <label for="name">Name :</label>
-                                <input type="text" required="" name="fname" placeholder="First name *" />
+                                <input type="text" required="" id="name" name="fname" placeholder="First name *" />
+                                <span id="error-message-name"  style="color: red; display: none;" ></span>
                             </div>
                             <div class="">
                                 <label for="phoneNumber">Phone Number:</label>
                                 <input type="tel" id="phone" name="phoneNumber" pattern="[0-9]{10}"
                                     placeholder="Enter your phone number *" required />
+                                <span id="error-message-phone"  style="color: red; display: none;" ></span>
                             </div>
                             <div class="">
                                 <label for="altphoneNumber">Alternate Number:</label>
                                 <input type="tel" id="phone2" name="phone2" pattern="[0-9]{10}"
                                     placeholder="Alternate phone number" />
+                                <span id="error-message-phone2"  style="color: red; display: none;" ></span>
                             </div>
                             <div class="">
                                 <label for="houseName">House Name</label>
-                                <input required="" type="text" name="cname" placeholder="House no / Name" />
+                                <input required="" type="text" name="cname" id="houseName" placeholder="House no / Name" />
+                                <span id="error-message-house"  style="color: red; display: none;" ></span>
                             </div>
 
                             <div class="">
                                 <label for="city">City</label>
-                                <input required="" type="text" name="city" placeholder="City / Town *" />
+                                <input required="" type="text" id="city" name="city" placeholder="City / Town *" />
+                                <span id="error-message-city"  style="color: red; display: none;" ></span>
                             </div>
                             <div class="">
                                 <label for="state">State</label>
-                                <input required="" type="text" name="state" placeholder="State / County *" />
+                                <input required="" type="text" id="state" name="state" placeholder="State / County *" />
+                                <span id="error-message-state"  style="color: red; display: none;" ></span>
                             </div>
                             <div class="">
                                 <label for="pincode">Pincode</label>
-                                <input required="" type="text" name="pincode" pattern="[0-9]{6}"
+                                <input required="" type="text" name="pincode" id="pincode" pattern="[0-9]{6}"
                                     placeholder="Postcode / ZIP *" />
+                                <span id="error-message-pincode"  style="color: red; display: none;"></span>
+
                             </div>
                             <div class="">
                                 <label for="LandMark">Land Mark</label>
-                                <input type="text" name="landMark" placeholder="Add Land mark" />
+                                <input type="text" name="landMark" id="landMark" placeholder="Add Land mark" />
+                                <span id="error-message-landMark"  style="color: red; display: none;"></span>
                             </div>
                             <div class=" ml-10">
-                                <button type="submit" onclick="validateForm()">
+                                <span id="error-message-general"  style="color: red; display: none;"></span>
+                                <button type="button" class="btn" onclick="validateForm()">
                                     Add new address
                                 </button>
                             </div>
@@ -366,9 +376,6 @@
                     toastr.warning(data.warningMessage)
                     console.log(data)
                 }
-               
-
-
             }))
         }
         function removeCoupon(){
@@ -377,8 +384,6 @@
                 document.getElementById('applyCouponBtn').style.display = 'inline-block';
                 document.getElementById('removeCouponBtn').style.display = 'none';
 
-                // Update other UI elements if needed
-                // document.getElementById("checkoutPrice").innerText = data.amountWithoutCoupon;
                let couponAmount =  document.getElementById("couponAmount").innerText 
                document.getElementById("couponAmount").innerText  = '';
             //    document.getElementById("checkoutPrice").innerText = 
@@ -506,8 +511,6 @@
                                         window.location.href = '/home'; // Change this to the actual URL of your home page
                                     }
                                 });
-                   
-
                  } else{
                     alert('FAILEDD')
                  }
@@ -631,8 +634,150 @@
             document.getElementById("checkoutPrice").innerText = total.toFixed(2);
         }
     </script>
+
+<script>
+    function validateForm() {
+        console.log("validte worked")
+        const name = document.getElementById('name').value;
+        const phone = document.getElementById('phone').value;
+        const phone2 = document.getElementById('phone2').value;
+        const house = document.getElementById('houseName').value;
+        const city = document.getElementById('city').value;
+        const state = document.getElementById('state').value;
+        const pincode = document.getElementById('pincode').value;
+        const landMark = document.getElementById('landMark').value;
+
+        // Reset error messages
+        resetErrorMessages();
+
+        // Check for empty fields
+        if (!name || !phone || !phone2 || !house || !city || !state || !pincode) {
+          //  preventDefault();
+          displayErrorMessage('Please fill all the required fields.', 'error-message-general');
+
+            return;
+        }
+
+        // Check for spaces in any field
+        if (containsSpace(name)) {
+            // preventDefault();
+            displayErrorMessage('Name cannot contain spaces.', 'error-message-name');
+            return;
+        }
+
+        if (containsSpace(phone)) {
+            // preventDefault();
+            displayErrorMessage('Mobile  cannot contain spaces.', 'error-message-phone');
+            return;
+        }
+
+        if (containsSpace(phone2)) {
+            // preventDefault();
+            displayErrorMessage('Mobile Number cannot contain spaces.', 'error-message-phone2');
+            return;
+        }
+
+       
+
+        if (containsSpace(city)) {
+            // preventDefault();
+            displayErrorMessage('City cannot contain spaces.', 'error-message-city');
+            return;
+        }
+
+        if (containsSpace(state)) {
+            // preventDefault();
+            displayErrorMessage('State cannot contain spaces.', 'error-message-state');
+            return;
+        }
+        if (containsSpace(pincode)) {
+            // preventDefault();
+            displayErrorMessage('Pincode cannot contain spaces.', 'error-message-pincode');
+            return;
+        }
+       
+        submitForm(name,phone,phone2,house,state,city,pincode,landMark)
+
+    }
+
+     // Function to submit the form
+     function submitForm(name,phone,phone2,house,state,city,pincode,landMark){
+        console.log("Submit form worked")
+        
+          console.log(name,phone,phone2,house,state,city,pincode,landMark)
+
+          fetch('/addAddress', {
+              method: 'post',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                 name:name,
+                 phone:phone,
+                 phone2:phone2,
+                 house:house,
+                 state:state,
+                 city:city,
+                 pincode:pincode,
+                 landMark:landMark
+              }),
+          })
+          .then(res => res.json())
+          .then(data => {
+            console.log("Worked 2")
+            if(data.warningMessage){
+                toastr.warning(data.warningMessage)
+              }
+              console.log(data);
+              if(data.success){
+                toastr.success(data.successMessage)
+               setTimeout(()=> {window.location.reload()},1000)
+              }
+          })
+          .catch(error => {
+              console.error('Fetch error:', error);
+          });
+      }
+
+    function displayErrorMessage(message, errorMessageId) {
+        console.log("display error worked")
+
+        var errorMessageElement = document.getElementById(errorMessageId);
+        errorMessageElement.innerHTML = message;
+        errorMessageElement.style.color = 'red';
+        errorMessageElement.style.display = 'block';
+
+        // Automatically hide the error message after 4 seconds
+        setTimeout(function () {
+            errorMessageElement.style.display = 'none';
+        }, 4000);
+    }
+
+    function containsSpace(value) {
+        return /\s/.test(value);
+    }
+
+   
+
+    function resetErrorMessages() {
+        // Reset error messages to hide them initially
+        var errorMessages = document.querySelectorAll('[id^="error-message-"]');
+        errorMessages.forEach(function (errorMessage) {
+            errorMessage.innerHTML = '';
+            errorMessage.style.display = 'none';
+        });
+    }
+</script>
+  <script>
+      // Function to clear the messages thar appeared while validating the form
+     function clearMessage(id){
+          setTimeout(()=>{
+              document.getElementById(id).innerText = ""
+          },3000)
+      }
+  </script>
     <script>
-        function validateForm() {
+        function validateFormT() {
             // Reset error messages
             document.getElementById("nameError").textContent = "";
             document.getElementById("phoneError").textContent = "";

@@ -2,7 +2,6 @@
 <html class="no-js" lang="en">
 
 
-<!-- Mirrored from wp.alithemes.com/html/evara/evara-frontend/shop-checkout.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 15 Jul 2023 10:10:07 GMT -->
 <head>
     <meta charset="utf-8">
     <title>MONK FASHION</title>
@@ -14,7 +13,7 @@
     <meta property="og:url" content="">
     <meta property="og:image" content="">
     <!-- Favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="/static/user-assets/imgs/theme/favicon.svg">
+    <link rel="shortcut icon" type="image/x-icon"  href="/static/asset/images/MonkFashionLogo.jpeg">
     <!-- Template CSS -->
     <link rel="stylesheet" href="/static/user-assets/css/maind134.css?v=3.4">
 
@@ -57,7 +56,7 @@
                 <div class="col-xl-3 col-lg-4">
                     <div class="header-info header-info-right">
                         <ul>
-                            <li>
+                            
                             <li>
                                 <i class="fi-rs-user"></i><a href="/home/Profile">Profile</a>
                             </li>
@@ -97,13 +96,13 @@
                             <div class="header-action-icon-2">
                                 <a href="/user/cart">
                                     <img class="svgInject" alt="Evara" src="/static/user-assets/imgs/theme/icons/icon-heart.svg">
-                                    <span class="pro-count blue">0</span>
+                                    <span class="pro-count blue" name ="wishlistQuantityIcon">0</span>
                                 </a>
                             </div>
                             <div class="header-action-icon-2">
                                     <a class="mini-cart-icon" href="/user/cart">
                                     <img alt="MONG" src="/static/user-assets/imgs/theme/icons/icon-cart.svg">
-                                    <span class="pro-count blue" id="cartQuantityIcon"><%= locals.cartQuantity ? cartQuantity : 0 %></span>
+                                    <span class="pro-count blue" name ="cartQuantityIcon" id="cartQuantityIcon"><%= locals.cartQuantity ? cartQuantity : 0 %></span>
                                    
                                 </a>
                                
@@ -116,7 +115,7 @@
     </div>
     <div class="header-bottom header-bottom-bg-color sticky-bar">
         <div class="container">
-            <div class="header-wrap header-space-between position-relative">
+            <div class="header-wrap header-space-between position-relative justify-content-center">
                 <div class="logo logo-width-1 d-block d-lg-none">
                     <a href="/home">
                          <div class="logo logo-width-1">
@@ -125,33 +124,23 @@
                     </a>
                 </div>
                 <div class="header-nav d-none d-lg-flex">
-                    <div class="main-categori-wrap d-none d-lg-block">
-                        <a class="categori-button-active" href="#">
-                            <span class="fi-rs-apps"></span> Browse Categories
-                        </a>
                     
-                    </div>
                     <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
                         <nav>
                             <ul>
-                                <li><a class="active" href="/home">Home <i class="fi-rs-angle-down"></i></a>
+                                <li><a class="active" href="/home">Home </a>
                                    
                                 </li>
                                 <li>
-                                    <a href="">About</a>
+                                    <a href="/home/about">About</a>
                                 </li>
-                                <li><a href="/home/allProducts">Shop <i class="fi-rs-angle-down"></i></a>
+                                <li><a href="/home/allProducts">Shop </i></a>
                                    
                                 </li>
-                                <li class="position-static"><a href="#">Mega menu <i class="fi-rs-angle-down"></i></a>
+                                <li class="position-static"><a href="#">Mega menu </i></a>
                                   
                                 </li>
-                                <li><a href="">Blog <i class="fi-rs-angle-down"></i></a>
-                                  
-                                </li>
-                                <li><a href="#">Pages <i class="fi-rs-angle-down"></i></a>
-                                   
-                                </li>
+                              
                                 <li>
                                     <a href="/home/allProducts">Contact</a>
                                 </li>
@@ -165,27 +154,16 @@
                     <div class="header-action-2">
                         <div class="header-action-icon-2">
                             <a href="/home/wishlist">
-                                <img alt="Evara" src="/static/user-assets/imgs/theme/icons/icon-heart.svg">
-                                <span class="pro-count white">0</span>
+                                <img alt="Mongo" src="/static/user-assets/imgs/theme/icons/icon-heart.svg">
+                                <span class="pro-count white" name ="wishlistQuantityIcon">0</span>
                             </a>
                         </div>
                         <div class="header-action-icon-2">
                             <a class="mini-cart-icon" href="/user/cart">
                                 <img alt="Evara" src="/static/user-assets/imgs/theme/icons/icon-cart.svg">
-                                <span class="pro-count white" id="cartQuantityIconMobile"><%= locals.cartQuantity ? cartQuantity : 0 %></span>
+                                <span class="pro-count white" name ="cartQuantityIcon" id="cartQuantityIconMobile"><%= locals.cartQuantity ? cartQuantity : 0 %></span>
                             </a>
-                            <div class="cart-dropdown-wrap cart-dropdown-hm2">
-                                <ul>
-                                    
-                                </ul>
-                                <div class="shopping-cart-footer">
-                                    
-                                    <div class="shopping-cart-button">
-                                        <a href="shop-cart.html">View cart</a>
-                                        <a href="shop-checkout.html">Checkout</a>
-                                    </div>
-                                </div>
-                            </div>
+                            
                         </div>
                         <div class="header-action-icon-2 d-block d-lg-none">
                             <div class="burger-icon burger-icon-white">
@@ -202,8 +180,31 @@
 </header>
 
 <script>
+    window.onload = ()=>{
+        updateCartAndWishlistQuantity()
+    }
     function submitSearch() {
         // Assuming you want to submit the form when the text input changes
         document.getElementById("searchForm").submit();
+    }
+
+   function updateCartAndWishlistQuantity(){
+            fetch('/getCartWishlistQuantity',{
+                method:'get'
+            })
+            .then(response => response.json())
+            .then((data)=>{
+                // console.log(data)
+                if( data.success){
+                    const quantityElements = document.querySelectorAll('[name="cartQuantityIcon"]');
+                        quantityElements.forEach(element => {
+                            element.innerText = data.cartQuantity;
+                        });
+                        const wishlistQuantity = document.querySelectorAll('[name="wishlistQuantityIcon"]');
+                        wishlistQuantity.forEach(element => {
+                            element.innerText = data.wishlistQuantity;
+                        });
+                }
+            })
     }
 </script>

@@ -27,7 +27,7 @@ const securePassword = async(password)=>{
 
 const sendVerifyMail = async (req,res) => {
     try {
-        console.log(req.body)
+       
         const existingUser = await User.findOne({ email: req.body.email });
 
         if (existingUser) {
@@ -37,8 +37,6 @@ const sendVerifyMail = async (req,res) => {
                 warningMessage: "Email already exists. Choose a different email."
             });
             
-
-            // return res.status(500).json( { warningMessage: "Email already exists. Choose a different email." });
         }
 
         req.session.name = req.body.name;
@@ -78,12 +76,11 @@ const sendVerifyMail = async (req,res) => {
 
         // Use Promise style for sending mail
         const info = await transporter.sendMail(mailOptions);
-
-        console.log('Message sent: %s', info.messageId);
         // res.redirect('/verifyotp')
         res.status(200).json({success:true,redirect:'/verifyotp'})
 
     } catch (error) {
+        res.render('../pages/error',{error:error.message})
         console.error('Error sending email:', error.message);
         
     }
@@ -95,6 +92,7 @@ const loadotpRedirect = async(req,res)=>{
         res.redirect('/verifyotp')
 
     }catch(error){
+        res.render('../pages/error',{error:error.message})
         console.log(error.message)
     }
 }
@@ -158,8 +156,9 @@ const loadOtp = async(req,res)=>{
 const forgetPasswordOtp = async(req,res)=>{
     try{
         res.redirect('forgetPasswordOtp')
-    }catch(err){
-        console.log(err.message)
+    }catch(error){
+        res.render('../pages/error',{error:error.message})
+        console.log(error.message)
     }
 } 
 
@@ -190,6 +189,7 @@ const loadRegsucess = async (req,res) =>{
         res.render('registrationSucess')
 
     }catch(error){
+        res.render('../pages/error',{error:error.message})
         console.log(error.message)
     }
 }
@@ -209,19 +209,19 @@ const newInsertUser = async(req,res,next)=>{
      
         });
 
-        const userData = await user.save();
-        console.log("userData :",userData)
+        const userData = await user.save();        
         const validatereferralId = await User.findOne({referralId:req.session.referral})
         if(validatereferralId){
-            console.log("findedd")
             const addToWallet = await walletController.addToWallet(100,validatereferralId._id)
             const addToWalletUser = await walletController.addToWallet(500,userData._id)
         }
 
+
+
         if(userData){
+            const createWallet = await walletController.createUseWallet(userData._id)
             req.session.user_id = userData._id;  // Creating a session here because user need to directly redirect into home page after successfully creating an account.
             res.redirect('/home')
-            console.log(userData)
             
         }else{
             res.render('registrationSucess',{message : "Registration failed."});
@@ -229,6 +229,7 @@ const newInsertUser = async(req,res,next)=>{
         }
 
     }catch(error){
+        res.render('../pages/error',{error:error.message})
         console.log(error.message)
     }
    
@@ -240,6 +241,7 @@ const loadRegister = async(req,res)=>{
     try{
         res.render('registration1');
     }catch(error){
+        res.render('../pages/error',{error:error.message})
         console.log(error.message);
     }
 
@@ -250,6 +252,7 @@ const loadLogin = (req,res)=>{
     try{
         res.render('../pages/login')
     }catch(error){
+        res.render('../pages/error',{error:error.message})
         console.log(error.message)
     }
 }
@@ -261,11 +264,8 @@ const verifyLogin = async(req,res)=>{
         console.log("Verify login worked")
         console.log(req.body.email)
         const email =req.body.email;
-        console.log(typeof(email))
-        console.log(typeof(req.body.email))
         const password = req.body.password;
         const userData = await User.findOne({email:email})
-        console.log(userData)
 
         if(userData){
                 if(userData.isActive){
@@ -280,44 +280,36 @@ const verifyLogin = async(req,res)=>{
                             console.log("user successfully loged")
 
                         }
-                        console.log("Login successfull") 
-                        // res.redirect('/home');
+                        
                 res.status(200).json({success:true,successMessage:" Login successfull",role:role})
 
                     }else{
-                        console.log(userData.password)
-                        console.log(password)
-                        // res.render('../pages/login',{message:" password is incorrect"})
-                        console.log("Password incorrect")
-
+                       
                 res.status(404).json({success:false,warningMessage:" password is incorrect"})
 
                     }
         
                 }else{
-                    // res.render('../pages/login',{message:" User is not active"})
-                console.log("User is not active")
-
+                   
                     res.status(404).json({success:false,warningMessage:" Not Found / Not Active"})
-        
                 }
         }else{
-                // res.render('../pages/login',{message:"Email and password is incorrect"})
-                console.log("Email and password incorrect")
+              
                 res.status(404).json({success:false,warningMessage:" Email and password is incorrect"})
 
             }
     
         }catch(error){
             console.log(error.message)
+        res.render('../pages/error',{error:error.message})
         }
     }
 
 const loadForgetPassword  = async (req, res) => {
     try {
-        console.log("forget password received")
         res.render('forgetPassword')
     } catch (error) {
+        res.render('../pages/error',{error:error.message})
         console.log(error.message);
     }
 };
@@ -330,8 +322,6 @@ const loadHome = async(req,res)=>{
        const newProducts = await Product.find({isDeleted:false,isActive:true}).sort({createdOn:1}).limit(10)
        const bannerData = await Banner.find()
        const categoriesData = await Categories.find({isDeleted:false,isActive:true})
-    //    console.log("product data ::",productData)
-       console.log("product data ::",productData.length)
        let cartCount = 0
        console.log("........................................")
        let userData = '';
@@ -340,15 +330,11 @@ const loadHome = async(req,res)=>{
             const user = await User.findOne({_id:req.session.user_id})
             userData = user
               const cartData = await Cart.find({userId:req.session.user_id});
-            //   console.log("cart data",cartData)
               console.log("........................................")
               if(cartData.length > 0)
                cartCount = cartData[0].product.length
 
        }
-       console.log("cart count",cartCount)
-       console.log("cart count",userData)
-       
    let data = await Order.aggregate([
         { $unwind: "$items" },
         {
@@ -371,11 +357,11 @@ const loadHome = async(req,res)=>{
         }
       ]);
       
-    console.log(data)
    
         res.render('index',{product:productData,cartQuantity: cartCount,userData:userData,newProducts:newProducts,banner:bannerData,categories:categoriesData,bestSeller:data });
        
     }catch(error){
+        res.render('../pages/error',{error:error.message})
         console.log(error.message)
     }
 }
@@ -385,10 +371,13 @@ const loadProduct = async(req,res)=>{
 
     try{
        const productData = await Product.findById({_id:req.query.id})
+       const userData = await User.findById(req.session.user_id)
        const similarProductData = await Product.find({categoryId:productData.categoryId}).populate('categoryId').limit(4)
-       console.log(similarProductData)
-     
-        res.render('shopProduct',{product:productData,similarProduct : similarProductData});
+       let cartCount = 0
+       const cartData = await Cart.find({userId:req.session.user_id});
+       if(cartData.length > 0)
+        cartCount = cartData[0].product.length
+        res.render('shopProduct',{product:productData,userData:userData,similarProduct : similarProductData,cartQuantity: cartCount});
        
     }catch(error){
         res.render('../pages/error',{error:error.message})
@@ -427,19 +416,7 @@ const loadProfile = async(req,res)=>{
         res.render('userProfile',{user:userData,order:orderData,wallet:walletData})
 
     }catch(error){
-        console.log("Load profile catch recieved")
-
-        const errorData =[]
-        const userId = req.session.user_id
-        const userData = await User.findById(req.session.user_id)
-
-        errorData.push(error.message)
-        console.log("Error Data :",errorData)
-        const orderData = await Order.find({userId:userId})
-        const walletData = await Wallet.find({userId:userId})
-        console.log(walletData)
-        res.render('userProfile',{user:userData,errorMessage:"Failed Some error occurs ",order:orderData,error:errorData,wallet:walletData[0].balance})
-        console.log(error.message)
+         console.log(error.message)
     }
 }
 
@@ -469,14 +446,9 @@ const addAddress = async (req,res)=>{
         // Add the new address to the user's address array
         user.address.push(newAddress);
 
-        // Save the user with the updated address array
         const updatedUser = await user.save();
-  
-
         // console.log(updatedUser)
         res.status(201).render('userProfile',{user:updatedUser,messageAddress:"New Address Added Sucessfully"})
-        
-
     }catch(error){
         console.log(error.message)
         res.status(500).json({ error: 'Internal Server Error' });
@@ -499,7 +471,6 @@ const removeAddress = async (req,res)=>{
             { $unset: {[`address.${index}`]: 1 }}
         );
         console.log(result)
-        // Remove null values from the address array
         await User.updateOne(
             { _id: userId },
             { $pull: { address: null } }
@@ -564,7 +535,6 @@ const editAddress = async ( req,res)=>{
         console.log("Error Data :",errorData)
         res.render('userProfile',{user:userData,errorMessage:"Failed Some error occurs ",error:errorData})
 
-        console.log(error.message)
     }
 }
 
@@ -578,7 +548,6 @@ const loadUpdateUserProfile = async(req,res)=>{
         const userData = await User.findById(req.session.user_id)
 
         errorData.push(error.message)
-        console.log("Error Data :",errorData)
         res.render('userProfile',{user:userData,errorMessage:"Failed Some error occurs ",error:errorData})
 
         console.log(error.message)
@@ -594,7 +563,6 @@ const updateUserProfile = async (req,res) =>{
         console.log(name)
         const result = await User.findOneAndUpdate({_id:userId},{name:name,email:email,mobile:phone,dob:dob})
         const userData = await User.findById(req.session.user_id)
-        console.log("result after updation :",userData)
         const orderData = await Order.find({userId:userId})
 
         if(result)
@@ -608,7 +576,6 @@ const updateUserProfile = async (req,res) =>{
         const userData = await User.findById(req.session.user_id)
 
         errorData.push(error.message)
-        console.log("Error Data :",errorData)
         res.render('userProfile',{user:userData,errorMessage:"Failed Some error occurs ",error:errorData})
 
         console.log(error.message)
@@ -651,11 +618,9 @@ const verifyChangePasword = async (req,res,next) =>{
                        
                     // next()
                     return
-
                     }else{
                       const orderData = await Order.find({userId:userId})
                     res.render('userProfile',{user:userData,failedMessage:"Password Mismatch ",order:orderData});
-
                 }
     
             }else{
@@ -725,11 +690,8 @@ const loadChangePasswordOtp = async (req,res) =>{
 const clearOtp = async (req,res) =>{
     try{
        
-        console.log("Clear otp recieved")
-        console.log("session :",req.session.changePassword)
          delete req.session.changePassword
          req.session.save()
-        console.log("After session :",req.session.changePassword)
         res.json({
             success: true,
             
@@ -744,16 +706,13 @@ const  changePasswordVerifyOtp = async (req,res)=>{
     try{
 
         const otpUser = req.body.otp.join("")
-        console.log("User otp :",otpUser)
         console.log("User otp :",req.session.changePassword) 
         console.log("User otp :",req.session.otp) 
-        console.log("User otp :",typeof(otpUser))
         if( otpUser === req.session.otp ){
                     const cpassword =  req.session.changePassword
                     const email =  req.session.email
                     const spass = await securePassword(cpassword)
                     const result = await User.findOneAndUpdate({email:email},{password:spass})
-                    console.log("result :",result)
                     if(result){
                         res.render('../pages/login',{successMessage:"Successfully changed Password"})
    
@@ -762,7 +721,6 @@ const  changePasswordVerifyOtp = async (req,res)=>{
                     res.render('../pages/login',{warnningMessage:"Failed to change Password"})
                     req.session.destroy()
         }else{
-            console.log("Wromg otp")
             res.render('otp2',{errorMessage:"Wrong password"})
         }
         
@@ -775,11 +733,8 @@ const cancelOrder = async (req,res)=>{
     try{
         console.log("Cancel Order request recieved")
         const {orderId,index} = req.body
-        console.log(req.body)
-        console.log(orderId)
         const userId = req.session.user_id
         const cancelOrder = await Order.findOneAndUpdate({_id:orderId},{$set:{orderStatus:"Cancelled"}},{new:true})
-        console.log("Order data :",cancelOrder)
         if(cancelOrder){
         res.status(200).json({ success: true, successMessage: 'Product Cancelled sucesfully' });
 
@@ -802,7 +757,6 @@ const loadOrderDetails = async (req,res)=>{
         .populate('items.productId') 
         .exec();
     
-        // console.log(orderData)
         res.render('orderDetails' ,{order:orderData})
     } catch (error) {
         console.log(error.message)
@@ -821,8 +775,9 @@ const loadAllProducts = async(req,res)=>{
         const totalProducts = await Product.countDocuments();
         const totalPages = Math.ceil(totalProducts / limit);
         const categoryData = await Categories.find({isActive:true})
-        const cartData = await Cart.find({userId:req.session.user_id});
+        const cartData = await Cart.findOne({userId:req.session.user_id});
 
+        
         console.log("Load all products worked")
            
                 const productQuery = {
@@ -843,14 +798,36 @@ const loadAllProducts = async(req,res)=>{
                     .limit(limit);
 
                 const productDataToPass = productData;
-            
+             let cartQuantity = 0;
+             if(cartData){
+                if(cartData.product)
+                 cartQuantity = cartData.product.length
+             }
           
-        res.render("allProducts",{products:productDataToPass,cartQuantity:cartData[0].product.length, currentPage: page,  totalPages: totalPages,categories:categoryData,search:req.query.search,categoryId:req.query.categoryId})
+        res.render("allProducts",{products:productDataToPass,cartQuantity:cartQuantity, currentPage: page,  totalPages: totalPages,categories:categoryData,search:req.query.search,categoryId:req.query.categoryId})
 
     }catch(error){
         console.log(error.message)
     }
 }
+
+const getQuantity = async (req, res) => {
+    try {
+       const cartData = await Cart.findOne({userId:req.session.user_id})
+    //    const wishlistData = Wishlist.findOne({userId:req.session.user_id}) 
+        if(cartData && cartData.product.length >0){
+            let cartQuantity = cartData.product.length || 0;
+            let wishlistQuantity =  10;
+            res.status(200).json({success:true,cartQuantity:cartQuantity,wishlistQuantity:wishlistQuantity})
+        }else{
+
+            res.status(400).json({success:false,cartQuantity:0,wishlistQuantity:0})
+        }
+
+    } catch (error) {
+        console.log(error.message);
+    }
+};
 
 
 module.exports ={
@@ -884,6 +861,7 @@ module.exports ={
     clearOtp,
     cancelOrder,
     loadOrderDetails,
-    loadAllProducts
+    loadAllProducts,
+    getQuantity
     
 }

@@ -60,6 +60,8 @@ user_route.post('/forgetPasswordOtp',auth.isLogout,userController.changePassword
 user_route.post('/login',userController.verifyLogin);
 // Route to load the home page
 user_route.get('/home',userController.loadHome);
+user_route.get('/getCartWishlistQuantity',auth.isLogin,userController.getQuantity);
+
 // Route to load the single product 
 user_route.get('/products',auth.isLogin,userController.loadProduct);
 // Route to view all Products

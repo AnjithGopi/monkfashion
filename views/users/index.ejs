@@ -97,7 +97,7 @@
                             <button class="nav-link" id="nav-tab-three" data-bs-toggle="tab" data-bs-target="#tab-three" type="button" role="tab" aria-controls="tab-three" aria-selected="false">New added</button>
                         </li>
                     </ul>
-                    <a href="#" class="view-more d-none d-md-flex">View More<i class="fi-rs-angle-double-small-right"></i></a>
+                    <a href="/home/allProducts" class="view-more d-none d-md-flex">View More<i class="fi-rs-angle-double-small-right"></i></a>
                 </div>
                 <!--End nav-tabs-->
                 <div class="tab-content wow fadeIn animated" id="myTabContent">
@@ -156,11 +156,11 @@
         </section>
 
         <section class="banner-2 section-padding pb-0">
-            <div class="d-flex mx-auto">
+            <div class=" container d-flex mx-auto">
                 
             <% if( banner.length > 0){ %>
                 <% if(banner[1]){ %>
-                <div class="container d-flex justify-content-center">
+                <div class="container d-flex justify-content-end">
                     <div class="banner-img banner-big wow fadeIn animated f-none">
                         <!-- <img src="/static/user-assets/imgs/banner/banner-4.png" alt=""> -->
                         <img src="/static/admin/images/banner/<%=banner[1].image[0]%>" alt="Banner 4" width="650" height="300">
@@ -347,8 +347,8 @@
                                     <a href="<%= banner[5].target %>" class="text-white">Shop Now <i class="fi-rs-arrow-right"></i></a>
                                 </div>
                             </div>
-                            <div class="banner-img style-2 wow fadeIn animated" style="width: fit-content; height: fit-content;">
-                                <img src="/static/admin/images/banner/<%= banner[5].image[0] %>" alt="">
+                            <div class="banner-img style-2 wow fadeIn animated" style="width: 305px; height: 210px;">
+                                <img src="/static/admin/images/banner/<%= banner[5].image[1] %>" alt="">
                                 <div class="banner-text">
                                     <span><%= banner[5].text2 %></span>
                                     <h4 class="mt-5"><%= banner[5].text %></h4>
@@ -395,7 +395,7 @@
                                                 </div>
                                                 <div class="product-price">
                                                     <span><%= product.salePrice %></span>
-                                                    <span class="old-price"><%= product.offerPrice %>%</span>
+                                                    <span class="old-price"><%= product.regularPrice %></span>
                                                 </div>
                                                 <div class="product-action-1 show">
                                                     <a aria-label="Add To Cart" class="action-btn hover-up" onclick="addProductToCart('<%=product._id%>')"><i class="fi-rs-shopping-bag-add"></i></a>
