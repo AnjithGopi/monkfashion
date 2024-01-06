@@ -219,7 +219,7 @@ const newInsertUser = async(req,res,next)=>{
 
 
         if(userData){
-            const createWallet = await walletController.createUseWallet(userData._id)
+            const createWallet = await walletController.createUserWallet(userData._id)
             req.session.user_id = userData._id;  // Creating a session here because user need to directly redirect into home page after successfully creating an account.
             res.redirect('/home')
             

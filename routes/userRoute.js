@@ -37,6 +37,9 @@ const couponController = require("../controllers/couponController")
 // import the page controller
 const pageController = require("../controllers/pagesController")
 
+// import the Wishlist controller
+const wishlistContoller = require("../controllers/wishlistController")
+
 
 user_route.get('/',userController.loadHome);
 // router to load registration form
@@ -118,7 +121,16 @@ user_route.post("/clearOtp",auth.isLogin,userController.clearOtp)
 // user_route.p("/clearOtp",auth.isLogin,userController.clearOtp)
 
 // Pages
-user_route.get("/contact",pageController.loadContact)
+user_route.get("/home/contact",pageController.loadContact)
+user_route.post("/home/contact/submitMessage",pageController.submitMessage)
+user_route.get("/home/about",pageController.loadAbout)
+
+// User Wishlist
+user_route.get("/home/wishlist",wishlistContoller.loadWishlist)
+user_route.post("/home/addToWishlist/:productId",wishlistContoller.addToWishlist)
+user_route.delete("/home/wishlist/removeProduct/:productId",wishlistContoller.removeProduct)
+
+
 
 
 // user_route.use('*', (req, res) => {

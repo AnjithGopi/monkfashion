@@ -1,0 +1,95 @@
+
+<%- include('../layouts/headerUser') -%>
+<%- include('../layouts/mobileHeaderUser')-%> 
+    <main class="main">
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="/home" rel="nofollow">Home</a>
+                    <span></span> Wishlist
+                </div>
+            </div>
+        </div>
+        <section class="mt-50 mb-50">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table class="table shopping-summery text-center">
+                                <thead>
+                                    <tr class="main-heading">
+                                        <th scope="col" colspan="2">Product</th>
+                                        <th scope="col">Price</th>
+                                        <th scope="col">Stock Status</th>
+                                        <th scope="col">Action</th>
+                                        <th scope="col">Remove</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                    <%  if(wishlistData.length > 0) { %>
+                                        <% wishlistData[0].productDetails.forEach((product,index)=>{ %>
+                                    <tr id="tableRow_<%=index %>">
+                                        <td class="image"><img src="/static/admin/images/product/<%=product.image[0]%>" alt="#"></td>
+                                        <td class="product-des">
+                                            <h5 class="product-name"><a  href="/products?id=<%=product._id %>"><%=product.name%></a></h5>
+                                            
+                                        </td>
+                                        <td class="price" data-title="Price"><span>₹<%=product.salePrice %> </span></td>
+                                        <td class="text-center" data-title="Stock">
+                                            <% if (product.stock > 0)  { %>
+                                            <span class="color3 font-weight-bold">In Stock</span>
+                                        </td>
+                                        <td class="text-right" data-title="Cart">
+                                            <button class="btn btn-sm"><i class="fi-rs-shopping-bag mr-5"></i>Add to cart</button>
+                                        </td>
+                                            <% } else { %>
+                                            <span class="text-danger font-weight-bold">Out of stock</span>
+                                            <% } %>
+
+                                        
+                                        <td class="action" data-title="Remove"><a onclick="removeItemFromCart('<%= product._id %>','<%= index %>')"><i class="fi-rs-trash"></i></a></td>
+                                    </tr>
+                                    <% }) %>
+                                    <% } else{ %>
+                                        <tr>
+                                            <h4>Wishlist Empty</h4>
+                                        </tr>
+                                    <% } %>
+                                   
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+<%- include('../layouts/footerUser')-%> 
+
+<script>
+    
+// Function to remove the item from the cart
+function removeItemFromCart(productId,index) {
+    fetch(`/home/wishlist/removeProduct/${productId}`, {
+        method: 'DELETE',
+    })
+    .then(response => {
+        if (response.ok) {
+        toastr.success(response.message);
+            document.getElementById(`tableRow_${index}`).remove();
+        } else {
+             toastr.error(response.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+
+
+</script>
+
+    

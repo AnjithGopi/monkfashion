@@ -38,7 +38,7 @@
                     <div class="header-info">
                         <ul>
                             <li><i class="fi-rs-smartphone"></i> <a href="#">9991 123 123</a></li>
-                            <li><i class="fi-rs-marker"></i><a  href="page-contact.html">Our location</a></li>
+                            <li><i class="fi-rs-marker"></i><a  href="/home/contact">Our location</a></li>
                         </ul>
                     </div>
                 </div>
@@ -94,7 +94,7 @@
                     <div class="header-action-right">
                         <div class="header-action-2">
                             <div class="header-action-icon-2">
-                                <a href="/user/cart">
+                                <a href="/home/wishlist">
                                     <img class="svgInject" alt="Evara" src="/static/user-assets/imgs/theme/icons/icon-heart.svg">
                                     <span class="pro-count blue" name ="wishlistQuantityIcon">0</span>
                                 </a>
@@ -142,7 +142,7 @@
                                 </li>
                               
                                 <li>
-                                    <a href="/home/allProducts">Contact</a>
+                                    <a href="/home/contact">Contact</a>
                                 </li>
                             </ul>
                         </nav>
@@ -206,5 +206,8 @@
                         });
                 }
             })
+            .catch(error => {
+                    console.log('Error :', error);
+                });
     }
 </script>

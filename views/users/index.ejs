@@ -117,7 +117,7 @@
 
                                         </div>
                                         <div class="product-action-1 d-flex justify-content-end align-items-top">
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="home/Wishlist"><i class="fi-rs-heart"></i></a>
+                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" onclick="addToWishlist('<%= product[i]._id %>')" ><i class="fi-rs-heart"></i></a>
                                         </div>
                                         <div class="product-badges product-badges-position product-badges-mrg">
                                             <span class="hot">Hot</span>
@@ -182,7 +182,7 @@
                             <div class="banner-text d-md-block d-none">
                                 <h4 class="mb-15 mt-40 text-brand"><%= banner[2].text %></h4>
                                 <h1 class="fw-600 mb-20"><%= banner[2].text2 %></h1>
-                                <a href="home/allProducts" class="btn">Learn More <i class="fi-rs-arrow-right"></i></a>
+                                <a href="<%= banner[2].target %>" class="btn">Learn More <i class="fi-rs-arrow-right"></i></a>
                             </div>
                         </div>
                     </div>
@@ -420,11 +420,29 @@
    <%-include('../layouts/footerUser')-%>
 
    <script>
-        function formatDateString(dateString) {
-    var date = new Date(dateString);
-    var year = date.getFullYear();
-    var month = ('0' + (date.getMonth() + 1)).slice(-2); // Adding 1 because months are zero-based
-    var day = ('0' + date.getDate()).slice(-2);
+
+    function addToWishlist(productId){
+        fetch(`/home/addToWishlist/${productId}`,{
+            method:'Post'
+        })
+        .then((response)=>response.json())
+        .then(data =>{
+            if(data.success){
+                toastr.success(data.message)
+            }else {
+                toastr.warning(data.message)
+            }
+        })
+        .catch(error => {
+              console.error('Fetch error:', error);
+          });
+    }
+
+    function formatDateString(dateString) {
+        var date = new Date(dateString);
+        var year = date.getFullYear();
+        var month = ('0' + (date.getMonth() + 1)).slice(-2); // Adding 1 because months are zero-based
+        var day = ('0' + date.getDate()).slice(-2);
 
     return `${year}-${month}-${day}`;
   }
