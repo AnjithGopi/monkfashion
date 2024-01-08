@@ -15,6 +15,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="table-responsive">
+                            <%  if(wishlistData.length > 0) { %>
                             <table class="table shopping-summery text-center">
                                 <thead>
                                     <tr class="main-heading">
@@ -27,7 +28,6 @@
                                 </thead>
                                 <tbody>
                                     
-                                    <%  if(wishlistData.length > 0) { %>
                                         <% wishlistData[0].productDetails.forEach((product,index)=>{ %>
                                     <tr id="tableRow_<%=index %>">
                                         <td class="image"><img src="/static/admin/images/product/<%=product.image[0]%>" alt="#"></td>
@@ -41,24 +41,27 @@
                                             <span class="color3 font-weight-bold">In Stock</span>
                                         </td>
                                         <td class="text-right" data-title="Cart">
-                                            <button class="btn btn-sm"><i class="fi-rs-shopping-bag mr-5"></i>Add to cart</button>
+                                            <button class="btn btn-sm" onclick="addProductToCart('<%=product._id%>')"><i class="fi-rs-shopping-bag mr-5"></i>Add to cart</button>
                                         </td>
                                             <% } else { %>
                                             <span class="text-danger font-weight-bold">Out of stock</span>
+                                            </td>
+                                            <td></td>
                                             <% } %>
 
                                         
                                         <td class="action" data-title="Remove"><a onclick="removeItemFromCart('<%= product._id %>','<%= index %>')"><i class="fi-rs-trash"></i></a></td>
                                     </tr>
                                     <% }) %>
-                                    <% } else{ %>
-                                        <tr>
-                                            <h4>Wishlist Empty</h4>
-                                        </tr>
-                                    <% } %>
+                                   
                                    
                                 </tbody>
                             </table>
+                            <% } else{ %>
+                                <tr>
+                                    <h4 class="text-danger">Wishlist Empty</h4>
+                                </tr>
+                            <% } %>
                         </div>
                     </div>
                 </div>
@@ -89,6 +92,31 @@ function removeItemFromCart(productId,index) {
 }
 
 
+function addProductToCart(productId){
+            fetch(`/user/addToCart/${productId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }).then(response => response.json())
+            .then(data => {
+               
+                if (data.success) {
+                toastr.success(data.message)
+        
+                }else {
+                    
+                    toastr.warning(data.warningMessage)
+            }
+            document.getElementById("cartQuantityIcon").innerHTML = data.cartQuantity
+            document.getElementById("cartQuantityIconMobile").innerHTML = data.cartQuantity
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+            });
+       
+        
+    }
 
 </script>
 

@@ -1,5 +1,25 @@
 const mongoose = require('mongoose')
 const {Schema} = mongoose;
+
+const reviewSchema = new mongoose.Schema({
+   userId:{
+      type:Schema.Types.ObjectId,
+      ref:'User',
+      required:false
+   },
+   rating:{
+      type:Number,
+      required:false
+   },
+   comment:{
+      type:String,
+      required:false
+   },
+   createdOn:{
+      type:Date,
+      default:Date.now
+   }
+})
 const productSchema = new mongoose.Schema({
     name:{
         type:String,
@@ -41,6 +61,14 @@ const productSchema = new mongoose.Schema({
             default:true
          }
      },
+     rating:{
+         type:Number,
+         default:0
+     },
+     review:{
+         type:[reviewSchema],
+         required:false
+     },
      createdOn:{
         type:Date,
         default:Date.now
@@ -50,8 +78,8 @@ const productSchema = new mongoose.Schema({
         required:true
      },
      selledQuantity:{
-      type:Number,
-      default:0
+         type:Number,
+         default:0
      },
      isActive:{
          type:Boolean,

@@ -40,7 +40,6 @@ const logout = async (req,res)=>{
             const password = req.body.password;
     
           const adminData = await User.findOne({email:email})
-          console.log(adminData)
     
            if(adminData){
            const passMatch = await bcrypt.compare(password,adminData.password)
@@ -72,9 +71,7 @@ const loadHome = async(req,res)=>{
         const productCount = await Product.countDocuments({isActive:true,isDeleted:false})
         const orderCount = await Order.countDocuments()
         const orderData = await Order.find()
-        console.log(userCount)
-        // ......................................................... 
-        // ......................................................... 
+   
 
         const monthlyOrders = await Order.aggregate([
             {
@@ -93,12 +90,8 @@ const loadHome = async(req,res)=>{
         const totalSum = orderData.reduce((sum,obj) => {
             return sum+=obj.totalAmount
             },0)
-            console.log("total :::",totalSum)
         
-        console.log("Monthly Orders:",monthlyOrders)
-        // monthlyOrders
-        // ......................................................... 
-        // ......................................................... 
+      
         res.render('index',{userCount,productCount,orderCount,monthlyOrders:monthlyOrders,totalAmount:totalSum})
     } catch (error) {
         console.log(error.message)
@@ -224,14 +217,14 @@ const changeOrderStatus = async (req,res) =>{
 
 const loadOrderDetails = async (req,res)=>{
     try {
-        console.log("View Order details received in admin ")
+        // console.log("View Order details received in admin ")
         const orderId = req.query.id;
         const orderData = await Order.findById(orderId)
         .populate('userId') 
         .populate('items.productId') 
         .exec();
     
-        console.log(orderData)
+        // console.log(orderData)
         res.render('orderDetails' ,{order:orderData})
     } catch (error) {
         console.log(error.message)
@@ -243,21 +236,17 @@ const loadSalesReport = async (req,res)=>{
         var search = '';
         var startDate = null;
         var endDate =null ;
-        // var category = '';
         const salesReportDuration = req.query.salesReportDuration;
-        console.log("query :;",req.query.salesReportDuration)
         const userCount = await User.countDocuments({isActive:true,isAdmin:false})
 
         if(req.query.search){
             search = req.query.search;
         }
-        console.log("Search Key :",search)
+        // console.log("Search Key :",search)
         if( req.query.fromDate && req.query.toDate){
-            console.log("Query worked")
             startDate = new Date(req.query.fromDate);
             endDate = new Date(req.query.toDate);
             endDate.setHours(23, 59, 59, 999);
-            console.log(startDate,endDate)
          const dateData = await Order.aggregate([
             {
                 $match: {
@@ -311,6 +300,8 @@ const loadSalesReport = async (req,res)=>{
                 $match: {
                     $or: [
                         { orderId: { $regex: '.*' + search + '.*', $options: 'i' } },
+                        { paymentStatus: { $regex: '.*' + search + '.*', $options: 'i' } },
+                        { paymentMethod: { $regex: '.*' + search + '.*', $options: 'i' } },
                         { totalAmount: { $eq: parseFloat(search) } }
                     ]
                 }
@@ -351,12 +342,10 @@ const loadSalesReport = async (req,res)=>{
         ]);
 
         const day = salesReportDuration === "Weekly" ? 7 : salesReportDuration === "Monthly" ? 30  : salesReportDuration === "Yearly" ? 365 : 0;
-        console.log("Report Duration :",day);
         const currentDate = new Date();
         const lastDate = new Date();
         lastDate.setDate(lastDate.getDate() - day);
-        console.log(currentDate)
-        console.log(lastDate)
+      
 
         const orderData = await Order.aggregate([
             {
@@ -463,10 +452,10 @@ const loadChart = async (req,res)=>{
                 
             }
         ])
-        console.log("Monthlu users:",monthlyUsers)
-        console.log("Monthlu sales:",monthlySales)
+        // console.log("Monthlu users:",monthlyUsers)
+        // console.log("Monthlu sales:",monthlySales)
 
-        console.log("Monthly Orders:",monthlyOrders)
+        // console.log("Monthly Orders:",monthlyOrders)
                 res.json({monthlyOrders,monthlySales,monthlyUsers});
     }catch(error){
         console.log(error.message)

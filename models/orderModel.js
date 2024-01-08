@@ -75,6 +75,10 @@ const orderSchema = new mongoose.Schema({
             returnedQuantity:{
                type:Number,
                required:false
+            },
+            reviewed:{
+               type:Boolean,
+               default:false
             }
         }
      ],

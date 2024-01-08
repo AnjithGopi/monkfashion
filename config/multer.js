@@ -25,6 +25,7 @@ const storageBanner = multer.diskStorage({
         cb(null,name);
 
     }
+    
 });
 
 const storageCategory = multer.diskStorage({

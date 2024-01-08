@@ -260,7 +260,7 @@
                                                     <h2 class="h4">Your Referral Link</h2>
                                                     <p class="small">Share this link with your friends:</p>
                                                     <div class="input-group mb-3">
-                                                        <input type="text" class="form-control small" value="https://yourwebsite.com/register?ref=<%= user.referralId %>" readonly>
+                                                        <input type="text" class="form-control small" value="https://monkfashion.shop/register?ref=<%= user.referralId %>" readonly>
                                                         <button class="btn btn-outline-secondary btn-sm" type="button" onclick="copyReferralLink()">Copy</button>
                                                     </div>
                                                     <div class="mb-20">
@@ -573,6 +573,20 @@
             console.error('Error:', error);
         });
     }
-   
+    function copyReferralLink() {
+        // Select the text in the input field
+        var referralLinkInput = document.querySelector('.form-control');
+        referralLinkInput.select();
+        referralLinkInput.setSelectionRange(0, 99999); // For mobile devices
+
+        // Copy the selected text to the clipboard
+        document.execCommand('copy');
+
+        // Deselect the text
+        referralLinkInput.setSelectionRange(0, 0);
+
+        // Optionally, you can provide user feedback
+        toastr.success('Referral link copied to clipboard!');
+    }
 
     </script>

@@ -66,9 +66,9 @@ user_route.get('/home',userController.loadHome);
 user_route.get('/getCartWishlistQuantity',auth.isLogin,userController.getQuantity);
 
 // Route to load the single product 
-user_route.get('/products',auth.isLogin,userController.loadProduct);
+user_route.get('/products',userController.loadProduct);
 // Route to view all Products
-user_route.get('/home/allProducts',auth.isLogin,userController.loadAllProducts);
+user_route.get('/home/allProducts',userController.loadAllProducts);
 // Route to Logout the User
 user_route.get('/logout',auth.isLogin,userController.logoutUser)
 // To Load the Cart page
@@ -112,9 +112,11 @@ user_route.post('/home/profile/changePassword',auth.isLogin,userController.verif
 // user_route.get("/home/profile/updateProfile/otp",auth.isLogin,userController.loadChangePasswordOtp)
 // user_route.post("/home/profile/updateProfile/otp",auth.isLogin,userController.changePasswordVerifyOtp)
 user_route.post("/home/profile/cancelOrder",auth.isLogin,userController.cancelOrder)
-user_route.get("/home/profile/order/orderDetails",auth.isLogin,userController.loadOrderDetails)
+user_route.get("/home/profile/order/orderDetails",userController.loadOrderDetails)
 user_route.post("/home/profile/order/orderDetails/cancelOrder",auth.isLogin,orderController.cancelSingleOrder)
 user_route.post("/home/profile/order/orderDetails/returnOrder",auth.isLogin,orderController.returnSingleOrder)
+
+user_route.put("/home/profile/order/orderDetails/submitReview",orderController.addReview)
 
 
 user_route.post("/clearOtp",auth.isLogin,userController.clearOtp)

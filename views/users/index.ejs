@@ -5,7 +5,8 @@
 <%- include('../layouts/headerUser')-%>
 <%- include('../layouts/mobileHeaderUser')-%>
 
- 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <main class="main">
         <section class="home-slider position-relative pt-50">
             
@@ -116,11 +117,12 @@
                                                 <img class="default-img" src="/static/admin/images/product/<%=product[i].image[0] %>" alt="">
 
                                         </div>
-                                        <div class="product-action-1 d-flex justify-content-end align-items-top">
+                                        <div class="product-action-1 ">
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up" onclick="addToWishlist('<%= product[i]._id %>')" ><i class="fi-rs-heart"></i></a>
+
                                         </div>
                                         <div class="product-badges product-badges-position product-badges-mrg">
-                                            <span class="hot">Hot</span>
+                                            <span class="hot"><%= product[i].offer.percentage %>%</span>
                                         </div>
                                     </div>
                                     <div class="product-content-wrap">
@@ -128,10 +130,12 @@
                                             <a href=""><%= product[i].categories %></a>
                                         </div>
                                         <h2><a  href="/products?id=<%-product[i]._id-%>"><%= product[i].name %></a></h2>
-                                        <div class="rating-result" title="90%">
-                                            <span>
-                                                <span><%= product[i].offer.percentage %>%</span>
-                                            </span>
+                                        <div class="" title="10%">
+                                            <% let n = parseInt(product[i].rating)  %>
+                                            <% for( let i = 0 ; i < n ; i++ ) {%>
+                                            <i class="fa-regular fa-star text-warning "></i>
+                                            <% } %>
+                                            
                                         </div>
                                         <div class="product-price">
                                             <span  class="product-price" >RS: <%= product[i].salePrice %> </span>
@@ -429,6 +433,8 @@
         .then(data =>{
             if(data.success){
                 toastr.success(data.message)
+        updateCartAndWishlistQuantity()
+
             }else {
                 toastr.warning(data.message)
             }

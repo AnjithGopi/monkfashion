@@ -189,12 +189,13 @@
     }
 
    function updateCartAndWishlistQuantity(){
+    console.log("Workd")
             fetch('/getCartWishlistQuantity',{
                 method:'get'
             })
             .then(response => response.json())
             .then((data)=>{
-                // console.log(data)
+                console.log(data)
                 if( data.success){
                     const quantityElements = document.querySelectorAll('[name="cartQuantityIcon"]');
                         quantityElements.forEach(element => {

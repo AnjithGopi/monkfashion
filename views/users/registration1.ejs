@@ -10,8 +10,7 @@
         <div class="page-header breadcrumb-wrap">
             <div class="container">
                 <div class="breadcrumb">
-                    <a href="index.html" rel="nofollow">Home</a>
-                    <span></span> Pages
+                    <a href="/home" rel="nofollow">Home</a>
                     <span></span> Login / Register
                 </div>
             </div>
@@ -204,7 +203,6 @@
               if(data.warningMessage){
                   toastr.warning(data.warningMessage)
                 }
-                console.log(data);
                 if(data.success){
                   window.location.href = "/verifyotp"
                 }

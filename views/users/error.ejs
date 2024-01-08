@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Error Page</title>
+<%-include('../layouts/headerUser')-%>
+
+<%-include('../layouts/mobileHeaderUser')-%>
   <style>
     body {
       font-family: 'Arial', sans-serif;
@@ -26,14 +22,14 @@
       overflow: auto;
     }
   </style>
-</head>
+
 <body>
-  <h1>Oops! Something Went Wrong</h1>
+  <h1>Oopqqs! Something Went Wrong</h1>
   <p>We're sorry, but an unexpected error occurred. Please try again later.</p>
   <% if (errorDetails) { %>
     <h2>Error Details:</h2>
     <pre><%= errorDetails %></pre>
   <% } %>
 </body>
-</html>
-<!-- res.status(500).render('errorPage', { errorMessage: 'Failed. Some error occurred.', errorDetails: error.stack }); -->
+<%-include('../layouts/footerUser')-%>
+

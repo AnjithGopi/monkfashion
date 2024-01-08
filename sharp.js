@@ -51,3 +51,19 @@
 // // var aaa
 // aaa=repeatedCharacter
 // console.log(aaa)
+
+
+// const data = [{name:"abhi",rating:12},{name:"cc",rating:8}]
+// // function calculateRating(data){
+
+// console.log(averageRating)
+// // calculateRating(data)
+
+
+// <% if (review.userId.avathar) { %>
+//     <img src="<%= review.userId.avatar %>" alt="">
+// <% } else { %>
+//     <!-- Display default image if avatar is not available -->
+//     <img src="/static/user-assets/imgs/page/avatar-6.jpg" alt="">
+//     <% } %>
+

@@ -1,5 +1,7 @@
 <%-include('../layouts/headerUser')-%>
 
+
+
     <link rel="shortcut icon" type="image/x-icon" href="/static/admin-assets/imgs/theme/favicon.svg">
     <!-- Template CSS -->
     <link href="/static/admin-assets/css/main.css" rel="stylesheet" type="text/css" />
@@ -25,7 +27,7 @@
                         </div>
                         <div class="col-lg-6 col-md-6 ms-auto text-md-end">
                           
-                            <a class="btn btn-primary" href="#">Download</a>
+                            <a class="btn btn-primary" onclick="printInvoice()">Print Invoice</a>
                             <a class="btn btn-secondary print ms-2" href="#"><i class="icon material-icons md-print"></i></a>
                         </div>
                     </div>
@@ -76,17 +78,18 @@
                         </div> <!-- col// -->
                     </div> <!-- row // -->
                     <div class="row">
-                        <div class="col-lg-11">
+                        <div class="col-lg-12">
                             <div class="table-responsive">
                                 <table class="table " style="text-align: center;" >
                                     <thead class="" style="background-color: #088178; color:#ffff">
                                         <tr>
-                                            <th width="30%">Product</th>
-                                            <th width="14%">Unit Price</th>
-                                            <th width="14%">Quantity</th>
-                                            <th width="14%">Status</th>
-                                            <th width="14%">Total</th>
-                                            <th width="14%" class="text-end">Action</th>
+                                            <th width="26%">Product</th>
+                                            <th width="13%">Unit Price</th>
+                                            <th width="10%">Quantity</th>
+                                            <th width="13%">Status</th>
+                                            <th width="13%">Total</th>
+                                            <th width="13%">Action</th>
+                                            <th width="12%" class="text-end">Rate Product</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -96,7 +99,7 @@
                                             <td>
                                                 <a class="itemside" href="#">
                                                     <div class="left">
-                                                        <img src="/static/admin/images/product/<%= item.productId.image[0]%>" width="40" height="40" class="img-xs" alt="Item">
+                                                        <img src="/static/admin/images/product/<%= item.productId.image[0]%>"  class="img-md" alt="Item">
                                                     </div>
                                                     <div class="info"> <%= item.productId.name %></div>
                                                 </a>
@@ -118,7 +121,7 @@
                                                 </td> 
                                                 <% } else if ( item.productStatus  == "Returned") { %>
                                                     <td> <%= item.returnedQuantity %> </td>
-                                                    <td class="text-danger">
+                                                    <td class="text-danger ">
                                                         <%=item.productStatus%>
                                                     </td>
                                                     <td > ₹<%= item.productId.salePrice * item.returnedQuantity %> </td>
@@ -133,12 +136,15 @@
                                                     <%=item.productStatus%>
                                                 </td>
                                                 <td > ₹<%= item.productId.salePrice * item.quantity %> </td>
-                                                <td class="text-end">
+                                                <td class="">
                                                     <% if ( item.productStatus  == "Delivered") { %>
                                                     <a href="#" class=" btn-lg btn-primary rounded font-sm"   onclick="returnProduct('<%=item.productId._id%>','<%= order._id %>','<%=item.cancelledQuantity%>')"   >Return Product</a>
                                                     <% } else {%>
                                                      <a href="#" class=" btn-lg btn-danger rounded font-sm"   onclick="cancelProduct('<%=item.productId._id%>','<%= order._id %>','<%=item.quantity%>')">Cancel Order</a>
                                                      <% }%>
+                                                </td>
+                                                <td class="">
+                                                 <a class="btn btn-primary  rounded" onclick="rateProduct('<%= order._id%>','<%= item.productId._id%>','<%= item.productId.name%>')">Rate the Product</a>
                                                 </td>
 
                                              <% }%>
@@ -149,7 +155,7 @@
                                         <% }); %>
                                       
                                         <tr>
-                                            <td colspan="4">
+                                            <td colspan="7">
                                                 <article class="float-end">
                                                     <dl class="dlist">
                                                         <dt>Subtotal:</dt>
@@ -299,6 +305,9 @@ function returnProduct(productId, orderId,quantity) {
         Swal.fire('Error!', 'Failed to Return the order. Please try again.', 'error');
     });
 }
+function printInvoice(){
+    window.print()
+}
       
         </script>
     </main>
@@ -318,5 +327,136 @@ function returnProduct(productId, orderId,quantity) {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
 
+
+<!-- Modal -->
+<div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="bannerModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="offerModalLabel">Banner Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" onclick="closeModal()">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body ">
+            <div class="text-center">
+               
+            </div>
+          <form >
+            <div class="form-group d-flex justify-content-center">
+              <!-- <label for="productName">Product Name:</label> -->
+              <input type="text" name="productId" id="productid" hidden>
+              <input type="text" name="orderId" id="orderid" hidden>
+              <h4 id="productname" class="text-success">Monk</h4>
+              <!-- <input type="text" class="form-control" name="productName" oninput="validateField(this)"  required> -->
+              <span id="bannerNameError" class="text-danger"> </span>
+            </div>
+           
+              
+              
+            <div class="form-group">
+                <label for="rating">Rating:</label>
+                <div class="custom-select">
+                    <select class="form-control" id="rating" name="rating" required>
+                        <option value="1">1 Star</option>
+                        <option value="2">2 Stars</option>
+                        <option value="3">3 Stars</option>
+                        <option value="4">4 Stars</option>
+                        <option value="5">5 Stars</option>
+                    </select>
+                </div>
+                <span id="ratingError" class="text-danger"> </span>
+            </div>
+             
+            
+            <div class="form-group">
+                <label for="review">Review:</label>
+                <textarea class="form-control" id="review" name="review" rows="4" oninput="validateReview()" required></textarea>
+                <span id="reviewError" class="text-danger"> </span>
+            </div>
+            <div class="d-flex justify-content-center">
+             <button type="button" class="btn btn-primary " onclick="submitReview()" id="updateBanner">Rate Product</button>
+            </div>                        
+          </form>
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+          <button type="button" class="btn btn-secondary " onclick="closeModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+<script>
+    function submitReview(){
+        const productId = document.getElementById('productid').value
+        const orderId = document.getElementById('orderid').value
+        const rating = document.getElementById('rating').value
+        const review = document.getElementById('review').value
+        console.log(productId,rating,review)
+        fetch('/home/profile/order/orderDetails/submitReview', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json', 
+            },
+            body: JSON.stringify({
+                productId:productId,
+                orderId:orderId,
+                rating:rating,
+                review:review
+            }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); 
+            })
+            .then(data => {
+                console.log('Review submitted successfully:', data);
+                if(data.success){
+                    toastr.success(data.message)
+                    closeModal()
+                }else{
+                    toastr.warning(data.message)
+                }
+            })
+            .catch(error => {
+                console.error('Error during fetch:', error);
+            });
+    }
+      function validateReview() {
+       
+            var reviewValue = document.getElementById('review').value.trim();
+
+            if (reviewValue.length === 0) {
+                reviewError.textContent = "Please provide a review.";
+                document.getElementById('reviewError').innerText = "Please provide a review."
+            } else {
+                document.getElementById('reviewError').innerText = "";
+            }
+        }
+
+
+    function rateProduct(orderId,productId,name){
+        console.log(orderId,productId,name)
+        document.getElementById('productid').value = productId;
+        document.getElementById('productname').value = name;
+        document.getElementById('orderid').value = orderId;
+      
+
+       
+                $('#reviewModal').modal('show');
+    }
+    function closeModal(){
+        document.getElementById('productid').value = " ";
+        document.getElementById('productname').value = " ";
+        document.getElementById('orderid').value = "";
+        document.getElementById('review').value = "";
+        document.getElementById('rating').value = "";
+        $('#reviewModal').modal('hide');
+    
+    }
+</script>
 </body>
 </html>

@@ -279,6 +279,7 @@ product.image = product.image.filter(image => !deletedImages.includes(image));
 }
 
 
+
 module.exports = {
     loadAddProduct,
     insertProduct,
@@ -287,4 +288,5 @@ module.exports = {
     deleteProduct ,
     loadEditProduct,
     editProduct
+   
 }

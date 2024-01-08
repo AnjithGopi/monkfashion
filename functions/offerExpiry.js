@@ -30,10 +30,7 @@ const productOfferExpiry =  schedule.scheduleJob('*/2 * * * * *',async ()=>{
     
         if (result.modifiedCount > 0) {
             console.log('Expired Offers  successfully.');
-            // const modifiedProduct = await Product.findOne({ temporaryField: 1 });
-            // console.log(modifiedProduct)
-            // const modifiedProductIds = result.modifiedCount > 0 ? result.modifiedCount : [];
-            // const productId = result.upsertedId || null;
+     
             await applyOfferFunction(); 
     // }
         } else {
@@ -61,11 +58,8 @@ const categoriesOfferExpiry =  schedule.scheduleJob('*/2 * * * * *',async ()=>{
     
     
         if (result.modifiedCount > 0) {
-            console.log('Expired Offers  successfully.');
-            // const modifiedProduct = await Product.findOne({ temporaryField: 1 });
-            // console.log(modifiedProduct)
-            // const modifiedProductIds = result.modifiedCount > 0 ? result.modifiedCount : [];
-            // const productId = result.upsertedId || null;
+            // console.log('Expired Offers  successfully.');
+           
             await applyOfferFunction(); 
     // }
         } else {
@@ -89,8 +83,7 @@ async function applyOfferFunction() {
                     product.offer ? product.offer.percentage : 0
                 );
 
-                // Update salePrice based on the greater offer
-                // product.offer.percentage = greaterOfferPercentage;
+          
                 product.salePrice = product.regularPrice - (product.regularPrice * greaterOfferPercentage / 100);
 
                 // Save the product to persist the changes
@@ -102,7 +95,7 @@ async function applyOfferFunction() {
             }
         }
 
-        console.log('Applied offer for all products successfully.');
+        // console.log('Applied offer for all products successfully.');
     } catch (error) {
         console.error(`Error applying offer for all products: ${error.message}`);
     }

@@ -9,8 +9,7 @@
 // }
 
 const order = require('./models/productModal')
-// console.log('100'-10)
-// console.log('100'+10)
+
 
 async function  fun(){
    try {

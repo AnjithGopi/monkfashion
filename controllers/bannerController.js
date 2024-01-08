@@ -63,9 +63,6 @@ const addBanner = async(req,res) =>{
             expiryDate:req.body.bannerExpiryDate
 
         })
-
-        
-        console.log("kkk")
         newProduct.image.push(...newImages)
         const productInsertedData = await newProduct.save()
         const bannerData =  await Banner.find()
@@ -78,6 +75,7 @@ const addBanner = async(req,res) =>{
         }
         
     } catch (error) {
+        res.render('../pages/error',{error:error.message})
         console.log(error.message)
         
     }
