@@ -19,9 +19,7 @@ const insertProduct  =  async (req,res)=>{
 
         const productData = await Categories.find({isDeleted:false})
         const categoriesId = await Categories.findOne({name:req.body.categories})
-       console.log("categoriews Id :",categoriesId._id)
         if(searchProduct){
-            console.log("Worked the sweet")
             res.render('add-product',{message: '1',categories:productData})
 
         }else{
@@ -46,9 +44,7 @@ const insertProduct  =  async (req,res)=>{
                 }
             
             
-                console.log("Cropped Images:", newImages);
             }
-            console.log("Images :",req.body)
             const newProduct = new Product({
                 name:req.body.name,
                 description:req.body.description,
@@ -65,11 +61,9 @@ const insertProduct  =  async (req,res)=>{
             if(productInsertedData){
                 res.render('add-product',{message: '2',categories:productData})
             }else{
-                console.log("not inserted")
             }
         }
     }catch(error){
-        console.log("Catch worked")
         console.log(error.message)
         const productData = await Categories.find({isDeleted:false})
         let errorMessage = []
@@ -83,7 +77,6 @@ const insertProduct  =  async (req,res)=>{
 // Loading Product pages
 
 const loadProduct = async (req,res)=>{
-//   const productData = await Product.find() 
     try {
 
         const page = parseInt(req.query.page) || 1;
@@ -93,10 +86,8 @@ const loadProduct = async (req,res)=>{
         var search = req.query.search || '';
         var category = req.query.category ||'';
       
-        console.log("Search Key :",search)
         let productData = null
         if(req.query.category){
-            // console.log("Category :",req.query.category)
          productData = await Product.find({categoryId:req.query.category}) .populate('categoryId')
          .skip(skip)
          .limit(limit);
@@ -117,7 +108,6 @@ const loadProduct = async (req,res)=>{
 
 
       const categoriesData = await Categories.find({isDeleted:false})
-    //   console.log("caat data ::",categoriesData)
         const totalProducts = await Product.countDocuments();
         const totalPages = Math.ceil(totalProducts / limit);
         res.render('products', {
@@ -176,7 +166,6 @@ const deleteProduct = async (req,res)=>{
 
         const statusUpdation =  await Product.findByIdAndUpdate({_id:id},{$set:{isDeleted:true}})
 
-              console.log(statusUpdation)
         if(statusUpdation){
              const message = "Product deleted Sucessfully"
         res.redirect(`/admin/products?message=${message}`)
@@ -208,13 +197,9 @@ const editProduct = async (req,res)=>{
 console.log("Deleted Image",req.body.deletedImages)
         const productId = req.session.editProductId ;
         
-        console.log(productId)
 
         const { name, description, regularPrice, salePrice, stock, categories } = req.body;
-        console.log(req.body)
         const categoriesId = await Categories.findOne({ name: categories });
-        console.log("Category Name",categories)
-        console.log(categoriesId)
         const product = await Product.findOne({_id:productId});
         product.name = name;
         product.description = description;
@@ -223,11 +208,8 @@ console.log("Deleted Image",req.body.deletedImages)
         product.stock = stock;
         product.categoryId = categoriesId._id;
  
-        console.log("req . file data", req.files)
         const imageNames =Object.values(req.body.deletedImages) 
-        console.log("images name",imageNames)
-        console.log(typeof(imageNames))
-        console.log(imageNames)
+       
 
         // Get the names of images to be deleted
 const deletedImages = req.body.deletedImages;
@@ -259,7 +241,6 @@ product.image = product.image.filter(image => !deletedImages.includes(image));
             // Add the new cropped images to the product
             product.image.push(...newImages);
         
-            console.log("Cropped Images:", newImages);
         }
       
 
@@ -268,7 +249,6 @@ product.image = product.image.filter(image => !deletedImages.includes(image));
         const productDataAfterUpdation = await Product.find().populate('_id').populate("categoryId")
 
 
-        console.log("Product updated successfully:", updatedProduct);
          res.redirect("/admin/products")
 
 

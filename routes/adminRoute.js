@@ -82,6 +82,7 @@ admin_route.patch('/categoriesOffer/applyOffer',auth.isLogin,offerController.app
 admin_route.get('/banner',bannerController.loadBanner)
 admin_route.post('/banner/addBanner',Multer.uploadBanner.array('image',5),bannerController.addBanner)
 admin_route.post('/banner/updateBanner',Multer.uploadBanner.array('image',5),bannerController.updateBanner)
+admin_route.patch('/banner/changeStatus',bannerController.changeStatus)
 
 
 // admin_route.use('*', (req, res) => {

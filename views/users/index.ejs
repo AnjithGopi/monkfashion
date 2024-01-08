@@ -279,7 +279,7 @@
                            
                             <div class="deal-top">
                                 <h2 class="text-6 " ><%= banner[3].name %></h2>
-                                <h5>Limited quantities.</h5>
+                                <h5 class="text-white">Limited quantities.</h5>
                             </div>
                             <div class="deal-content">
                                 <a class="animated btn btn-brush btn-brush-3" style="border:none"><%= banner[3].text %></a><br>
@@ -299,7 +299,7 @@
                         <div class="deal wow fadeIn animated" style="background-image: url('/static/admin/images/banner/<%= banner[4].image[0] %>');">
                             <div class="deal-top">
                                 <h2 class="text-brand"><%= banner[4].name %></h2>
-                                <h5>Limited quantities.</h5>
+                                <h5 class="text-white">Limited quantities.</h5>
                             </div>
                             <div class="deal-content">
                                 <a class="animated btn btn-brush btn-brush-3" style="border:none"><%= banner[4].text %></a><br>
@@ -309,7 +309,7 @@
                             <div class="deal-bottom">
                                 <p>Hurry Up! Offer End In:</p>
                                 <div class="deals-countdown" data-countdown='<%= banner[4].expiryDate.toLocaleDateString() %>'></div>
-                                <a href="<%= banner[3].target %>" class="btn hover-up">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                                <a href="<%= banner[4].target %>" class="btn hover-up">Shop Now <i class="fi-rs-arrow-right"></i></a>
                             </div>
                         </div>
                     </div>
@@ -341,8 +341,8 @@
                 </div>
                 <div class="row">
                  <% if( banner.length > 0){ %>
-                    <% if (banner[5]) { %>
-                        <div class="col-lg-3 d-none d-lg-flex flex-column">
+                    <div class="col-lg-3 d-none d-lg-flex flex-column">
+                            <% if (banner[5]) { %>
                             <div class="banner-img style-2 wow fadeIn animated" style="width: fit-content; height: fit-content;">
                                 <img src="/static/admin/images/banner/<%= banner[5].image[0] %>" alt="">
                                 <div class="banner-text">
@@ -351,16 +351,18 @@
                                     <a href="<%= banner[5].target %>" class="text-white">Shop Now <i class="fi-rs-arrow-right"></i></a>
                                 </div>
                             </div>
+                            <% } %>
+                            <% if (banner[5]) { %>
                             <div class="banner-img style-2 wow fadeIn animated" style="width: 305px; height: 210px;">
-                                <img src="/static/admin/images/banner/<%= banner[5].image[1] %>" alt="">
+                                <img src="/static/admin/images/banner/<%= banner[6].image[0] %>" alt="">
                                 <div class="banner-text">
-                                    <span><%= banner[5].text2 %></span>
-                                    <h4 class="mt-5"><%= banner[5].text %></h4>
+                                    <span><%= banner[6].text2 %></span>
+                                    <h4 class="mt-5"><%= banner[6].text %></h4>
                                     <a href="<%= banner[5].target %>" class="text-white">Shop Now <i class="fi-rs-arrow-right"></i></a>
                                 </div>
                             </div>
+                            <% } %>
                         </div>
-                    <% } %>
                 <% } %>
                     
                     <div class="col-lg-9 col-md-12">

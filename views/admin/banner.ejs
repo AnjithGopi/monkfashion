@@ -20,6 +20,11 @@
                     <% if(banner) { %>
                         <% banner.forEach((banner, index) => { %>
                             <div class="col">
+                              <% if(banner.isActive){ %>
+                                <h6 id="active_<%=banner._id%>" class="text-success">Active</h6>
+                             <%  }else{ %>
+                                <h6 id="notActive_<%=banner._id%>" class="text-danger">Not Active</h6>
+                              <% } %>
                                 <h3 class="col d-flex align-items-center flex-column" style="color: #088178;"><%= banner.name%></h3>
                                 <div class="card card-product-grid">
                 
@@ -45,8 +50,8 @@
                                         <a onclick="showBannerDetails('<%=banner._id %>','<%=banner.name %>','<%=banner.target %>','<%= banner.image %>','<%=banner.text %>','<%=banner.text2 %>','<%=banner.expiryDate %>')" class="btn btn-sm font-sm rounded btn-brand">
                                             <i class="material-icons md-edit"></i> Edit
                                         </a>
-                                        <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                            <i class="material-icons md-delete_forever"></i> Delete
+                                        <a onclick="changeStatus('<%= banner._id %>','<%= banner.isActive %>')" class="btn btn-sm font-sm btn-light rounded">
+                                            <i class="material-icons md-delete_forever"></i> Change Status
                                         </a>
                                     </div>
                                 </div>
@@ -58,18 +63,7 @@
                 </div>
                                 
             </div> <!-- card end// -->
-            <div class="pagination-area mt-15 mb-50">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-start">
-                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                        <li class="page-item"><a class="page-link" href="#">02</a></li>
-                        <li class="page-item"><a class="page-link" href="#">03</a></li>
-                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="#">16</a></li>
-                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
-                    </ul>
-                </nav>
-            </div>
+           
         </section> <!-- content-main end// -->
 
 <%- include('../../partials/adminFooter')-%>
@@ -206,6 +200,54 @@
 
 
 <script>
+
+  function changeStatus(id,status){
+    console.log("Change status")
+    fetch('/admin/banner/changeStatus', {
+      method: 'PATCH',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+          bannerId:id,
+          status:status
+          
+      }),
+  })
+  .then(response => response.json())
+  .then(data => {
+      console.log("got the response")
+      console.log(data)
+      if(data.success){
+      console.log("got the response2")
+      
+        // document.getElementById(`data._${id}`).style.display='none'
+        if(data.status){
+          console.log("1")
+          document.getElementById(`notActive_${id}`).innerText = "Active"
+          document.getElementById(`notActive_${id}`).style.color = "green"
+        }else{
+          console.log("11")
+
+          // document.getElementById(`notActive_${id}`).innerText = "Not Active"
+          document.getElementById(`active_${id}`).innerText = "Not Active"
+        }
+    
+    document.getElementById(`offerPercentage_${categoryId}`).innerText = data.offer+'%'
+        toastr.success(data.message)
+      }else{
+        toastr.warnning(data.message)
+      }
+  
+  })
+  .catch(error => {
+      console.error('Error :', error);
+  });
+    
+
+  }
+
+
      function showBannerDetails(id,name,target,images,text1,text2,expiryDate) {
 
   document.getElementById('bannerid').value = id;

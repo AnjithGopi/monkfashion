@@ -88,6 +88,7 @@ const updateBanner  = async (req, res) => {
         
         const cropStatus = req.body.cropStatus || 'off'
         const newImages = [];
+        console.log(req.body)
         const  { id,bannerName,bannerText,bannerText2,bannerExpiryDate,target} = req.body
         console.log(id,bannerName,bannerText,bannerText2,bannerExpiryDate,cropStatus)
         const bannerId = new mongoose.Types.ObjectId(req.body.bannerId)
@@ -98,7 +99,7 @@ const updateBanner  = async (req, res) => {
         banner.text = bannerText;
         banner.text2 = bannerText2;
         banner.target = target;
-        banner.bannerExpiryDate = new Date(bannerExpiryDate);
+        banner.expiryDate = new Date(bannerExpiryDate);
 
         if (req.files && req.files.length > 0) {
             console.log("files 1")
@@ -107,7 +108,7 @@ const updateBanner  = async (req, res) => {
                     const filename = file.filename;
                     console.log("files 2")
                     const croppedImageBuffer = await sharp(file.path)
-                        .resize({ width: 650, height: 300, fit: 'cover' }) // Example cropping options
+                        .resize({ width: 1000, height: 1000, fit: 'cover' }) // Example cropping options
                         .toBuffer();
             
                     const croppedFilename = `cropped_${filename}`;           
@@ -147,9 +148,27 @@ const updateBanner  = async (req, res) => {
         console.log(error.message);
     }
 };
+const changeStatus= async (req, res) => {
+    try {
+        const { bannerId ,status} = req.body;
+        let updateStatus = status == 'true' ? false : true
+        const bannerData = await Banner.findByIdAndUpdate(bannerId,{$set:{isActive:updateStatus}},{new:true})
+        
+        if(bannerData){
+            res.status(200).json({success:true,message:"Status changed Successfully",status:updateStatus})
+        }else{
+            res.status(400).json({success:false,message:"Failed to change Status",status:updateStatus})
+        }
+
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+const exp = require('../functions/bannerExpiry')
 
 module.exports ={
     loadBanner,
     addBanner,
-    updateBanner
+    updateBanner,
+    changeStatus
 }

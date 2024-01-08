@@ -200,11 +200,13 @@ const loadOrders = async (req,res) =>{
 const changeOrderStatus = async (req,res) =>{
     try{
         console.log("Order change status recieved")
-        console.log("Body :",req.body)
-        const {id,index,status} = req.body
-        const updatedStatus = await Order.findByIdAndUpdate(id,{orderStatus:status},{new:true})
-        console.log("updated data:",updatedStatus)
-        console.log("updated status:",updatedStatus.orderStatus)
+        const {id,index,status,paymentStatus} = req.body
+       let updatePaymentStatus = status == "Delivered" ? "Success" :  paymentStatus
+        const updatedStatus = await Order.findByIdAndUpdate(id,{orderStatus:status,paymentStatus:updatePaymentStatus,'items.$[element].productStatus': status},{
+            new: true,
+            arrayFilters: [{ 'element.productId': { $exists: true } }],
+          })
+        
         if(updatedStatus){
         res.status(200).json({ success: true, changedOrderStatus:updatedStatus.orderStatus,successMessage: 'Status Changed Successfully'});
         }
@@ -217,14 +219,12 @@ const changeOrderStatus = async (req,res) =>{
 
 const loadOrderDetails = async (req,res)=>{
     try {
-        // console.log("View Order details received in admin ")
         const orderId = req.query.id;
         const orderData = await Order.findById(orderId)
         .populate('userId') 
         .populate('items.productId') 
         .exec();
     
-        // console.log(orderData)
         res.render('orderDetails' ,{order:orderData})
     } catch (error) {
         console.log(error.message)
@@ -242,7 +242,6 @@ const loadSalesReport = async (req,res)=>{
         if(req.query.search){
             search = req.query.search;
         }
-        // console.log("Search Key :",search)
         if( req.query.fromDate && req.query.toDate){
             startDate = new Date(req.query.fromDate);
             endDate = new Date(req.query.toDate);

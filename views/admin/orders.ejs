@@ -81,7 +81,11 @@
                                     <td><%= orderItem.totalAmount %></td>
                                     <td><span class="badge rounded-pill text-success"><%= orderItem.paymentMethod %></span></td>
                                     <td><%=orderItem.orderDate.toLocaleDateString()%></td>
-                                    <td><span class="badge rounded-pill alert-warning"><%= orderItem.paymentStatus %></span></td>
+                                    <% if( orderItem.paymentStatus == "Success") { %>
+                                    <td><span class="badge rounded-pill alert-success" id="paymentStatusSelect_<%=index%>"><%= orderItem.paymentStatus %></span></td>
+                                    <% } else {%>
+                                    <td><span class="badge rounded-pill alert-warning" id="paymentStatusSelect_<%=index%>"><%= orderItem.paymentStatus %></span></td>
+                                        <% } %>
                                     <td><span class="badge rounded-pill alert-primary" id="orderStatus_<%=index%>"><%= orderItem.orderStatus %></span></td>
                                     <td>
                                         <div class="col-lg-6 col-md-6 m-auto text-md-end w-100">
@@ -172,6 +176,7 @@
             function changeStatus(id,index) {
                 console.log("Id; ",id,"index :",index)
                 const selectedStatus = document.getElementById(`statusSelect_${index}`).value;
+                const paymentStatus = document.getElementById(`paymentStatusSelect_${index}`).innerText;
                 console.log(selectedStatus)
                 // toastr.success("hhhhhhh")
                 Swal.fire({
@@ -193,6 +198,7 @@
                         id:id,
                         index:index,
                         status:selectedStatus,
+                        paymentStatus:paymentStatus
                     }),
                 })
                 .then(response => response.json())

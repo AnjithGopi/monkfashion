@@ -549,6 +549,7 @@ const returnSingleOrder = async (req,res)=>{
     try {
        const userId = req.session.user_id
        const {productId,orderId,returnedQuantity,reason} = req.body
+       console.log(req.body)
        const particularOrder = await Order.findById(orderId)
        const product = await Product.find({_id:productId})
        const totalAmountOfReturnedProduct = product[0].salePrice * returnedQuantity;
@@ -586,7 +587,13 @@ const addReview = async (req, res) => {
         }
         const productData = await Product.findByIdAndUpdate(productId,{$push:{review:newReview}},{new:true})
         if(productData){
-            const updateStatusOfOrder = await Order.findByIdAndUpdate({_id:orderId,'items.productId':productId},{$set:{reviewed:true}})
+            // const updateStatusOfOrder = await Order.findById AndUpdate({_id:orderId,'items.productId':productId},{$set:{'items.$.reviewed':true}})
+            const updateStatusOfOrder = await Order.findOneAndUpdate(
+                { _id: orderId, 'items.productId': productId },
+                { $set: { 'items.$.reviewed': true } },
+                { new: true } // Return the modified document
+              );
+              
             if(updateStatusOfOrder){
                 const newRating = await calculateRating(productData.review)
                 const updateRating = await Product.findByIdAndUpdate(productId,{$set:{rating:Math.ceil(newRating)}},{new:true})

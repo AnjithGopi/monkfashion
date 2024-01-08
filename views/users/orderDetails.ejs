@@ -56,7 +56,7 @@
                                 <div class="text">
                                     <h6 class="mb-1">Order info</h6>
                                     <p class="mb-1">
-                                        Shipping: Mong express <br> Pay method: <%= order.paymentMethod %> <br> Status: <span class="badge rounded-pill alert-warning"><%= order.orderStatus %></span>
+                                        Shipping: Mong express <br> Pay method: <%= order.paymentMethod %> <br> Status: <span class="badge rounded-pill alert-success"><%= order.paymentStatus %></span>
                                     </p>
                                     <a href="#">Download info</a>
                                 </div>
@@ -115,9 +115,7 @@
                                                 <td class="text-end">
                                                      <span class="badge badge-pill badge-soft-danger">Cancelled</span>
 
-                                                    <!-- <a href="#" class=" btn-lg btn-primary rounded font-sm"   onclick="returnProduct('<%=item.productId._id%>','<%= order._id %>','<%=item.cancelledQuantity%>')"   >Return Product</a> -->
-                                                 <!-- <a href="#" class=" btn-lg btn-danger rounded font-sm"   onclick="cancelProduct('<%=item.productId._id%>','<%= order._id %>','<%=item.quantity%>')">Cancel Order</a> -->
-
+                                                 
                                                 </td> 
                                                 <% } else if ( item.productStatus  == "Returned") { %>
                                                     <td> <%= item.returnedQuantity %> </td>
@@ -144,7 +142,16 @@
                                                      <% }%>
                                                 </td>
                                                 <td class="">
-                                                 <a class="btn btn-primary  rounded" onclick="rateProduct('<%= order._id%>','<%= item.productId._id%>','<%= item.productId.name%>')">Rate the Product</a>
+                                                    <% if( item.reviewed) { %>
+                                                        <span class="text-success">Review Already Added</span>
+                                                    <% } else { %>
+                                                        <% if (order.orderStatus == "Delivered") {%>
+                                                        <a class="btn btn-primary rounded" id="rateProductButton" onclick="rateProduct('<%= order._id%>','<%= item.productId._id%>','<%= item.productId.name%>')">Rate the Product</a>
+                                                        <% } else { %>
+                                                        <span class="text-success"> Product is not Delivered </span>
+                                                        <% } %>
+
+                                                        <% } %>
                                                 </td>
 
                                              <% }%>
@@ -417,6 +424,7 @@ function printInvoice(){
                 if(data.success){
                     toastr.success(data.message)
                     closeModal()
+                    document.getElementById('rateProductButton').style.display = 'none'
                 }else{
                     toastr.warning(data.message)
                 }

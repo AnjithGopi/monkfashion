@@ -38,10 +38,10 @@ async function debitFromWallet(amount,userId){
 
         // const userId = req.session.user_id
         const userWallet = await Wallet.find({userId:userId})
-        console.log("user wallet data",userWallet)
+        // console.log("user wallet data",userWallet)
         if(userWallet.length > 0){
             const addAmount = await Wallet.updateOne({userId:userId},{$inc:{balance:-amount},$push:{transaction:{amount:amount,mode:"Debited"}}})
-            console.log("Amount debited from wallet")
+            // console.log("Amount debited from wallet")
             return true
         }else{
             console.log("Wallet Not Exist !!")
@@ -54,13 +54,13 @@ async function debitFromWallet(amount,userId){
 
 async function createUserWallet(userIdd){
     try{
-        console.log("create wallet received")
+        // console.log("create wallet received")
         const newWallet = new Wallet({
             userId:userIdd
         })
         const createWallet = await newWallet.save()
         if(createWallet){
-            console.log("wallet created sucesfully")
+            // console.log("wallet created sucesfully")
             return true
         }else{
             return false

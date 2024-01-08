@@ -171,11 +171,9 @@ const verifyOTP = async (req,res,next)=>{
     console.log("verify-session-otp :",req.session.otp)
     try{
         if(userEnteredOtp === req.session.otp){
-            console.log('verification sucessfull')
             // res.render('registrationSucess')
              next()
         }else{
-            console.log('verification failed')
             res.render('otp',{message:" otp is incorrect"})
             return
 
@@ -264,8 +262,7 @@ const loadLogin = (req,res)=>{
 // code for verifyin the User
 const verifyLogin = async(req,res)=>{
     try{
-        console.log("Verify login worked")
-        console.log(req.body.email)
+       
         const email =req.body.email;
         const password = req.body.password;
         const userData = await User.findOne({email:email})
@@ -322,18 +319,16 @@ const loadHome = async(req,res)=>{
 
     try{
        const productData = await Product.find({isDeleted:false,isActive:true}).limit(12)
-       const newProducts = await Product.find({isDeleted:false,isActive:true}).sort({createdOn:1}).limit(10)
+       const newProducts = await Product.find({isDeleted:false,isActive:true}).sort({createdOn:-1}).limit(10)
        const bannerData = await Banner.find()
        const categoriesData = await Categories.find({isDeleted:false,isActive:true})
        let cartCount = 0
-       console.log("........................................")
        let userData = '';
        if(req.session.user_id){
-        console.log(req.session.user_id)
+        // console.log(req.session.user_id)
             const user = await User.findOne({_id:req.session.user_id})
             userData = user
               const cartData = await Cart.find({userId:req.session.user_id});
-              console.log("........................................")
               if(cartData.length > 0)
                cartCount = cartData[0].product.length
 
@@ -436,13 +431,12 @@ const logoutUser = async (req,res)=>{
 // Function to load user profile
 const loadProfile = async(req,res)=>{
     try{
-        console.log("Load profile recieved")
+        // console.log("Load profile recieved")
         const userId = req.session.user_id
         const userData = await User.findById(req.session.user_id)
         const orderData = await Order.find({userId:userId}).sort({orderDate:-1})
       
         const walletData = await Wallet.findOne({userId:userId})
-        console.log(walletData)
         res.render('userProfile',{user:userData,order:orderData,wallet:walletData})
 
     }catch(error){

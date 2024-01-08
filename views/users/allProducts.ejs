@@ -1,6 +1,7 @@
 <%-include('../layouts/headerUser')-%>
 
 <%-include('../layouts/mobileHeaderUser')-%>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
  
    
     <main class="main">
@@ -39,20 +40,18 @@
                                         </div>
                                     </div>
                                     <div class="product-action-1">
-                                        <!-- <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-                                            <i class="fi-rs-search"></i></a> -->
-                                        <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                        <!-- <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a> -->
+                                      
+                                        <a aria-label="Add To Wishlist" class="action-btn hover-up" onclick="addToWishlist('<%= product._id %>')"><i class="fi-rs-heart"></i></a>
                                     </div>
                                     <div class="product-badges product-badges-position product-badges-mrg">
-                                        <span class="new">New</span>
+                                        <span class="new"><%= product.offer.percentage %>%</span>
                                     </div>
                                 </div>
                                 <div class="product-content-wrap">
                                     <div class="product-category">
-                                        <a href="shop-grid-right.html"><%= product.categoryId.name %></a>
+                                        <a href="/home"><%= product.categoryId.name %></a>
                                     </div>
-                                    <h2><a href="shop-product-right.html"><%= product.name %></a></h2>
+                                    <h2><a href="/products?id=<%-product._id-%>"><%= product.name %></a></h2>
                                     <div class="product-price">
                                         <span>₹<%= product.salePrice %> </span>
                                         <span class="old-price">₹ <%= product.regularPrice %></span>
@@ -60,10 +59,13 @@
                                     <p class="mt-15"><%= product.description %></p>
                                     <div class="product-action-1 show">
                                         <a aria-label="Buy now" class="action-btn" onclick="addProductToCart('<%=product._id%>')"><i class="fi-rs-shopping-bag-add"></i>Add to Cart</a>
-                                        <div class="rating-result" title="90%">
-                                            <span>
-                                                <span>50%</span>
-                                            </span>
+                                        <div class="mt-5" title="10%">
+                                            <% let n = parseInt(product.rating)  %>
+                                            <% for( let i = 0 ; i < n ; i++ ) {%>
+                                            <i class="fa-regular fa-star text-warning "></i>
+                                            <% } %>
+                                            <span>(<%=product.review.length %>)</span>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -123,8 +125,25 @@
     </main>
 
     <script>
+
+    function addToWishlist(productId){
+        fetch(`/home/addToWishlist/${productId}`,{
+            method:'Post'
+        })
+        .then((response)=>response.json())
+        .then(data =>{
+            if(data.success){
+                toastr.success(data.message)
+            }else {
+                toastr.warning(data.message)
+            }
+        })
+        .catch(error => {
+              console.error('Fetch error:', error);
+          });
+    }
+
         function loadProduct(categoryId) {
-        // Make a fetch request to the server to remove the item from the cart
         fetch(`/user/allProducts`, {
             method: 'get',
         })
