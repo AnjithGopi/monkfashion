@@ -1,0 +1,101 @@
+<%- include('../../partials/adminHeader')-%>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+<body>
+
+
+    <div class="screen-overlay"></div>
+<%- include('../../partials/adminAside')-%>
+   
+    <main class="main-wrap">
+<%- include('../../partials/adminNavbar')-%> 
+       
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Reviews</h2>
+                </div>
+                <div>
+                    <form action="" >
+                    <input type="text" placeholder="Search by name" name="search" class="form-control bg-white">
+
+                    </form>
+                </div>
+            </div>
+            <div class="card mb-4">
+                
+                <!-- card-header end// -->
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" />
+                                        </div>
+                                    </th>
+                                    <th>#ID</th>
+                                    <th>Customer Name</th>
+                                    <th>Product Name</th>
+                                    <th>Rating</th>
+                                    <th>Comment</th>
+                                    <!-- <th class="text-end">Action</th> -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if(reviews.length > 0 ) { %>
+                                    <% reviews.forEach((product)=>{ %>
+                                        <% product.review.forEach((review,index)=>{ %>
+                                        
+
+                                   
+                                <tr>
+                                    <td>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" />
+                                        </div>
+                                    </td>
+                                    <td>#</td>
+                                    <td><b><%= product.name %></b></td>
+                                    <td><%= review.userId.name %></td>
+                                    <td>
+                                      <div class="d-flex ">
+                                        <% for( let i =0 ; i < review.rating  ;i++){ %>
+                                            <i class="fa-regular fa-star text-warning "></i>
+                                       <% }%>
+                                      </div>
+                                    </td>
+                                    <td><%= review.comment %></td>
+                                    
+                                </tr>
+                                <%  }) %>
+                                <%  }) %>
+                                <% } else{%>
+                                    <h4 class="text-danger">No Reviews Available</h4>
+                                <%}%>
+                               
+                               
+                            </tbody>
+                        </table>
+                    </div> <!-- table-responsive//end -->
+                </div>
+                <!-- card-body end// -->
+            </div>
+            <div class="pagination-area mt-30 mb-50">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                        <li class="page-item"><a class="page-link" href="#">02</a></li>
+                        <li class="page-item"><a class="page-link" href="#">03</a></li>
+                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                        <li class="page-item"><a class="page-link" href="#">16</a></li>
+                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </section> <!-- content-main end// -->
+
+<%- include('../../partials/adminFooter')-%>
+
+       

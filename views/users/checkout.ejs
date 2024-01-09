@@ -284,7 +284,7 @@
                                                 name="payment_option" value="Online" id="exampleRadios5"  />
                                             <label class="form-check-label" for="exampleRadios5"
                                                 data-bs-toggle="collapse" data-target="#paypal"
-                                                aria-controls="paypal">Paypal</label>
+                                                aria-controls="paypal">Razorpay</label>
                                             <div class="form-group collapse in" id="paypal">
                                                 <p class="text-muted mt-5">
                                                     Pay via PayPal; you can pay with your credit card if you
@@ -309,7 +309,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <input type="button" onclick="placeOrder()" class="btn btn-fill-out btn-block mt-30" value="Place Order" />
+                                <input type="button" onclick="checkQuantity()" class="btn btn-fill-out btn-block mt-30" value="Place Order" />
                             </div>
                         </div>
                     </div>
@@ -395,7 +395,20 @@
 
     <script>
 
-       
+      function checkQuantity(){
+
+        fetch('/order/checkQuantityInCart',{
+            method:'get'
+        }).then(response=>response.json())
+        .then((data)=>{
+            console.log(data)
+            if(data.success){
+                placeOrder()
+            }else{
+                toastr.error(data.message)
+            }
+        })
+      } 
 
         // Script to Place ORder
      function placeOrder() {
@@ -716,7 +729,7 @@
                  phone:phone,
                  phone2:phone2,
                  house:house,
-                 state:state,
+                 state:state, 
                  city:city,
                  pincode:pincode,
                  landMark:landMark

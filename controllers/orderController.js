@@ -74,6 +74,7 @@ const loadCart = async (req, res) => {
 
         }
     } catch (error) {
+        res.render('../pages/error',{error:error.message})
         console.log(error.message);
     }
 };
@@ -315,7 +316,6 @@ const addAddress = async (req, res) => {
         if(!user){
             return
         }
-        console.log("11")
 
         const newAddress = {
             fullName:req.body.name,
@@ -571,6 +571,7 @@ const returnSingleOrder = async (req,res)=>{
       
 
     } catch (error) {
+        res.render('../pages/error',{error:error.message})
         console.log(error.message)
         
     }
@@ -612,6 +613,40 @@ const addReview = async (req, res) => {
     }
 };
 
+const checkQuantityInCart = async (req, res) => {
+    try {
+        const userId=req.session.user_id
+        const cartData = await Cart.find({userId:userId}).populate('product.productId')
+
+        for (const cartItem of cartData[0].product) {
+            const productId = cartItem.productId;
+            const quantityInCart = cartItem.quantity;
+            const productName = cartItem.productId.name;
+
+            const productData = await Product.findById(productId);
+
+            if (productData.isActive && !productData.isDeleted) {
+                if (quantityInCart > productData.stock) {
+                    return res.status(400).json({
+                        success: false,
+                        message: `Product ${productName} is out of stock.`,
+                    });
+                }
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    message: `Product ${productName} is not available.`,
+                });
+            }
+        }
+
+        res.status(400).json({success:true,message:"Stock Is Available"})
+    } catch (error) {
+        res.render('../pages/error',{error:error.message})
+        console.log(error.message);
+    }
+};
+
 module.exports = {
     loadCart,
     addToCart,
@@ -623,5 +658,6 @@ module.exports = {
     razorpay,
     cancelSingleOrder,
     returnSingleOrder,
-    addReview
+    addReview,
+    checkQuantityInCart
 };

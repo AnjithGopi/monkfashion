@@ -84,6 +84,11 @@ admin_route.post('/banner/addBanner',Multer.uploadBanner.array('image',5),banner
 admin_route.post('/banner/updateBanner',Multer.uploadBanner.array('image',5),bannerController.updateBanner)
 admin_route.patch('/banner/changeStatus',bannerController.changeStatus)
 
+// Admin Messages 
+admin_route.get('/messages',adminController.loadMessages)
+admin_route.get('/reviews',adminController.loadReview)
+
+admin_route.get('/errorAdmin',adminController.errorAdmin)
 
 // admin_route.use('*', (req, res) => {
 //     res.status(404).json({

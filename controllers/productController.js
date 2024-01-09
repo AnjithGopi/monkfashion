@@ -9,6 +9,7 @@ const loadAddProduct = async (req,res)=>{
         const categoriesData = await Categories.find({isDeleted:false})
         res.render('add-product',{categories:categoriesData})
     }catch(error){
+        res.render('../pages/errorAdmin',{error:error.message})
         console.log(error.message)
     }
 }
@@ -88,7 +89,7 @@ const loadProduct = async (req,res)=>{
       
         let productData = null
         if(req.query.category){
-         productData = await Product.find({categoryId:req.query.category}) .populate('categoryId')
+         productData = await Product.find({categoryId:req.query.category}).populate('categoryId').sort({createdOn:-1})
          .skip(skip)
          .limit(limit);
 
@@ -155,7 +156,7 @@ const changeStatus = async (req,res)=>{
 
     }catch(error){
         console.log(error.message)
-        res.status(500).send("Internal Server Error");
+        res.render('../pages/errorAdmin',{error:error.message})
     }
 }
 
@@ -173,7 +174,7 @@ const deleteProduct = async (req,res)=>{
 
     }catch(error){
         console.log(error.message)
-        res.status(500).send("Internal Server Error");
+        res.render('../pages/errorAdmin',{error:error.message})
     }
 }
 
@@ -186,6 +187,7 @@ const loadEditProduct = async (req,res)=>{
         const categoryName = await Categories.findById({_id:idCat})
          res.render('editProduct',{product:productData,categories:categoriesData,categoryname:categoryName})
     }catch(error){
+        res.render('../pages/errorAdmin',{error:error.message})
         console.log(error.message)
     }
 }
@@ -254,7 +256,7 @@ product.image = product.image.filter(image => !deletedImages.includes(image));
 
     }catch(error){
         console.log(error.message)
-        res.status(500).send("Internal server error")
+        res.render('../pages/errorAdmin',{error:error.message})
     }
 }
 

@@ -121,6 +121,8 @@ const loadCategoriesOffer = async(req,res)=>{
             totalPages: totalPages})
     }catch(error){
         console.log(error.message)
+        res.render('../pages/errorAdmin',{error:error.message})
+
     }
 }
 
@@ -139,13 +141,14 @@ const categoriesOfferChangestatus = async (req, res) => {
         }
     } catch (error) {
         console.log(error.message);
+        res.render('../pages/errorAdmin',{error:error.message})
+
     }
 };
 
 const applyCategoryOffer  = async (req, res) => {
     try {
-        console.log("Apply product offer received")
-        console.log(req.body)
+       
         const {categoryId ,categoryExpiryDate,categoryPercentage} = req.body
        
         // // console.log()

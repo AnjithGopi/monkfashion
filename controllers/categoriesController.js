@@ -4,10 +4,11 @@ const path = require('path')
 
 const loadCategories = async(req,res)=>{
     try{
-        const categoriesData = await Categories.find({})
+        const categoriesData = await Categories.find({isDeleted:false})
         // console.log(categoriesData)
         res.render('categories',{categories:categoriesData})
     }catch(error){
+        res.render('../pages/errorAdmin',{error:error.message})
         console.log(error.message)
     }
 }
@@ -35,8 +36,7 @@ const addCategories =  async(req,res)=>{
             console.log("categories data :",categoriesData)
             res.render('categories',{message :'2',categories:dataAfter});
 
-            // res.render('categories',{message : true,categories:categoriesData});
-            // res.redirect('/admin/categories')
+          
 
             }else{
             // res.render('registrationSucess',{message : "Registration failed."});
@@ -48,6 +48,7 @@ const addCategories =  async(req,res)=>{
 
 
     }catch(error){
+        res.render('../pages/errorAdmin',{error:error.message})
         console.log(error.message)
     }
 }
@@ -81,7 +82,7 @@ const changeCategoriesStatus = async (req,res)=>{
 
     }catch(error){
         console.log(error.message)
-        res.status(500).send("Internal Server Error");
+        res.render('../pages/errorAdmin',{error:error.message})
     }
 }
 
@@ -98,7 +99,7 @@ const deleteCategories = async (req,res)=>{
 
     }catch(error){
         console.log(error.message)
-        res.status(500).send("Internal Server Error");
+        res.render('../pages/errorAdmin',{error:error.message})
     }
     
 }
@@ -110,6 +111,7 @@ const loadEditCategories = async (req,res)=>{
         const categoriesData = await Categories.findById({_id:req.query.id})
         res.render('editCategory',{categories:categoriesData})
     }catch(error){
+        res.render('../pages/errorAdmin',{error:error.message})
         console.log(error.message)
     }
 }
@@ -164,6 +166,7 @@ const editCategories = async (req,res)=>{
         }
 
     }catch(error){
+        res.render('../pages/errorAdmin',{error:error.message})
         console.log(error.message)
     }
 }

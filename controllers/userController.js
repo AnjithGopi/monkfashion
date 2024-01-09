@@ -12,6 +12,7 @@ const Banner = require('../models/bannerModal');
 const mongoose = require('mongoose');
 
 const {generateRefferalId} = require('../functions/generateRefferalId')
+const {sendEmailOtp } = require('../functions/sendMail')
 const walletController = require('./walletController')
 const securePassword = async(password)=>{
 
@@ -45,7 +46,7 @@ const sendVerifyMail = async (req,res) => {
         req.session.mobile = req.body.mobile;
         req.session.password= req.body.password;
         req.session.referral= req.body.referral;
-
+       
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -58,6 +59,7 @@ const sendVerifyMail = async (req,res) => {
 
         const otp = OTP.generateOTP();
         req.session.otp = otp
+        clearRegistrationOtp(req)
         console.log("sendmail - generatd-otp:",otp)
         const mailOptions = {
             from: 'abhilash.brototype@gmail.com',
@@ -87,6 +89,29 @@ const sendVerifyMail = async (req,res) => {
     }
 
 };
+
+const resendOtp = async (req, res) => {
+    try {
+        console.log("Resend otp received")
+       const result = await sendEmailOtp(req)
+       if(result){
+        res.status(200).json({success:true,message:"Otp Send to Email"})
+       }else{
+        res.status(400).json({success:false,message:"Failed to send Otp"})
+       }
+
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+      function  clearRegistrationOtp(req){
+        setTimeout(()=>{
+            console.log("Otp Expired")
+            delete req.session.otp
+            req.session.save()
+        },20000)
+      }
 
 const loadotpRedirect = async(req,res)=>{
     try{
@@ -850,6 +875,7 @@ module.exports ={
     verifyLogin,
     sendVerifyMail,
     loadOtp,
+    resendOtp,
     verifyOTP,
     forgetPasswordOtp,
     newInsertUser,

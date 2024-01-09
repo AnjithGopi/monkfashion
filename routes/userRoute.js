@@ -46,6 +46,8 @@ user_route.get('/',userController.loadHome);
 user_route.get('/register',auth.isLogout,userController.loadRegister);
 // Router to submit the registration form
 user_route.post('/register',userController.sendVerifyMail);
+user_route.post('/register/resendOtp',userController.resendOtp);
+
 // Router to load the verify Otp page
 user_route.get('/verifyotp',auth.isLogout,userController.loadOtp)
 // Rotute to check the submited otp
@@ -133,6 +135,8 @@ user_route.post("/home/addToWishlist/:productId",wishlistContoller.addToWishlist
 user_route.delete("/home/wishlist/removeProduct/:productId",wishlistContoller.removeProduct)
 
 
+// checking Quantity
+user_route.get("/order/checkQuantityInCart",orderController.checkQuantityInCart)
 
 
 // user_route.use('*', (req, res) => {

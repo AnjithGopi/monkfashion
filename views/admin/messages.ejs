@@ -1,0 +1,93 @@
+<%- include('../../partials/adminHeader')-%>
+<body>
+
+
+    <div class="screen-overlay"></div>
+<%- include('../../partials/adminAside')-%>
+   
+    <main class="main-wrap">
+<%- include('../../partials/adminNavbar')-%> 
+       
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Messages</h2>
+                    
+                </div>
+                <div style="border-color: red;">
+                    <form action=" " method="get">
+                    <input  style="border-color: red;" type="text" placeholder="Search by name" name="search" class="form-control bg-white">
+                    </form>
+                </div>
+            </div>
+            <div class="card mb-4">
+               
+                <!-- card-header end// -->
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead style="background-color: #088178; color: white;">
+                                <tr>
+                                    <th>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" />
+                                        </div>
+                                    </th>
+                                    <th>#ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Date</th>
+                                    <th class="text-center">Subject</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if( message.length > 0) { %>
+                                    <% message.forEach((message,index)=>{ %>
+                                <tr>
+                                    <td>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" />
+                                        </div>
+                                    </td>
+                                    <td><%= index+1 %> </td>
+                                    <td><b><%= message.name %></b></td>
+                                    <td><%= message.email %></td>
+                                    <td>
+                                        <%= message.mobile %>
+                                    </td>
+                                    <td><%= message.createdDate.toLocaleDateString() %></td>
+                                    <td class="text-end">
+                                       <div>
+                                        <%= message.subject %>
+                                       </div>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                <% } else { %>
+                                    <h4 class="text-danger">No Messages Available</h4>
+                                    <% }  %>
+
+                               
+                            </tbody>
+                        </table>
+                    </div> <!-- table-responsive//end -->
+                </div>
+                <!-- card-body end// -->
+            </div>
+            <div class="pagination-area mt-30 mb-50">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                        <li class="page-item"><a class="page-link" href="#">02</a></li>
+                        <li class="page-item"><a class="page-link" href="#">03</a></li>
+                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                        <li class="page-item"><a class="page-link" href="#">16</a></li>
+                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </section> <!-- content-main end// -->
+    </main>
+        
+        <%- include('../../partials/adminFooter')-%>

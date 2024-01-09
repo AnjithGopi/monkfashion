@@ -1,7 +1,9 @@
 // const { default: orders } = require("razorpay/dist/types/orders");
 const Order = require("../models/orderModel");
 const Product = require("../models/productModal");
+const Categories = require("../models/categoriesModal");
 const User = require("../models/userModal")
+const Message = require("../models/messagesModel")
 const {getSalesReportCounts} = require("../functions/admin")
 
 const bcrypt = require('bcrypt')
@@ -29,6 +31,7 @@ const logout = async (req,res)=>{
             }
           })
     }catch(error){
+        res.render('../pages/errorAdmin',{error:error.message})
         console.log(error.message)
     }
 }
@@ -61,6 +64,7 @@ const logout = async (req,res)=>{
         }
     
         }catch(error){
+            res.render('../pages/errorAdmin',{error:error.message})
             console.log(error.message)
         }
     }
@@ -69,6 +73,7 @@ const loadHome = async(req,res)=>{
     try {
         const userCount = await User.countDocuments({isActive:true,isAdmin:false})
         const productCount = await Product.countDocuments({isActive:true,isDeleted:false})
+        const categoriesCount = await Categories.countDocuments({isActive:true,isDeleted:false})
         const orderCount = await Order.countDocuments()
         const orderData = await Order.find()
    
@@ -92,8 +97,9 @@ const loadHome = async(req,res)=>{
             },0)
         
       
-        res.render('index',{userCount,productCount,orderCount,monthlyOrders:monthlyOrders,totalAmount:totalSum})
+        res.render('index',{userCount,productCount,orderCount,categoriesCount,monthlyOrders:monthlyOrders,totalAmount:totalSum})
     } catch (error) {
+        res.render('../pages/errorAdmin',{error:error.message})
         console.log(error.message)
         
     }
@@ -118,12 +124,14 @@ const loadUserList = async(req,res)=>{
             ]
 
         })
+        .sort({createdTime:-1})
         .skip(skip)
         .limit(limit);
         const totalUsers = await User.countDocuments();
         const totalPages = Math.ceil(totalUsers / limit);
         res.render('user-list',{users:userData,currentPage: page,totalPages: totalPages})
     }catch(error){
+        res.render('../pages/errorAdmin',{error:error.message})
         console.log(error.message)
     }
 }
@@ -185,12 +193,14 @@ const loadOrders = async (req,res) =>{
             $or:[
             {orderStatus:{$regex:'.*'+search+'.*',$options:'i'}}
         ]})
+        .sort({orderDate:-1})
         .skip(skip)
         .limit(limit);
         const totalUsers = await Order.countDocuments();
         const totalPages = Math.ceil(totalUsers / limit);
         res.render('orders',{order:orderData,currentPage: page,totalPages: totalPages,search:search})
     } catch (error) {
+        res.render('../pages/errorAdmin',{error:error.message})
         console.log(error.message)
     }
 }
@@ -227,6 +237,7 @@ const loadOrderDetails = async (req,res)=>{
     
         res.render('orderDetails' ,{order:orderData})
     } catch (error) {
+        res.render('../pages/errorAdmin',{error:error.message})
         console.log(error.message)
     }
 }
@@ -401,6 +412,7 @@ const loadSalesReport = async (req,res)=>{
         res.render("salesReport",{orders:orders,users:userCount,totalOrders:orders.length,onlinePayments:orderCounts.filterPaymentOnline,offlinePayments:orderCounts.filterPaymentOffline,cancelledOrders:orderCounts.filterOrderCancelled,totalAmount:orderCounts.totalSum})
     } catch (error) {
         console.log(error.message)
+        res.render('../pages/errorAdmin',{error:error.message})
         
     }
 
@@ -451,16 +463,81 @@ const loadChart = async (req,res)=>{
                 
             }
         ])
-        // console.log("Monthlu users:",monthlyUsers)
-        // console.log("Monthlu sales:",monthlySales)
-
-        // console.log("Monthly Orders:",monthlyOrders)
+      
                 res.json({monthlyOrders,monthlySales,monthlyUsers});
     }catch(error){
         console.log(error.message)
     }
 }
 
+const loadMessages = async (req, res) => {
+    try {
+      
+        
+        let search = '';
+        if(req.query.search){
+            search = req.query.search;
+        }
+        
+        const messageData = await Message.find({
+            $or:[
+                {name:{$regex:'.*'+search+'.*',$options:'i'}},
+                {email:{$regex:'.*'+search+'.*',$options:'i'}}
+        ]})
+
+       
+        console.log(messageData)
+        res.render('messages',{message:messageData})
+    } catch (error) {
+        console.log(error.message);
+        res.render('../pages/errorAdmin',{error:error.message})
+    }
+};
+
+const loadReview = async (req, res) => {
+    try {
+        let search = '';
+        if(req.query.search){
+            search = req.query.search;
+        }
+        
+        const messageData = await Message.find({
+            $or:[
+                {name:{$regex:'.*'+search+'.*',$options:'i'}},
+                {email:{$regex:'.*'+search+'.*',$options:'i'}}
+        ]})
+        const productWithReviews = await Product.find({
+            $or:[
+                {name:{$regex:'.*'+search+'.*',$options:'i'}}
+                
+        ]}
+        ).populate('review.userId','name')
+ 
+
+        let productReview = [];
+
+        productWithReviews.forEach((product) => {
+        if (product.review.length > 0) {
+
+            productReview.push(product);
+        }
+        });
+
+        res.render('reviews',{reviews:productReview})
+    } catch (error) {
+        console.log(error.message);
+        res.render('../pages/errorAdmin',{error:error.message})
+
+    }
+};
+
+const errorAdmin = async (req, res) => {
+    try {
+        res.render('../pages/errorAdmin',{error:"dsdsfsdfdf"})
+    } catch (error) {
+        console.log(error.message);
+    }
+};
 module.exports ={
    loadLogin,
    verifyLogin,
@@ -472,7 +549,10 @@ module.exports ={
    changeOrderStatus,
    loadOrderDetails,
    loadSalesReport,
-   loadChart
+   loadChart,
+   loadMessages,
+   loadReview,
+   errorAdmin
   
 }
     

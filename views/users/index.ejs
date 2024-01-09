@@ -164,6 +164,7 @@
                 
             <% if( banner.length > 0){ %>
                 <% if(banner[1]){ %>
+                    <% if ( banner[0].isActive) { %>
                 <div class="container d-flex justify-content-end">
                     <div class="banner-img banner-big wow fadeIn animated f-none">
                         <!-- <img src="/static/user-assets/imgs/banner/banner-4.png" alt=""> -->
@@ -177,7 +178,9 @@
                     </div>
                 </div>
                 <% } %>
+                <% } %>
                 <% if(banner[2]){ %>
+                    <% if ( banner[2].isActive) { %>
                     <div class="container">
                         <div class="banner-img banner-big wow fadeIn animated f-none">
                             <!-- <img src="/static/user-assets/imgs/banner/banner-4.png" alt=""> -->
@@ -190,6 +193,7 @@
                             </div>
                         </div>
                     </div>
+                <% } %>
                 <% } %>
             <% } %>
             
@@ -270,8 +274,9 @@
         <section class="deals section-padding">
             <div class="container">
                 <div class="row">
-                 <% if( banner.length > 0){ %>
+                 <% if( banner.length > 3){ %>
                     <% if ( banner[3] ){ %>
+                    <% if ( banner[3].isActive) { %>
                     <div class="col-lg-6 deal-co">
                         <div class="deal wow fadeIn animated mb-md-4 mb-sm-4 mb-lg-0" style="background-image: url('/static/admin/images/banner/<%= banner[3].image[0] %>'); background-color: rgba(57, 43, 43, 0.7);">
                             <!-- <div class=""style="background-color: rgba(0, 0, 0, .6);  z-index: 1000;"> -->
@@ -294,7 +299,9 @@
                         </div>
                     </div>
                     <% } %>
+                    <% } %>
                     <% if ( banner[4] ){ %>
+                    <% if ( banner[4].isActive) { %>
                     <div class="col-lg-6 deal-co">
                         <div class="deal wow fadeIn animated" style="background-image: url('/static/admin/images/banner/<%= banner[4].image[0] %>');">
                             <div class="deal-top">
@@ -313,6 +320,7 @@
                             </div>
                         </div>
                     </div>
+                    <% } %>
                     <% } %>
                  <% } %>
                 </div>
@@ -340,27 +348,31 @@
                     </div>
                 </div>
                 <div class="row">
-                 <% if( banner.length > 0){ %>
+                 <% if( banner.length > 5){ %>
                     <div class="col-lg-3 d-none d-lg-flex flex-column">
                             <% if (banner[5]) { %>
-                            <div class="banner-img style-2 wow fadeIn animated" style="width: fit-content; height: fit-content;">
-                                <img src="/static/admin/images/banner/<%= banner[5].image[0] %>" alt="">
-                                <div class="banner-text">
-                                    <span><%= banner[5].text2 %></span>
-                                    <h4 class="mt-5"><%= banner[5].text %></h4>
-                                    <a href="<%= banner[5].target %>" class="text-white">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                               <% if ( banner[5].isActive) { %>
+                                <div class="banner-img style-2 wow fadeIn animated" style="width: fit-content; height: fit-content;">
+                                    <img src="/static/admin/images/banner/<%= banner[5].image[0] %>" alt="">
+                                    <div class="banner-text">
+                                        <span><%= banner[5].text2 %></span>
+                                        <h4 class="mt-5"><%= banner[5].text %></h4>
+                                        <a href="<%= banner[5].target %>" class="text-white">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                                    </div>
                                 </div>
-                            </div>
+                              <% } %>
                             <% } %>
-                            <% if (banner[5]) { %>
+                            <% if (banner[6]) { %>
+                               <% if ( banner[6].isActive) { %>
                             <div class="banner-img style-2 wow fadeIn animated" style="width: 305px; height: 210px;">
                                 <img src="/static/admin/images/banner/<%= banner[6].image[0] %>" alt="">
                                 <div class="banner-text">
                                     <span><%= banner[6].text2 %></span>
                                     <h4 class="mt-5"><%= banner[6].text %></h4>
-                                    <a href="<%= banner[5].target %>" class="text-white">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                                    <a href="<%= banner[6].target %>" class="text-white">Shop Now <i class="fi-rs-arrow-right"></i></a>
                                 </div>
                             </div>
+                            <% } %>
                             <% } %>
                         </div>
                 <% } %>

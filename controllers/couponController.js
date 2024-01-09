@@ -6,14 +6,13 @@ const loadCoupon = async(req,res)=>{
         const couponData = await Coupon.find().sort({timestamp:-1})
         res.render('coupon',{coupon:couponData})
     }catch(error){
-        console.log(error.message)
+        res.render('../pages/errorAdmin',{error:error.message})
     }
 }
 
 const createCoupon = async(req,res)=>{
     try{
-        console.log("Create Coupon received")
-        console.log(req.body)
+       
         
         const { name,couponId,minimumAmount,discountAmount,limit,expirationDate}  = req.body
         const existingCoupon = await Coupon.find({ $or: [{ name: name }, { code: couponId }] });
@@ -34,7 +33,6 @@ const createCoupon = async(req,res)=>{
                 res.status(200).json({success:true,successMessage:message})
             }
         }else{
-            console.log("Coupon creation Failes")
 
             let errorMessage = '';
 
@@ -48,9 +46,9 @@ const createCoupon = async(req,res)=>{
             res.status(500).json({success:false,warningMessage:errorMessage})
         }
 
-        // res.render('coupon',{categories:""})
     }catch(error){
         console.log(error.message)
+        
     }
 }
 
