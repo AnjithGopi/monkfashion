@@ -111,14 +111,13 @@ user_route.post('/home/profile/editProfile',auth.isLogin,userController.updateUs
 // To change user Password
 user_route.get('/home/profile/changePassword',auth.isLogin,userController.loadChangePassword)
 user_route.post('/home/profile/changePassword',auth.isLogin,userController.verifyChangePasword)
-// user_route.get("/home/profile/updateProfile/otp",auth.isLogin,userController.loadChangePasswordOtp)
-// user_route.post("/home/profile/updateProfile/otp",auth.isLogin,userController.changePasswordVerifyOtp)
+
 user_route.post("/home/profile/cancelOrder",auth.isLogin,userController.cancelOrder)
-user_route.get("/home/profile/order/orderDetails",userController.loadOrderDetails)
+user_route.get("/home/profile/order/orderDetails",auth.isLogin,userController.loadOrderDetails)
 user_route.post("/home/profile/order/orderDetails/cancelOrder",auth.isLogin,orderController.cancelSingleOrder)
 user_route.post("/home/profile/order/orderDetails/returnOrder",auth.isLogin,orderController.returnSingleOrder)
 
-user_route.put("/home/profile/order/orderDetails/submitReview",orderController.addReview)
+user_route.put("/home/profile/order/orderDetails/submitReview",auth.isLogin,orderController.addReview)
 
 
 user_route.post("/clearOtp",auth.isLogin,userController.clearOtp)
@@ -130,13 +129,13 @@ user_route.post("/home/contact/submitMessage",pageController.submitMessage)
 user_route.get("/home/about",pageController.loadAbout)
 
 // User Wishlist
-user_route.get("/home/wishlist",wishlistContoller.loadWishlist)
-user_route.post("/home/addToWishlist/:productId",wishlistContoller.addToWishlist)
-user_route.delete("/home/wishlist/removeProduct/:productId",wishlistContoller.removeProduct)
+user_route.get("/home/wishlist",auth.isLogin,wishlistContoller.loadWishlist)
+user_route.post("/home/addToWishlist/:productId",auth.isLogin,wishlistContoller.addToWishlist)
+user_route.delete("/home/wishlist/removeProduct/:productId",auth.isLogin,wishlistContoller.removeProduct)
 
 
 // checking Quantity
-user_route.get("/order/checkQuantityInCart",orderController.checkQuantityInCart)
+user_route.get("/order/checkQuantityInCart",auth.isLogin,orderController.checkQuantityInCart)
 
 
 // user_route.use('*', (req, res) => {

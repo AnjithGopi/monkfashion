@@ -102,6 +102,7 @@ const loadProduct = async (req,res)=>{
             ]
         })
             .populate('categoryId')
+            .sort({createdOn:-1})
             .skip(skip)
             .limit(limit);
 

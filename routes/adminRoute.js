@@ -27,13 +27,14 @@ const auth = require("../middleware/adminAuthentication")
 
 // importing inbuild contoller modules
 const adminController = require("../controllers/adminController")
+const userController = require("../controllers/userController")
 const categoriesController = require("../controllers/categoriesController")
 const productController = require("../controllers/productController")
 const couponController = require("../controllers/couponController")
 const offerController = require("../controllers/offerContoller")
 const bannerController = require("../controllers/bannerController")
 
-admin_route.get('/',auth.isLogout,adminController.loadLogin);
+admin_route.get('/',auth.isLogout,userController.loadLogin);
 admin_route.post('/',adminController.verifyLogin);
 admin_route.get('/home',auth.isLogin,adminController.loadHome);
 admin_route.get('/logout',auth.isLogin,adminController.logout);
@@ -62,7 +63,7 @@ admin_route.post('/orders/changeStatus',auth.isLogin,adminController.changeOrder
 admin_route.get('/orders/orderDetails',auth.isLogin,adminController.loadOrderDetails)
 
 // Admin Dashboard
-admin_route.get('/dashboard/salesReport',adminController.loadSalesReport)
+admin_route.get('/dashboard/salesReport',auth.isLogin,adminController.loadSalesReport)
 admin_route.get('/home/chart',auth.isLogin,adminController.loadChart);
 
 // Admin Coupon Management
@@ -79,16 +80,16 @@ admin_route.patch('/categoriesOffer/changeStatus',auth.isLogin,offerController.c
 admin_route.patch('/categoriesOffer/applyOffer',auth.isLogin,offerController.applyCategoryOffer)
 
 // Admin Banner management
-admin_route.get('/banner',bannerController.loadBanner)
-admin_route.post('/banner/addBanner',Multer.uploadBanner.array('image',5),bannerController.addBanner)
-admin_route.post('/banner/updateBanner',Multer.uploadBanner.array('image',5),bannerController.updateBanner)
-admin_route.patch('/banner/changeStatus',bannerController.changeStatus)
+admin_route.get('/banner',auth.isLogin,bannerController.loadBanner)
+admin_route.post('/banner/addBanner',auth.isLogin,Multer.uploadBanner.array('image',5),bannerController.addBanner)
+admin_route.post('/banner/updateBanner',auth.isLogin,Multer.uploadBanner.array('image',5),bannerController.updateBanner)
+admin_route.patch('/banner/changeStatus',auth.isLogin,bannerController.changeStatus)
 
 // Admin Messages 
-admin_route.get('/messages',adminController.loadMessages)
-admin_route.get('/reviews',adminController.loadReview)
+admin_route.get('/messages',auth.isLogin,adminController.loadMessages)
+admin_route.get('/reviews',auth.isLogin,adminController.loadReview)
 
-admin_route.get('/errorAdmin',adminController.errorAdmin)
+// admin_route.get('/errorAdmin',adminController.errorAdmin)
 
 // admin_route.use('*', (req, res) => {
 //     res.status(404).json({
