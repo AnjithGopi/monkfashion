@@ -2,6 +2,8 @@ const Product = require('../models/productModal')
 const Categories = require('../models/categoriesModal')
 const sharp = require('sharp')
 const path = require('path');
+const mongoose = require('mongoose');
+
 const { DefaultDeserializer } = require('v8')
 
 const loadAddProduct = async (req,res)=>{
@@ -84,33 +86,43 @@ const loadProduct = async (req,res)=>{
         const limit = parseInt(req.query.limit) || 5;
         const skip = (page - 1) * limit;
         
-        var search = req.query.search || '';
+        let search = req.query.search || '';
         var category = req.query.category ||'';
-      
+        
         let productData = null
         if(req.query.category){
-         productData = await Product.find({categoryId:req.query.category}).populate('categoryId').sort({createdOn:-1})
+         productData = await Product.find({categoryId:req.query.category})
+         .populate('categoryId')
+         .sort({createdOn:-1})
          .skip(skip)
          .limit(limit);
+         totalProducts = await Product.countDocuments({ categoryId: req.query.category });
 
-    }else{
+         }else{
          productData = await Product.find({
             isDeleted:false,
             $or:[
                 {name:{$regex:'.*'+search+'.*',$options:'i'}}
                
             ]
-        })
+        }) 
             .populate('categoryId')
             .sort({createdOn:-1})
             .skip(skip)
             .limit(limit);
 
+            totalProducts = await Product.countDocuments({
+                isDeleted: false,
+                $or: [
+                  { name: { $regex: '.*' + search + '.*', $options: 'i' } },
+        
+        
+                ],
+              });
+
     }
-
-
       const categoriesData = await Categories.find({isDeleted:false})
-        const totalProducts = await Product.countDocuments();
+      
         const totalPages = Math.ceil(totalProducts / limit);
         res.render('products', {
             products: productData,
@@ -124,14 +136,7 @@ const loadProduct = async (req,res)=>{
       
     } catch (error) {
         console.log(error.message)
-        let errorData = []
-            errorData.push(error.message)
-        res.render('products', {
-            products: "",
-            currentPage: "",
-            totalPages: "",
-            errorData:errorData
-        });
+       
     }
 }
 

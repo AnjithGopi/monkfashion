@@ -408,6 +408,9 @@
                 toastr.error(data.message)
             }
         })
+        .catch(error => {
+                console.error('Checking quantity:', error);
+            });
       } 
 
         // Script to Place ORder

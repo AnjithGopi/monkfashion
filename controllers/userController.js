@@ -461,7 +461,7 @@ const loadProfile = async(req,res)=>{
         const userData = await User.findById(req.session.user_id)
         const orderData = await Order.find({userId:userId}).sort({orderDate:-1})
       
-        const walletData = await Wallet.findOne({userId:userId})
+        const walletData = await Wallet.findOne({userId:userId}) .sort({ 'transaction.createdOn': -1 })
         res.render('userProfile',{user:userData,order:orderData,wallet:walletData})
 
     }catch(error){
@@ -809,14 +809,10 @@ const loadAllProducts = async(req,res)=>{
         if( req.query.search){
             search= req.query.search
         }
-        const totalProducts = await Product.countDocuments();
-        const totalPages = Math.ceil(totalProducts / limit);
+     
         const categoryData = await Categories.find({isActive:true})
         const cartData = await Cart.findOne({userId:req.session.user_id});
 
-        
-        console.log("Load all products worked")
-           
                 const productQuery = {
                     isDeleted: false,
                     isActive: true,
@@ -840,6 +836,9 @@ const loadAllProducts = async(req,res)=>{
                 if(cartData.product)
                  cartQuantity = cartData.product.length
              }
+
+             const totalProducts = await Product.countDocuments(productQuery);
+             const totalPages = Math.ceil(totalProducts / limit);
           
         res.render("allProducts",{products:productDataToPass,cartQuantity:cartQuantity, currentPage: page,  totalPages: totalPages,categories:categoryData,search:req.query.search,categoryId:req.query.categoryId})
 

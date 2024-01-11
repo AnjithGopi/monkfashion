@@ -124,12 +124,7 @@
                                                                 <td><span class="badge rounded-pill alert-primary" id="orderStatus_<%=index%>"><%= orderItem.orderStatus %></span></td>
                                                                 
                                                                 <td class="text-end">
-                                                                    <% if(  orderItem.orderStatus  !== 'Cancelled' ) { %>
-                                                                    <% if(  orderItem.orderStatus  !== 'Delivered' ) { %>
-                                                                    <a  class="btn btn-danger btn-md m-2 rounded font-sm" id="cancelOrderButton_<%=index%>" onclick="cancelOrder('<%=orderItem._id%>','<%= index %>')" style="background-color: brown;">Cancel Order</a>
-                                                                    <% } else {  %>
-                                                                    <a  class="btn btn-danger btn-md m-2 rounded font-sm" onclick="returnOrder('<%=orderItem._id%>','<%= index %>')" style="background-color: rgb(8, 89, 210);">Return Order</a>
-                                                                    <%  }  } %>
+                                                                   
                                                                     <a  class="btn btn-md m-2 rounded font-sm" href="/home/profile/order/orderDetails?id=<%=orderItem._id%>">View Details</a>
                                                                      <!-- dropdown //end -->
                                                                 </td>

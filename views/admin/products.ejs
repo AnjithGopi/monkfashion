@@ -16,7 +16,16 @@
                 <div>
                     <input type="text"  placeholder="Search order ID" class="form-control bg-white">
                 </div>
-            </div>
+            </div> 
+            <% if (messages.success) { %>
+                <div class="alert alert-success" id="editSuccessMessage">
+                    <%= messages.success %>
+                </div>
+            <% } else if (messages.error) { %>
+                <div class="alert alert-danger" id="editErrorMessage">
+                    <%= messages.error %>
+                </div>
+            <% } %>
             <div class="card mb-4">
                 <header class="card-header">
                     <div class="row gx-3 d-flex">
@@ -257,6 +266,17 @@
                 });;
          }
           
-    
+         setTimeout(() => {
+                    const successMessage = document.getElementById('editSuccessMessage');
+                    const errorMessage = document.getElementById('editErrorMessage');
+        
+                    if (successMessage) {
+                        successMessage.remove();
+                    }
+        
+                    if (errorMessage) {
+                        errorMessage.remove();
+                    }
+                }, 3000);
           </script>
  

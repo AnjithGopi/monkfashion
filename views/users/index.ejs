@@ -121,9 +121,11 @@
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up" onclick="addToWishlist('<%= product[i]._id %>')" ><i class="fi-rs-heart"></i></a>
 
                                         </div>
+                                         <% if( product[i].offer.percentage >0){ %>
                                         <div class="product-badges product-badges-position product-badges-mrg">
                                             <span class="hot"><%= product[i].offer.percentage %>%</span>
                                         </div>
+                                        <% } %>
                                     </div>
                                     <div class="product-content-wrap">
                                         <div class="product-category">
@@ -245,9 +247,12 @@
                                     <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="" tabindex="0"><i class="fi-rs-heart"></i></a>
                                    
                                 </div>
+                                <% if( product.offer.percentage >0){ %>
+                                   
                                 <div class="product-badges product-badges-position product-badges-mrg">
                                     <span class="hot"><%=product.offer.percentage%> %</span>
                                 </div>
+                                <% } %>
                             </div>
                             <div class="product-content-wrap">
                                 <h2><a  href="/products?id=<%=product._id%>"><%=product.name%></a></h2>
@@ -398,9 +403,11 @@
                                                     <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
                                                                     <i class="fi-rs-eye"></i></a>
                                                 </div>
+                                         <% if( product.offer.percentage >0){ %>
                                                 <div class="product-badges product-badges-position product-badges-mrg">
                                                     <span class="hot"><%= product.offer.percentage %> %</span>
                                                 </div>
+                                                <% } %>
                                             </div>
                                             <div class="product-content-wrap">
                                                 <div class="product-category">

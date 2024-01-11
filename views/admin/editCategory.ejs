@@ -12,7 +12,16 @@
             <div class="card-body p-5">
               <h2 class="text-uppercase text-center mb-5">Edit Categories</h2>
               
-              
+              <% if (messages.success) { %>
+                <div class="alert alert-success" id="editSuccessMessage">
+                    <%= messages.success %>
+                </div>
+            <% } else if (messages.error) { %>
+                <div class="alert alert-danger" id="editErrorMessage">
+                    <%= messages.error %>
+                </div>
+            <% } %>
+   
               <form  method="post" enctype="multipart/form-data" >
                 <div class="mb-4">
                     <label for="categories_name" class="form-label">Category title</label>
@@ -21,7 +30,8 @@
                 </div>
                 <div class="mb-4">
                   <label for="product_name" class="form-label">Category image</label><br>
-                  <input type="file" name="image" id="image" multiple accept="image/*">
+                  <input type="file" name="image" id="image" multiple accept="image/*" ><br>
+                  <img src="/static/admin/images/category/<%= categories.image[0]%>" width="200px" height="200px" alt="">
               </div>
                
                
@@ -67,7 +77,18 @@
         }, 3000);
 
 
+        setTimeout(() => {
+        const successMessage = document.getElementById('editSuccessMessage');
+        const errorMessage = document.getElementById('editErrorMessage');
 
+        if (successMessage) {
+            successMessage.remove();
+        }
+
+        if (errorMessage) {
+            errorMessage.remove();
+        }
+    }, 3000);
                 
               </script>
 

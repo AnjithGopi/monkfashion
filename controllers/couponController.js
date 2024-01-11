@@ -48,7 +48,7 @@ const createCoupon = async(req,res)=>{
 
     }catch(error){
         console.log(error.message)
-        
+
     }
 }
 
@@ -92,7 +92,7 @@ const applyCoupon = async (req,res)=>{
         console.log(couponData)
         const userId = req.session.user_id
         var message = ""
-        if(couponData && !couponData.isDeleted){
+        if(couponData && !couponData.isDeleted && couponData.isActive){
             console.log("Coupon find")
             const countOfUser = couponData.redeemedUsers.filter(item => item ==userId).length
             console.log("Count of used :", countOfUser)

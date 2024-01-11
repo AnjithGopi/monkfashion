@@ -74,15 +74,14 @@
             </div>
         </header>
         <section class="content-main">
-            <div class="row">
             <form method="post" enctype="multipart/form-data">
+            <div class="row">
 
                 <div class="col-9">
                     <div class="content-header">
                         <h2 class="content-title">Add New Product</h2>
                         <div>
-                            <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
-                            <button class="btn btn-md rounded font-sm hover-up" >Publish</button>
+                            <button type="submit" class="btn btn-md rounded font-sm hover-up" onclick="validateForm()"  >Add Product</button>
                         </div>
                     </div>
                 </div>
@@ -107,7 +106,7 @@
                                         <div class="mb-4">
                                             <label class="form-label">Regular price</label>
                                             <div class="row gx-2">
-                                                <input placeholder="$" name="regularPrice" min="0" type="text" class="form-control"oninput="validateField(this)">
+                                                <input placeholder="$" name="regularPrice" min="0" type="number" class="form-control"oninput="validateField(this)">
                                                 <div class="text-danger" id="regularPriceError"></div>
                                             </div>
                                         </div>
@@ -115,7 +114,7 @@
                                     <div class="col-lg-4">
                                         <div class="mb-4">
                                             <label class="form-label">Promotional price</label>
-                                            <input placeholder="$" type="text" name="salePrice" min="0" class="form-control" oninput="validateField(this)">
+                                            <input placeholder="$" type="number" name="salePrice" min="0" class="form-control" oninput="validateField(this)">
                                             <div class="text-danger" id="salePriceError"></div>
                                         </div>
                                     </div>
@@ -157,25 +156,26 @@
                         <div class="card-body">
                             <label for="imageUpload" class="input-upload">
                                 <img src="/static/admin-assets/imgs/theme/upload.svg" alt="Upload Image">
-                                <input id="imageUpload" class="form-control" name="image" type="file" multiple accept="image/*">
+                                <input id="imageUpload" class="form-control" name="image" type="file" multiple accept="image/*" required>
                             </label>
                             <div id="selectedImagesContainer"></div>
                             <!-- <input type="file" multiple id="files" /> -->
-<div id="image-preview-container"></div>
+                                <div id="image-preview-container"></div>
                         </div>
                      
        
                     </div> <!-- card end// -->
                    
                 </div>
-            </form>
             </div>
+            </form>
         </section> <!-- content-main end// -->
        
     </main>
 
 <!-- Sweet alert Js link  -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
 
 <script>
     function displaySelectedImages(input) {
@@ -209,6 +209,12 @@ function validateField(element) {
                 const regularPrice = document.querySelector("[name='regularPrice']").value;
                 if (parseFloat(fieldValue) > parseFloat(regularPrice)) {
                     errorElement.textContent = "Sale price cannot be greater than regular price.";
+                }
+            }
+            if (fieldName === "regularPrice") {
+                const regularPrice = document.querySelector("[name='salePrice']").value;
+                if (parseFloat(fieldValue) < parseFloat(regularPrice)) {
+                    errorElement.textContent = "Regular Price cannot be greater than regular price.";
                 }
             }
         }
@@ -380,6 +386,8 @@ if (spanValue === '2') {
 
 
 }
+
+
     </script>
    
 <%- include('../../partials/adminFooter')-%>

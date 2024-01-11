@@ -3,6 +3,7 @@ const admin_route = express()
 const path = require('path')
 const session = require('express-session');
 const Multer = require('../config/multer')
+const imageSize = require('image-size');
 
 
 admin_route.set('view engine','ejs')
@@ -23,6 +24,7 @@ admin_route.use(session({
 
 // Authentication middlewares
 const auth = require("../middleware/adminAuthentication")
+const imageValidation = require("../middleware/imageValidation")
 
 
 // importing inbuild contoller modules
@@ -51,12 +53,12 @@ admin_route.get('/deleteCategories',auth.isLogin,categoriesController.deleteCate
 
 // Admin Product Management
 admin_route.get('/addproduct',auth.isLogin,productController.loadAddProduct);
-admin_route.post('/addproduct',auth.isLogin,Multer.upload.array('image',5),productController.insertProduct);
+admin_route.post('/addproduct',auth.isLogin,Multer.upload.array('image',5),imageValidation.checkImageUpload,productController.insertProduct);
 admin_route.get('/products',auth.isLogin,productController.loadProduct)
 admin_route.get('/products/changeStatus',auth.isLogin,productController.changeStatus);
 admin_route.get('/products/deleteProduct',auth.isLogin,productController.deleteProduct);
 admin_route.get('/products/editProduct',auth.isLogin,productController.loadEditProduct);
-admin_route.post('/products/editProduct',auth.isLogin,Multer.upload.array('image',5),productController.editProduct)
+admin_route.post('/products/editProduct',auth.isLogin,Multer.upload.array('image',5),imageValidation.checkImageUpload,productController.editProduct)
 
 admin_route.get('/orders',auth.isLogin,adminController.loadOrders)
 admin_route.post('/orders/changeStatus',auth.isLogin,adminController.changeOrderStatus)

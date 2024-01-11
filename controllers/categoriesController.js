@@ -20,7 +20,6 @@ const addCategories =  async(req,res)=>{
         const searchCategories = await Categories.findOne({ name: new RegExp('^' + req.body.name + '$', 'i') });
         const searchReturnData =await Categories.find()
         if(searchCategories){
-            console.log("Worked the sweet")
             
             res.render('categories',{message :'1',categories:searchReturnData});
             // res.redirect('/admin/categories')
@@ -121,15 +120,19 @@ const editCategories = async (req,res)=>{
     try{  
         const categoriesName = req.body.name;
         const categoriesId = req.body.id;
-        console.log(req.body);
         const id = req.body.id
-        console.log("id:",id)
+        const searchCategories = await Categories.findOne({ name: new RegExp('^' + req.body.name + '$', 'i') });
         
-        const categories = await Categories.findOne({_id:categoriesId});
+        const categories = await Categories.findOne({name: new RegExp('^' + categoriesName + '$', 'i')});
+        if(categories && categories._id.toString()!==categoriesId){
+            req.flash('error', 'Category Name already Exist');
+            res.redirect(`/admin/categories/editCategories?id=${categoriesId}`);
+        }else{
 
+            const categories = await Categories.findOne({_id:categoriesId});
+   
         categories.name = categoriesName;
  
-        console.log("req . file data", req.files)
 
         if (req.files && req.files.length > 0) {
             const newImages = [];
@@ -152,17 +155,15 @@ const editCategories = async (req,res)=>{
                 newImages.push(croppedFilename);
             }  
             categories.image = newImages;
-            console.log("Cropped Images:", newImages);
         }
       
           const updatedCategories = await categories.save();
 
         if(updatedCategories){
-            console.log('updated category sucessfully')
-            // console.log(categories)
             res.redirect('/admin/categories')
         }else{
             console.log("failed to update data category")
+        }
         }
 
     }catch(error){

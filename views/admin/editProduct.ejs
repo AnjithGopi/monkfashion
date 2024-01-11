@@ -53,7 +53,7 @@
                                         <div class="mb-4">
                                             <label class="form-label">Regular price</label>
                                             <div class="row gx-2">
-                                                <input placeholder="$" name="regularPrice" type="text" min="1" value="<%= product.regularPrice %>" class="form-control"oninput="validateField(this)">
+                                                <input placeholder="₹" name="regularPrice" type="number" min="1" value="<%= product.regularPrice %>" class="form-control"oninput="validateField(this)">
                                                 <div class="text-danger" id="regularPriceError"></div>
                                             </div>
                                         </div>
@@ -61,7 +61,7 @@
                                     <div class="col-lg-4">
                                         <div class="mb-4">
                                             <label class="form-label">Promotional price</label>
-                                            <input placeholder="$" type="text" name="salePrice" min="1" value="<%= product.salePrice %>"  class="form-control" oninput="validateField(this)">
+                                            <input placeholder="₹" type="number" name="salePrice" min="1" value="<%= product.salePrice %>"  class="form-control" oninput="validateField(this)">
                                             <div class="text-danger" id="salePriceError"></div>
                                         </div>
                                     </div>
@@ -108,14 +108,13 @@
                                 <div id="imagePreviewContainer">
                                     <% for (let i = 0; i < product.image.length; i++) { %>
                                         <div class="image-preview-item">
-                                            <img src="/static/admin/images/product/<%= product.image[i] %>" data-deletedImage="<%= product.image[i] %>" alt="Product Image">
+                                            <img src="/static/admin/images/product/<%= product.image[i] %>" data-deletedImage="<%= product.image[i] %>" alt="Product Image" >
                                             <button type="button" class="btn btn-sm btn-danger" onclick="deleteImage(this)">Delete</button>
                                         </div>
                                         
                                     <% } %>
                                 </div>
-                                <input id="imageUpload" class="form-control" name="image" type="file" multiple >
-                                <!-- <input type="file" id="image-input" accept="image/*" multiple> -->
+                                <input id="imageUpload" class="form-control" name="image" type="file" multiple accept="image/*">
                              
                             </label>
                             <div id="selectedImagesContainer"></div>

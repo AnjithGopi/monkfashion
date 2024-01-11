@@ -98,10 +98,10 @@
                                     </div>
                         
                                     <div class="mb-4 mx-auto align-items-center">
-                                        <span class="fs-6 font-weight-bold text-danger mx-auto">
-                                            <strong><%= locals.cancelledOrders ? cancelledOrders : 0 %></strong>
+                                        <span class="fs-6 font-weight-bold text-success mx-auto">
+                                            <strong><%= locals.walletPayments ? walletPayments : 0%></strong>
                                         </span>
-                                        <br><label for="order_customer" class="form-label fs-6 font-weight-bold">Cancelled Orders</label>
+                                        <br><label for="order_customer" class="form-label fs-6 font-weight-bold">Wallet Payments</label>
                                     </div>
                         
                                     <div class="mb-4 mx-auto align-items-center">
@@ -132,7 +132,7 @@
                                         <tr>
                                             <td><%= orderItem.orderId %></td>
                                             <td><b><%= orderItem.userDetails.name %></b></td>
-                                            <td><%= orderItem.totalAmount %></td>
+                                            <td><%= orderItem.productDetails[0].salePrice %></td>
                                            
                                             <td>
                                                 <% if ( orderItem.paymentMethod  == "Online") { %>
@@ -178,17 +178,30 @@
                 </div>
                
             </div>
+
             <div class="pagination-area mt-15 mb-50">
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-start">
-                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                        <li class="page-item"><a class="page-link" href="#">02</a></li>
-                        <li class="page-item"><a class="page-link" href="#">03</a></li>
-                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="#">16</a></li>
-                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
+                        <% if (currentPage > 1) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage - 1 %>&search=<%= search %>">Previous</a>
+                            </li>
+                        <% } %>
+                
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>&search=<%= search %>&fromDate=<%= fromDate %>$toDate=<%= toDate %>"><%= i %></a>
+                            </li>
+                        <% } %>
+                
+                        <% if (currentPage < totalPages) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage + 1 %>&search=<%= search %>">Next</a>
+                            </li>
+                        <% } %>
                     </ul>
                 </nav>
+                
             </div>
         </section> <!-- content-main end// -->
 <%- include('../../partials/adminFooter')-%>

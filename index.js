@@ -34,7 +34,9 @@ app.set('view engine','ejs');
 app.use(express.urlencoded({extended:true}))
 app. use(express.json());
 
-
+// flash message
+const flash = require('express-flash');
+app.use(flash());
 
 //for user router
 const userRoute = require('./routes/userRoute')

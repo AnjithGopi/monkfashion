@@ -550,17 +550,22 @@ const returnSingleOrder = async (req,res)=>{
        const userId = req.session.user_id
        const {productId,orderId,returnedQuantity,reason} = req.body
        console.log(req.body)
+       console.log(typeof(returnedQuantity))
+       const returnedquantity = parseInt(returnedQuantity)
+       console.log(returnedquantity)
        const particularOrder = await Order.findById(orderId)
        const product = await Product.find({_id:productId})
-       const totalAmountOfReturnedProduct = product[0].salePrice * returnedQuantity;
+       const totalAmountOfReturnedProduct = product[0].salePrice * returnedquantity;
+       console.log(totalAmountOfReturnedProduct)
+       console.log(typeof(totalAmountOfReturnedProduct))
        
-       const changeStatus = await Order.updateOne({_id:orderId,"items.productId":productId},{$inc:{'totalAmount':-totalAmountOfReturnedProduct},$set:{'items.$.productStatus':"Returned",'items.$.returnedQuantity':returnedQuantity,'items.$.returnedReason':reason},$unset:{'items.$.quantity':0}})
+       const changeStatus = await Order.updateOne({_id:orderId,"items.productId":productId},{$inc:{'totalAmount':-totalAmountOfReturnedProduct},$set:{'items.$.productStatus':"Returned",'items.$.returnedQuantity':returnedquantity,'items.$.returnedReason':reason},$unset:{'items.$.quantity':0}})
        if(changeStatus){
           if(particularOrder.paymentStatus == "Success"){
             // console.log("particular order data ",particularOrder)
               const addToWallet = await walletController.addToWallet(totalAmountOfReturnedProduct,userId)
           }
-           const increaseQuantity = await Product.findByIdAndUpdate({_id:productId},{$inc:{stock:returnedQuantity}})
+           const increaseQuantity = await Product.findByIdAndUpdate({_id:productId},{$inc:{stock:returnedquantity}})
 
            let message = " Order Returned sucessfully"
             res.status(200).json({
@@ -627,20 +632,23 @@ const checkQuantityInCart = async (req, res) => {
 
             if (productData.isActive && !productData.isDeleted) {
                 if (quantityInCart > productData.stock) {
-                    return res.status(400).json({
+                     res.status(400).json({
                         success: false,
                         message: `Product ${productName} is out of stock.`,
+                        
                     });
+                    return
                 }
             } else {
-                return res.status(400).json({
+                res.status(400).json({
                     success: false,
                     message: `Product ${productName} is not available.`,
                 });
+                return 
             }
         }
 
-        res.status(400).json({success:true,message:"Stock Is Available"})
+        res.status(200).json({success:true,message:"Stock Is Available"})
     } catch (error) {
         res.render('../pages/error',{error:error.message})
         console.log(error.message);

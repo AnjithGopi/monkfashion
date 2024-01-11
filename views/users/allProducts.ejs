@@ -43,9 +43,11 @@
                                       
                                         <a aria-label="Add To Wishlist" class="action-btn hover-up" onclick="addToWishlist('<%= product._id %>')"><i class="fi-rs-heart"></i></a>
                                     </div>
+                                    <% if( product.offer.percentage >0){ %>
                                     <div class="product-badges product-badges-position product-badges-mrg">
                                         <span class="new"><%= product.offer.percentage %>%</span>
                                     </div>
+                                    <% } %>
                                 </div>
                                 <div class="product-content-wrap">
                                     <div class="product-category">
@@ -81,8 +83,8 @@
                             <nav aria-label="Page navigation example">
                                 <ul class="pagination justify-content-start">
                                     <% if (currentPage > 1) { %>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page=<%= currentPage - 1 %>&search=<%=search%>&categoryId=<%= categoryId %>">Previous</a>
+                                        <li class="page-item ">
+                                            <a class="page-link" href="?page=<%= currentPage - 1 %>&search=<%=search%>&categoryId=<%= categoryId %>">Prev</a>
                                         </li>
                                     <% } %>
                         
@@ -93,7 +95,7 @@
                                     <% } %>
                         
                                     <% if (currentPage < totalPages) { %>
-                                        <li class="page-item">
+                                        <li class="page-item w-30">
                                             <a class="page-link" href="?page=<%= currentPage + 1 %>&search=<%= search %>&categoryId=<%= categoryId %>">Next</a>
                                         </li>
                                     <% } %>

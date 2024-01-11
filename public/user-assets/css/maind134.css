@@ -3444,10 +3444,13 @@ table .product-thumbnail img {
   transition: all 1.5s cubic-bezier(0, 0, 0.05, 1);
 }
 
+
+
+
 .product-cart-wrap .product-action-1 {
   position: absolute;
-  left: 90%;
-  top: 10%;
+  left: 50%;
+  top: 50%;
   -webkit-transform: translateX(-50%) translateY(-50%);
           transform: translateX(-50%) translateY(-50%);
   opacity: 0;

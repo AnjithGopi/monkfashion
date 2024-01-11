@@ -13,6 +13,7 @@ const storage = multer.diskStorage({
         cb(null,name);
 
     }
+    
 });
 
 const storageBanner = multer.diskStorage({

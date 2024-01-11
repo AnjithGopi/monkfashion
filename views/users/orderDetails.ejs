@@ -136,7 +136,7 @@
                                                 <td > ₹<%= item.productId.salePrice * item.quantity %> </td>
                                                 <td class="">
                                                     <% if ( item.productStatus  == "Delivered") { %>
-                                                    <a href="#" class=" btn-lg btn-primary rounded font-sm"   onclick="returnProduct('<%=item.productId._id%>','<%= order._id %>','<%=item.cancelledQuantity%>')"   >Return Product</a>
+                                                    <a href="#" class=" btn-lg btn-primary rounded font-sm"   onclick="returnProduct('<%=item.productId._id%>','<%= order._id %>','<%=item.quantity%>')"   >Return Product</a>
                                                     <% } else {%>
                                                      <a href="#" class=" btn-lg btn-danger rounded font-sm"   onclick="cancelProduct('<%=item.productId._id%>','<%= order._id %>','<%=item.quantity%>')">Cancel Order</a>
                                                      <% }%>
@@ -146,7 +146,7 @@
                                                         <span class="text-success">Review Already Added</span>
                                                     <% } else { %>
                                                         <% if (order.orderStatus == "Delivered") {%>
-                                                        <a class="btn btn-primary rounded" id="rateProductButton" onclick="rateProduct('<%= order._id%>','<%= item.productId._id%>','<%= item.productId.name%>')">Rate the Product</a>
+                                                        <a class="btn btn-primary rounded" id="rateProductButton_<%=item.productId._id %>" onclick="rateProduct('<%= order._id%>','<%= item.productId._id%>','<%= item.productId.name%>')">Rate the Product</a>
                                                         <% } else { %>
                                                         <span class="text-success"> Product is not Delivered </span>
                                                         <% } %>
@@ -424,7 +424,7 @@ function printInvoice(){
                 if(data.success){
                     toastr.success(data.message)
                     closeModal()
-                    document.getElementById('rateProductButton').style.display = 'none'
+                    document.getElementById(`rateProductButton_${productId}`).style.display = 'none'
                 }else{
                     toastr.warning(data.message)
                 }

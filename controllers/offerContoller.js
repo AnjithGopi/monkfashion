@@ -161,6 +161,7 @@ const applyCategoryOffer  = async (req, res) => {
                 const greaterOfferPercentage = Math.max(parseInt(categoryPercentage), productPercentage);
 
                 data.salePrice = data.regularPrice - (data.regularPrice * greaterOfferPercentage/ 100);
+                // data.offer.status
             
                 return data.save();
          
@@ -168,7 +169,7 @@ const applyCategoryOffer  = async (req, res) => {
     console.log("Updated Product :",updatedProducts)
 
         if (updatedProducts.length > 0){
-            const updateOfferInCategory = await Categories.findByIdAndUpdate({_id:new mongoose.Types.ObjectId(categoryId)},{$set:{'offer.percentage':categoryPercentage,'offer.expiryDate':categoryExpiryDate}},{new:true})
+            const updateOfferInCategory = await Categories.findByIdAndUpdate({_id:new mongoose.Types.ObjectId(categoryId)},{$set:{'offer.percentage':categoryPercentage,'offer.expiryDate':categoryExpiryDate,'offer.status':true}},{new:true})
 
             res.status(200).json({success:true,message:"Offer Applied Successfully",offer:categoryPercentage})
         }else{

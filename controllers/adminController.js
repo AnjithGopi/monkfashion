@@ -244,15 +244,18 @@ const loadOrderDetails = async (req,res)=>{
 
 const loadSalesReport = async (req,res)=>{
     try {
-        var search = '';
+       
         var startDate = null;
         var endDate =null ;
         const salesReportDuration = req.query.salesReportDuration;
         const userCount = await User.countDocuments({isActive:true,isAdmin:false})
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
 
-        if(req.query.search){
-            search = req.query.search;
-        }
+        let search = req.query.search || '';
+        let fromDate = req.query.toDate ||'';
+        let toDate= req.query.toDate || '';
         if( req.query.fromDate && req.query.toDate){
             startDate = new Date(req.query.fromDate);
             endDate = new Date(req.query.toDate);
@@ -285,11 +288,19 @@ const loadSalesReport = async (req,res)=>{
                 }
             },
             {
-                $unwind: '$productDetails'
+                $unwind: '$items'
             },
             {
                 $match: {
-                    "orderStatus": "Delivered"  
+                    "items.productStatus": "Delivered"  
+                }
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'items.productId',
+                    foreignField: '_id',
+                    as: 'productDetails'
                 }
             },
             {
@@ -298,8 +309,31 @@ const loadSalesReport = async (req,res)=>{
                 }
             }
         ]);
+        // const totalCount = dateData.length; // Assuming `orders` is the array of orders
+        const uniqueIds = new Set(dateData.map(doc => doc._id.toString()))
+        const totalCount = uniqueIds.size;
+        const totalPages = Math.ceil(totalCount / limit);
+
+
+        const paginatedOrders = dateData.slice(skip, skip + limit);
         const orderCounts =  getSalesReportCounts(dateData)
-        res.render("salesReport",{orders:dateData,users:userCount,totalOrders:dateData.length,onlinePayments:orderCounts.filterPaymentOnline,offlinePayments:orderCounts.filterPaymentOffline,cancelledOrders:orderCounts.filterOrderCancelled,totalAmount:orderCounts.totalSum})
+
+        res.render("salesReport", {
+            orders: paginatedOrders,
+            users: userCount,
+            totalOrders: totalCount,
+            onlinePayments: orderCounts.filterPaymentOnline,
+            offlinePayments: orderCounts.filterPaymentOffline,
+            walletPayments: orderCounts.filterPaymentWallet,
+            totalAmount: orderCounts.totalSum,
+            currentPage: page,
+            totalPages: totalPages,
+            search:search,
+            fromDate:fromDate,
+            toDate:toDate
+            
+        });
+    
 
         return
 
@@ -336,11 +370,19 @@ const loadSalesReport = async (req,res)=>{
                 }
             },
             {
-                $unwind: '$productDetails'
+                $unwind: '$items'
             },
             {
                 $match: {
-                    "orderStatus": "Delivered"  
+                    "items.productStatus": "Delivered"  
+                }
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'items.productId',
+                    foreignField: '_id',
+                    as: 'productDetails'
                 }
             },
             {
@@ -348,6 +390,7 @@ const loadSalesReport = async (req,res)=>{
                     orderDate:-1
                 }
             }
+            
                  
         ]);
 
@@ -386,11 +429,19 @@ const loadSalesReport = async (req,res)=>{
                 }
             },
             {
-                $unwind: '$productDetails'
+                $unwind: '$items'
             },
             {
                 $match: {
-                    "orderStatus": "Delivered"  
+                    "items.productStatus": "Delivered"  
+                }
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'items.productId',
+                    foreignField: '_id',
+                    as: 'productDetails'
                 }
             },
             {
@@ -408,8 +459,33 @@ const loadSalesReport = async (req,res)=>{
             orderCounts = getSalesReportCounts(orderData1)
 
         }
+        const uniqueIds = new Set(orders.map(doc => doc._id.toString()))
+        const totalCount = uniqueIds.size;
+        // const totalCount = orders.length; // Assuming `orders` is the array of orders
 
-        res.render("salesReport",{orders:orders,users:userCount,totalOrders:orders.length,onlinePayments:orderCounts.filterPaymentOnline,offlinePayments:orderCounts.filterPaymentOffline,cancelledOrders:orderCounts.filterOrderCancelled,totalAmount:orderCounts.totalSum})
+        const totalPages = Math.ceil(totalCount / limit);
+    
+        const paginatedOrders = orders.slice(skip, skip + limit);
+     
+
+        
+    
+        res.render("salesReport", {
+            orders: paginatedOrders,
+            users: userCount,
+            totalOrders: totalCount,
+            onlinePayments: orderCounts.filterPaymentOnline,
+            offlinePayments: orderCounts.filterPaymentOffline,
+            walletPayments: orderCounts.filterPaymentWallet,
+            totalAmount: orderCounts.totalSum,
+            currentPage: page,
+            totalPages: totalPages,
+            search:search,
+            fromDate:fromDate,
+            toDate:toDate
+        });
+
+       
     } catch (error) {
         console.log(error.message)
         res.render('../pages/errorAdmin',{error:error.message})

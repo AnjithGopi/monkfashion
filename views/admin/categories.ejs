@@ -67,6 +67,15 @@
                                    
                 <!-- To indicate which sweet alert should work -->
                 <span hidden id="statusSpan"><%=locals.message  ? message: ''%></span>
+                <% if (messages.success) { %>
+                    <div class="alert alert-success" id="editSuccessMessage">
+                        <%= messages.success %>
+                    </div>
+                <% } else if (messages.error) { %>
+                    <div class="alert alert-danger" id="editErrorMessage">
+                        <%= messages.error %>
+                    </div>
+                <% } %>
 
                                     <% if( categories.length > 0 ) { for( let i = 0 ; i < categories.length ; i ++){ %>
                                         <% if(!categories[i].isDeleted) {%>
@@ -228,6 +237,20 @@
             });;
      }
       
+
+        setTimeout(() => {
+            const successMessage = document.getElementById('editSuccessMessage');
+            const errorMessage = document.getElementById('editErrorMessage');
+
+            if (successMessage) {
+                successMessage.remove();
+            }
+
+            if (errorMessage) {
+                errorMessage.remove();
+            }
+        }, 3000);
+    
 
       </script>
 

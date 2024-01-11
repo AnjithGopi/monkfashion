@@ -54,6 +54,15 @@ const categoriesOfferExpiry =  schedule.scheduleJob('*/2 * * * * *',async ()=>{
             
              }
         );
+        const result1 = await Categories.updateMany(
+            {
+                'offer.expiryDate': { $gte: new Date() }
+                       
+            },
+            { $set: { 'offer.status':true }
+            
+             }
+        );
         // console.log(result)
     
     
