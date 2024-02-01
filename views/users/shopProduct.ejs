@@ -8,7 +8,7 @@
             <div class="container">
                 <div class="breadcrumb">
                     <a href="/home" rel="nofollow">Home</a>
-                    <span></span> All products
+                    <span></span> All productss
                 </div>
             </div>
         </div>
@@ -20,11 +20,11 @@
                             <div class="row mb-50">
                                 <div class="col-md-6 col-sm-12 col-xs-12">
                                     <!-- <div class=""> -->
-                                        <div class="detail-gallery">
+                                        <div class="detail-gallery" style="width: 100%;" >
                                         <!-- MAIN SLIDES -->
-                                        <div class="product-image-slider" >
+                                        <div class="product-image-slider " >
                                             <% for (let i = 0 ; i < product.image.length; i++ ) {%>
-                                            <figure class="border-radius-10" style="width: 500px;">
+                                            <figure class="border-radius-10" style="background-color: white;">
                                                 <a href="/static/admin/images/product/<%=product.image[i]%>" class="MagicZoom" data-options="zoomWidth: 400, zoomLength: 400">
                                                     <img src="/static/admin/images/product/<%=product.image[i]%>"></a>
 

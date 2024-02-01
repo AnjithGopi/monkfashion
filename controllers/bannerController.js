@@ -17,17 +17,15 @@ const loadBanner = async (req, res) => {
 const addBanner = async(req,res) =>{
     try {
         console.log("add banner received")
-        console.log(req.body)
+       
         const cropStatus = req.body.cropStatus;
       
 
         const newImages = [];
         if (req.files && req.files.length > 0) {
-            console.log("files 1")
             if( cropStatus == 'on'){
                 for (const file of req.files) {
                     const filename = file.filename;
-                    console.log("files 2")
             
                     const croppedImageBuffer = await sharp(file.path)
                         .resize({ width: 1000, height: 1000, fit: 'cover' }) // Example cropping options
@@ -49,13 +47,10 @@ const addBanner = async(req,res) =>{
                         const filename = file.filename;                           
                         newImages.push(filename);
                     }     
-                    console.log("Cropped Images:", newImages);
                 }
             }
             
-            console.log("Cropped Images:", newImages);
         }
-        console.log("Images :",req.body)
         const newProduct = new Banner({
             name:req.body.bannerName,
             text:req.body.bannerText,
@@ -83,17 +78,14 @@ const addBanner = async(req,res) =>{
 
 const updateBanner  = async (req, res) => {
     try {
-        console.log('update Banner received')
-        console.log(req.body)
+        
         
         const cropStatus = req.body.cropStatus || 'off'
         const newImages = [];
-        console.log(req.body)
         const  { id,bannerName,bannerText,bannerText2,bannerExpiryDate,target} = req.body
         console.log(id,bannerName,bannerText,bannerText2,bannerExpiryDate,cropStatus)
         const bannerId = new mongoose.Types.ObjectId(req.body.bannerId)
         const banner = await Banner.findOne({_id:bannerId});
-        console.log("Banner :",banner)
 
         banner.name = bannerName;
         banner.text = bannerText;
@@ -102,11 +94,9 @@ const updateBanner  = async (req, res) => {
         banner.expiryDate = new Date(bannerExpiryDate);
 
         if (req.files && req.files.length > 0) {
-            console.log("files 1")
             if( cropStatus == 'on'){
                 for (const file of req.files) {
                     const filename = file.filename;
-                    console.log("files 2")
                     const croppedImageBuffer = await sharp(file.path)
                         .resize({ width: 1000, height: 1000, fit: 'cover' }) // Example cropping options
                         .toBuffer();
@@ -128,7 +118,6 @@ const updateBanner  = async (req, res) => {
                         const filename = file.filename;                           
                         newImages.push(filename);
                     }     
-                    console.log("Cropped Images:", newImages);
                 }
                 banner.image = newImages
 
@@ -139,7 +128,6 @@ const updateBanner  = async (req, res) => {
         const updateBanner  = await banner.save();
         const bannerData = await Banner.find()
         if(updateBanner){
-            console.log("Update successfully")
             res.render('banner',{banner:bannerData,successMessage:"Banner Updated "})
         }else{
             res.render('banner',{banner:bannerData,warnningMessage:"Failed to Update Banner "})        

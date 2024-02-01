@@ -14,7 +14,7 @@
             <li class="nav-item">
                 <a class="nav-link btn-icon" href="/admin/messages">
                     <i class="material-icons md-notifications animation-shake"></i>
-                    <span class="badge rounded-pill">3</span>
+                    <span class="badge rounded-pill" id="messageIdNavbar">0</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -47,3 +47,28 @@
         </ul>
     </div>
 </header>
+
+<script>
+  window.onload = ()=>{
+        updateMessageIcon()
+    }
+    function submitSearch() {
+        // Assuming you want to submit the form when the text input changes
+        document.getElementById("searchForm").submit();
+    }
+
+   function updateMessageIcon(){
+            fetch('/admin/getMessageIconQuantity',{
+                method:'get'
+            })
+            .then(response => response.json())
+            .then((data)=>{
+                if( data.success){
+                    document.getElementById('messageIdNavbar').innerText = data.quantity
+                }
+            })
+            .catch(error => {
+                    console.log('Error :', error);
+                });
+    }
+</script>

@@ -9,93 +9,93 @@
     </div>
     <nav>
         <ul class="menu-aside">
-            <li class="menu-item active">
-                <a class="menu-link" href="/admin"> <i class="icon material-icons md-home"></i>
-                    <span class="text">Dashboared</span>
+            <li class="menu-item active" id="dashboardAside">
+                <a class="menu-link" href="/admin" onclick="setActiveState('dashboardAside')"> <i class="icon material-icons md-home"></i>
+                    <span class="text">Dashboard</span>
                 </a>
             </li>
-            <li class="menu-item has-submenu">
-                <a class="menu-link" href="page-products-list.html"> <i class="icon material-icons md-shopping_bag"></i>
+            <li class="menu-item has-submenu" id="productAside">
+                <a class="menu-link" > <i class="icon material-icons md-shopping_bag"></i>
                     <span class="text">Products</span>
                 </a>
                 <div class="submenu">
-                    <a href="/admin/products">Product List</a>
+                    <a href="/admin/products" onclick="setActiveState('productAside')">Product List</a>
                   
                 </div>
             </li>
-            <li class="menu-item has-submenu">
-                <a class="menu-link" href="page-orders-1.html"> <i class="icon material-icons md-shopping_cart"></i>
+            <li class="menu-item has-submenu" id="orderAside">
+                <a class="menu-link" > <i class="icon material-icons md-shopping_cart"></i>
                     <span class="text">Orders</span>
                 </a>
                 <div class="submenu">
-                    <a href="/admin/orders">Order Details</a>
+                    <a href="/admin/orders" onclick="setActiveState('orderAside')">Order Details</a>
                 </div>
             </li>
-            <li class="menu-item has-submenu">
+            <li class="menu-item has-submenu" id="userAside">
                 <a class="menu-link" href="/admin/user-list"> <i class="icon material-icons md-store"></i>
                     <span class="text">Users</span>
                 </a>
                 <div class="submenu">  
-                    <a href="/admin/userList">Users list</a>
+                    <a href="/admin/userList" onclick="setActiveState('userAside')">Users list</a>
                 </div>
             </li>
-            <li class="menu-item has-submenu">
-                <a class="menu-link" href="page-form-product-1.html"> <i class="icon material-icons md-add_box"></i>
+            <li class="menu-item has-submenu" id="categoriesAside">
+                <a class="menu-link" > <i class="icon material-icons md-add_box"></i>
                     <span class="text">Categories</span>
                 </a>
                 <div class="submenu">
-                    <a href="/admin/categories">Add category</a>
+                    <a href="/admin/categories" onclick="setActiveState('categoriesAside')">Add category</a>
                     
                 </div>
             </li>
-            <li class="menu-item has-submenu">
-                <a class="menu-link" href="page-form-product-1.html"> <i class="icon material-icons md-add_box"></i>
+            <li class="menu-item has-submenu" id="addProductAside">
+                <a class="menu-link" > <i class="icon material-icons md-add_box"></i>
                     <span class="text"> Add Products</span>
                 </a>
                 <div class="submenu">
-                    <a href="/admin/addproduct">Add Products</a>
+                    <a href="/admin/addproduct" onclick="setActiveState('addProductAside')">Add Products</a>
                     
                 </div>
             </li>
-            <li class="menu-item has-submenu">
+            <li class="menu-item has-submenu" id="offerAside">
                 <a class="menu-link" href=""> <i class="icon material-icons md-stars"></i>
                     <span class="text">Offers</span>
                 </a>
                 <div class="submenu">
-                    <a href="/admin/productOffer">Product Offers</a>
-                    <a href="/admin/categoriesOffer">Categories Offers</a>
+                    <a href="/admin/productOffer" onclick="setActiveState('offerAside')">Product Offers</a>
+                    <a href="/admin/categoriesOffer" onclick="setActiveState('offerAside')">Categories Offers</a>
                 </div>
             </li>
-            <li class="menu-item  has-submenu">
+            <li class="menu-item  has-submenu" id="couponAside">
                 <a class="menu-link" disabled href=""> <i class="icon material-icons md-pie_chart"></i>
                     <span class="text">Coupon</span>
                 </a>
                 <div class="submenu">
-                    <a href="/admin/coupon">Coupon</a>
+                    <a href="/admin/coupon" onclick="setActiveState('couponAside')" >Coupon</a>
                 </div>
             </li>
-            <li class="menu-item  has-submenu">
-                <a class="menu-link" disabled href=""> <i class="icon material-icons md-local_offer"></i>
+            <li class="menu-item  has-submenu" id="bannerAside">
+                <a class="menu-link" disabled href=""> <i class="icon material-icons md-speaker_notes"></i>
                     <span class="text">Banner </span>
                 </a>
-                <div class="submenu">
-                    <a href="/admin/banner">Banner Management</a>
+                <div class="submenu" >
+                    <a href="/admin/banner"  onclick="setActiveState('bannerAside')">Banner Management</a>
                 </div>
             </li>
-            <li class="menu-item  has-submenu">
-                <a class="menu-link" disabled href=""> <i class="icon material-icons md-local_offer"></i>
+            <li class="menu-item  has-submenu" id="messageAside">
+                <a class="menu-link" disabled href="" > <i class="icon material-icons md-chat"></i>
                     <span class="text">Messages </span>
                 </a>
                 <div class="submenu">
-                    <a href="/admin/messages">Messages Management</a>
+                    <a href="/admin/messages" onclick="setActiveState('messageAside')">Messages Management</a>
                 </div>
             </li>
-            <li class="menu-item  has-submenu">
-                <a class="menu-link" disabled href=""> <i class="icon material-icons md-local_offer"></i>
+            <li class="menu-item  has-submenu"  id="reviewAside">
+                <a class="menu-link" disabled href=""> <i class="icon material-icons md-feedback"></i>
                     <span class="text">Reviews </span>
                 </a>
                 <div class="submenu">
-                    <a href="/admin/reviews">Reviews Management</a>
+                    <a href="/admin/reviews" onclick="setActiveState('reviewAside')">Reviews Management</a>
                 </div>
             </li>
             
@@ -114,3 +114,22 @@
         <br>
     </nav>
 </aside>
+
+<script>
+    function setActiveState(value) {
+        localStorage.setItem('activeState', value);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const isActive = localStorage.getItem('activeState');
+        if (isActive) {
+            const menuItems = document.querySelectorAll('.menu-item');
+
+            // Remove the "active" class from each menu item
+            menuItems.forEach((menuItem) => {
+                menuItem.classList.remove('active');
+            });
+           document.getElementById(`${isActive}`).classList.add('active')
+        }
+    });
+</script>

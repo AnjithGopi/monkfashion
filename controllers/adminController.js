@@ -614,6 +614,19 @@ const errorAdmin = async (req, res) => {
         console.log(error.message);
     }
 };
+
+const updateMessageIconQuantity = async (req, res) => {
+    try {
+        const count = await Message.countDocuments()
+        if(count){
+            res.status(200).json({success:true,quantity:count})
+        }else{
+            res.status(400).json({success:false,quantity:count})
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+};
 module.exports ={
    loadLogin,
    verifyLogin,
@@ -628,7 +641,8 @@ module.exports ={
    loadChart,
    loadMessages,
    loadReview,
-   errorAdmin
+   errorAdmin,
+   updateMessageIconQuantity
   
 }
     

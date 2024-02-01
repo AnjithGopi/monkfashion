@@ -345,7 +345,7 @@ const loadHome = async(req,res)=>{
     try{
        const productData = await Product.find({isDeleted:false,isActive:true}).limit(12)
        const newProducts = await Product.find({isDeleted:false,isActive:true}).sort({createdOn:-1}).limit(10)
-       const bannerData = await Banner.find()
+       const bannerData = await Banner.find().sort({index:1})
        const categoriesData = await Categories.find({isDeleted:false,isActive:true})
        let cartCount = 0
        let userData = '';

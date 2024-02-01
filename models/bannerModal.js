@@ -31,6 +31,10 @@ const bannerSchema = new mongoose.Schema({
          expiryDate:{
          type:Date,
          default:Date.now  
+        },
+        index:{
+            type:Number,
+            default:0
         }
        
 })

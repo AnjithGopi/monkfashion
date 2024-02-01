@@ -91,6 +91,9 @@ admin_route.patch('/banner/changeStatus',auth.isLogin,bannerController.changeSta
 admin_route.get('/messages',auth.isLogin,adminController.loadMessages)
 admin_route.get('/reviews',auth.isLogin,adminController.loadReview)
 
+admin_route.get('/getMessageIconQuantity',auth.isLogin,adminController.updateMessageIconQuantity)
+
+
 // admin_route.get('/errorAdmin',adminController.errorAdmin)
 
 // admin_route.use('*', (req, res) => {
